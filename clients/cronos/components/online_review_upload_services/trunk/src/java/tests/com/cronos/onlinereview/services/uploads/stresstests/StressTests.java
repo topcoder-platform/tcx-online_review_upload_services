@@ -1,25 +1,31 @@
-/**
- *
- * Copyright (c) 2007, TopCoder, Inc. All rights reserved
+/*
+ * Copyright (C) 2007 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.services.uploads.stresstests;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import junit.framework.TestResult;
 
 /**
- * <p>This test case aggregates all Stress test cases.</p>
- *
- * @author TopCoder
+ * <p>
+ * This test case aggregates all Stress test cases.
+ * </p>
+ * @author Thinfox
  * @version 1.0
  */
 public class StressTests extends TestCase {
 
+    /**
+     * Aggregates stress test cases.
+     * @return Stress test fixtures.
+     */
     public static Test suite() {
         final TestSuite suite = new TestSuite();
-        //suite.addTest(XXX.suite());
+
+        suite.addTestSuite(DefaulUploadServicesStressTests.class);
+        suite.addTestSuite(DefaulUploadExternalServicesStressTests.class);
+
         return suite;
     }
 }
