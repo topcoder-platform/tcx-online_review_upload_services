@@ -14,8 +14,11 @@ import java.text.MessageFormat;
 import javax.activation.DataHandler;
 
 import com.cronos.onlinereview.services.uploads.ConfigurationException;
+import com.cronos.onlinereview.services.uploads.InvalidProjectException;
+import com.cronos.onlinereview.services.uploads.InvalidProjectPhaseException;
 import com.cronos.onlinereview.services.uploads.InvalidSubmissionException;
 import com.cronos.onlinereview.services.uploads.InvalidSubmissionStatusException;
+import com.cronos.onlinereview.services.uploads.InvalidUserException;
 import com.cronos.onlinereview.services.uploads.PersistenceException;
 import com.cronos.onlinereview.services.uploads.UploadExternalServices;
 import com.cronos.onlinereview.services.uploads.UploadServices;
@@ -24,8 +27,6 @@ import com.topcoder.util.generator.guid.UUID;
 import com.topcoder.util.generator.guid.UUIDType;
 import com.topcoder.util.generator.guid.UUIDUtility;
 import com.topcoder.util.log.Level;
-import com.topcoder.util.log.Log;
-import com.topcoder.util.log.LogManager;
 
 /**
  * <p>
@@ -33,10 +34,9 @@ import com.topcoder.util.log.LogManager;
  * it saves the file into fileStorageLocation and then delegates to UploadServices implementation. The
  * setSubmission delegate directly to <code>UploadServices</code> instance.
  * </p>
- *
  * <p>
  * A sample configuration file that can be used is given below.
- *
+ * 
  * <pre>
  *  &lt;Config name=&quot;com.cronos.onlinereview.services.uploads.impl.DefaultUploadExternalServices&quot;&gt;
  *      &lt;Property name=&quot;objectFactoryNamespace&quot;&gt;
@@ -53,14 +53,13 @@ import com.topcoder.util.log.LogManager;
  *      &lt;/Property&gt;
  *  &lt;/Config&gt;
  * </pre>
- *
+ * 
  * </p>
- *
  * <p>
  * Thread safe: The thread safety is completely relied to the uploadServices implementation because it's impossible
  * to change the other variables
  * </p>
- *
+ * 
  * @author fabrizyo, cyberjag
  * @version 1.0
  */
@@ -87,7 +86,8 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
      * Represents the logger to log all operations, exceptions, etc. It is initialized statically.
      * </p>
      */
-    private static final Log LOG = LogManager.getLog(DefaultUploadExternalServices.class.getName());
+    private static final com.topcoder.util.log.Log LOG = com.topcoder.util.log.LogFactory
+            .getLog(DefaultUploadExternalServices.class.getName());
 
     /**
      * <p>
@@ -125,7 +125,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
      * <p>
      * Creates <code>DefaultUploadExternalServices</code> using the configuration with default namespace.
      * </p>
-     *
+     * 
      * @throws ConfigurationException
      *             If any error occurs during accessing configuration. If bad configuration is detected.
      */
@@ -137,7 +137,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
      * <p>
      * Creates <code>DefaultUploadExternalServices</code> using the configuration with specified namespace.
      * </p>
-     *
+     * 
      * @param namespace
      *            the namespace to load configuration
      * @throws ConfigurationException
@@ -147,8 +147,12 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
      */
     public DefaultUploadExternalServices(String namespace) throws ConfigurationException {
         Helper.checkString(namespace, "namespace", LOG);
-        this.uploadServices = (UploadServices) Helper.createObject(namespace, "uploadServicesIdentifier",
-                "DefaultUploadServices", LOG, UploadServices.class, new DefaultUploadServices());
+        UploadServices services = (UploadServices) Helper.createObject(namespace, "uploadServicesIdentifier",
+                "DefaultUploadServices", LOG, UploadServices.class, null);
+        if (services == null) {
+            services = new DefaultUploadServices();
+        }
+        this.uploadServices = services;
         LOG.log(Level.INFO, "UploadServices created using ObjectFactory");
         this.filenamePattern = Helper.readProperty(namespace, "filenamePattern", DEFAULT_FILENAME_PATTERN, LOG,
                 false);
@@ -159,7 +163,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
      * <p>
      * Creates <code>DefaultUploadExternalServices</code> with the specified property.
      * </p>
-     *
+     * 
      * @param uploadServices
      *            the services to delegate all calls
      * @param filenamePattern
@@ -186,13 +190,12 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
      * <p>
      * Adds a new submission for an user in a particular project.
      * </p>
-     *
      * <p>
      * If the project allows multiple submissions for users, it will add the new submission and return. If multiple
      * submission are not allowed for the project, firstly it will add the new submission, secondly mark previous
      * submissions as deleted and then return.
      * </p>
-     *
+     * 
      * @param projectId
      *            the project's id
      * @param userId
@@ -210,7 +213,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
      *             if any id is &lt; 0, if any argument is <code>null</code> or trim to empty
      */
     public long uploadSubmission(long projectId, long userId, String filename, DataHandler submission)
-        throws RemoteException, UploadServicesException {
+            throws RemoteException, UploadServicesException {
         LOG.log(Level.DEBUG,
                 "Entered DefaultUploadExternalServices#uploadSubmission(long, long, String, DataHandler)");
         Helper.checkId(projectId, "projectId", LOG);
@@ -219,8 +222,8 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
         Helper.checkNull(submission, "submission", LOG);
 
         File newFile = createNewFile(filename, submission);
-        String filenameGenerated = newFile.getAbsolutePath();
-        LOG.log(Level.INFO, "Submission file created {0}", new Object[] {filenameGenerated });
+        String filenameGenerated = newFile.getName();
+        Helper.logFormat(LOG, Level.INFO, "Submission file created {0}", new Object[] {newFile.getAbsolutePath()});
         try {
             // delegate to the similar method in uploadServices without DataHandler passing only
             // filenameGenerated
@@ -232,7 +235,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
             throw e;
         } finally {
             new File(submission.getName()).delete();
-            LOG.log(Level.DEBUG,
+            Helper.logFormat(LOG, Level.DEBUG,
                     "Exited DefaultUploadExternalServices#uploadSubmission(long, long, String, DataHandler)");
         }
     }
@@ -242,7 +245,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
      * Adds a new final fix upload for an user in a particular project. This submission always overwrite the
      * previous ones.
      * </p>
-     *
+     * 
      * @param projectId
      *            the project's id
      * @param userId
@@ -260,8 +263,8 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
      *             if any id is &lt; 0, if any argument is <code>null</code> or trim to empty
      */
     public long uploadFinalFix(long projectId, long userId, String filename, DataHandler finalFix)
-        throws RemoteException, UploadServicesException {
-        LOG.log(Level.DEBUG,
+            throws RemoteException, UploadServicesException {
+        Helper.logFormat(LOG, Level.DEBUG,
                 "Entered DefaultUploadExternalServices#uploadFinalFix(long, long, String, DataHandler)");
         Helper.checkId(projectId, "projectId", LOG);
         Helper.checkId(userId, "userId", LOG);
@@ -269,8 +272,8 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
         Helper.checkNull(finalFix, "finalFix", LOG);
 
         File newFile = createNewFile(filename, finalFix);
-        String filenameGenerated = newFile.getAbsolutePath();
-        LOG.log(Level.INFO, "Final fix file created {0}", new Object[] {filenameGenerated });
+        String filenameGenerated = newFile.getName();
+        Helper.logFormat(LOG, Level.INFO, "Final fix file created {0}", new Object[] {filenameGenerated});
         try {
             // delegate to the similar method in uploadServices without DataHandler passing only
             // filenameGenerated
@@ -282,7 +285,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
             throw e;
         } finally {
             new File(finalFix.getName()).delete();
-            LOG.log(Level.DEBUG,
+            Helper.logFormat(LOG, Level.DEBUG,
                     "Exited DefaultUploadExternalServices#uploadFinalFix(long, long, String, DataHandler)");
         }
     }
@@ -292,7 +295,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
      * Adds a new test case upload for an user in a particular project. This submission always overwrite the
      * previous ones.
      * </p>
-     *
+     * 
      * @param projectId
      *            the project's id
      * @param userId
@@ -310,8 +313,8 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
      *             if any id is &lt; 0, if any argument is <code>null</code> or trim to empty
      */
     public long uploadTestCases(long projectId, long userId, String filename, DataHandler testCases)
-        throws RemoteException, UploadServicesException {
-        LOG.log(Level.DEBUG,
+            throws RemoteException, UploadServicesException {
+        Helper.logFormat(LOG, Level.DEBUG,
                 "Entered DefaultUploadExternalServices#uploadTestCases(long, long, String, DataHandler)");
         Helper.checkId(projectId, "projectId", LOG);
         Helper.checkId(userId, "userId", LOG);
@@ -319,8 +322,8 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
         Helper.checkNull(testCases, "testCases", LOG);
 
         File newFile = createNewFile(filename, testCases);
-        String filenameGenerated = newFile.getAbsolutePath();
-        LOG.log(Level.INFO, "Test case file created {0}", new Object[] {filenameGenerated });
+        String filenameGenerated = newFile.getName();
+        Helper.logFormat(LOG, Level.INFO, "Test case file created {0}", new Object[] {filenameGenerated});
         try {
             // delegate to the similar method in uploadServices without DataHandler passing only
             // filenameGenerated
@@ -332,7 +335,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
             throw e;
         } finally {
             new File(testCases.getName()).delete();
-            LOG.log(Level.DEBUG,
+            Helper.logFormat(LOG, Level.DEBUG,
                     "Exited DefaultUploadExternalServices#uploadTestCases(long, long, String, DataHandler)");
         }
     }
@@ -341,7 +344,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
      * <p>
      * Sets the status of a existing submission.
      * </p>
-     *
+     * 
      * @param submissionId
      *            the submission's id
      * @param submissionStatusId
@@ -362,20 +365,22 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
      *             if any id is &lt; 0 or if operator is null or trim to empty
      */
     public void setSubmissionStatus(long submissionId, long submissionStatusId, String operator)
-        throws RemoteException, InvalidSubmissionException, InvalidSubmissionStatusException,
+            throws RemoteException, InvalidSubmissionException, InvalidSubmissionStatusException,
             PersistenceException {
-        LOG.log(Level.DEBUG, "Entered DefaultUploadExternalServices#setSubmissionStatus(long, long, String)");
+        Helper.logFormat(LOG, Level.DEBUG,
+                "Entered DefaultUploadExternalServices#setSubmissionStatus(long, long, String)");
         try {
             uploadServices.setSubmissionStatus(submissionId, submissionStatusId, operator);
         } finally {
-            LOG.log(Level.DEBUG, "Exited DefaultUploadExternalServices#setSubmissionStatus(long, long, String)");
+            Helper.logFormat(LOG, Level.DEBUG,
+                    "Exited DefaultUploadExternalServices#setSubmissionStatus(long, long, String)");
         }
     }
 
     /**
      * Creates a new file with a unique name and copies the stream from the <code>DataHandler</code> to the new
      * file created.
-     *
+     * 
      * @param filename
      *            the filename to use
      * @param dataHandler
@@ -399,7 +404,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
         InputStream inputStream = null;
         FileOutputStream outputStream = null;
         try {
-            inputStream =  dataHandler.getDataSource().getInputStream();
+            inputStream = dataHandler.getDataSource().getInputStream();
             outputStream = new FileOutputStream(newFile);
             // write all bytes from input to output
             byte[] buffer = new byte[BUFFER_SIZE];
@@ -408,8 +413,8 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
                 outputStream.write(buffer, 0, length);
             }
         } catch (IOException e) {
-            LOG.log(Level.ERROR, e, "Failed to read/write from the submission data source stream to new file",
-                    new Object[] {});
+            Helper.logFormat(LOG, Level.ERROR, e,
+                    "Failed to read/write from the submission data source stream to new file", new Object[] {});
             throw new RemoteException("Failed to read/write from the submission data source stream to new file", e);
         } finally {
             try {
@@ -428,5 +433,36 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
             }
         }
         return newFile;
+    }
+
+    /**
+     * Adds the given user as a new submitter to the given project id. If the user is already added returns the the
+     * id.
+     * 
+     * @param projectId
+     *            the project to which the user needs to be added
+     * @param userId
+     *            the user to be added
+     * @return the added resource id
+     * @throws InvalidProjectException
+     *             if the project id is unknown
+     * @throws InvalidUserException
+     *             if the user id is unknown
+     * @throws InvalidProjectPhaseException
+     *             if the phase of the project is not Registration.
+     * @throws UploadServicesException
+     *             if any error occurs from UploadServices
+     * @throws IllegalArgumentException
+     *             if any id is &lt; 0
+     */
+    public long addSubmitter(long projectId, long userId) throws RemoteException, UploadServicesException {
+        Helper.logFormat(LOG, Level.DEBUG,
+                "Entered DefaultUploadExternalServices#addSubmitter(long, long)");
+        try {
+            return uploadServices.addSubmitter(projectId, userId);
+        } finally {
+            Helper.logFormat(LOG, Level.DEBUG,
+                    "Exited DefaultUploadExternalServices#addSubmitter(long, long)");
+        }
     }
 }

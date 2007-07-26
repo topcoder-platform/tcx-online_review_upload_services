@@ -6,7 +6,7 @@
 
     <!-- COMPONENT PARAMETERS -->
     <property name="component" value="Online_Review_Upload_Services" />
-    <property name="package" value="com.cronos.onlinereview.services.uploads" />
+    <property name="package" value="com.cronos.onlinereview.services.submission" />
     <property name="packagedir" value="com/cronos/onlinereview/services/uploads" />
     <property name="distfilename" value="online_review_upload_services" />
     <property name="component_version" value="1.0" />
@@ -14,11 +14,11 @@
 
     <!-- DIRECTORY SETUP -->
     <property name="srcdir" value="src" />
-    <property name="tcs" value="../tcs" />
-    <property name="tcs_libdir" value="../tcs/lib/tcs" />
-    <property name="ext_libdir" value="../tcs/lib/third_party" />
-    <property name="jar_tcs_libdir" value="../tcs/lib/tcs" />
-    <property name="jar_ext_libdir" value="../tcs/lib/third_party" />
+    <property name="tcs_libdir" value="lib/tcs" />
+    <property name="ext_libdir" value="lib" />
+    <property name="cronos_libdir" value="${tcs_libdir}" />
+    <property name="jar_tcs_libdir" value="lib/tcs" />
+    <property name="jar_ext_libdir" value="lib" />
     <property name="docsdir" value="docs" />
     <property name="configdir" value="conf" />
     <property name="testlogdir" value="log" />
@@ -26,7 +26,6 @@
     <property name="javadocsdir" value="${docsdir}/javadocs" />
     <property name="webdir" value="web" />
     <property name="reports" value="reports" />
-    <property name="docs_coverage" value="${docsdir}/coverage" />
 
     <property name="javasrc" value="${srcdir}/java" />
     <property name="javamain" value="${javasrc}/main" />
@@ -44,7 +43,7 @@
     <property name="build_tcsdistdir" value="${build_distdir}/${distfilename}-${component_version}" />
 
     <!-- EXECUTION TAGS -->
-    <property name="debug" value="off" />
+    <property name="debug" value="on" />
     <property name="verbose" value="no" />
 
     <!-- COMPONENT DISTRIBUTION STRUCTURE -->
@@ -54,7 +53,6 @@
     <property name="dist_docs" value="${build_tcsdistdir}/${docsdir}" />
     <property name="dist_javadocs" value="${build_tcsdistdir}/${javadocsdir}" />
     <property name="dist_testfiles" value="${build_tcsdistdir}/${testfiles}" />
-    <property name="dist_coverage" value="${dist_docs}/coverage" />
 
     <!-- NAME FOR .JAR AND .WAR FILES -->
     <property name="component.jar" value="${dist_lib}/${component_path}/${distfilename}.jar"/>
@@ -70,228 +68,239 @@
     <!-- DOCUMENT PACKAGE -->
     <property name="dist_docpackage" value="${builddir}/doc_package" />
     <property name="docpackage.jar" value="${distfilename}_docs.jar" />
-
-
-    <property name="cobertura.dir" value="${ext_libdir}/cobertura/1.8"/>
-    <path id="cobertura.classpath">
-        <fileset dir="${cobertura.dir}">
-            <include name="cobertura.jar"/>
-            <include name="lib/**/*.jar"/>
-        </fileset>
-    </path>
-    <taskdef classpathref="cobertura.classpath" resource="tasks.properties"/>
-    <property name="cobertura.datafile" value="${testlogdir}/cobertura.ser"/>
-    <property name="instrumented.dir" value="${builddir}/instrumented"/>
-
+    
     <!-- TCS Dependencies -->
-    <property name="auto_screening_management.version" value="1.0"/>
-    <property name="auto_screening_management.jar.name" value="auto_screening_management.jar"/>
-    <property name="auto_screening_management.path" value="auto_screening_management/${auto_screening_management.version}"/>
-    <property name="auto_screening_management.jar" value="${tcs_libdir}/${auto_screening_management.path}/${auto_screening_management.jar.name}"/>
-
-    <property name="base_exception.version" value="2.0"/>
+    <property name="logging_wrapper.version" value="1.2" />
+    <property name="logging_wrapper.jar.name" value="logging_wrapper.jar" />
+    <property name="logging_wrapper.path" value="logging_wrapper/${logging_wrapper.version}" />
+    <property name="logging_wrapper.jar" value="${tcs_libdir}/${logging_wrapper.path}/${logging_wrapper.jar.name}" />
+	
+    <property name="configmanager.version" value="2.1.5"/>
+    <property name="configmanager.jar.name" value="configuration_manager.jar"/>
+    <property name="configmanager.path" value="configuration_manager/${configmanager.version}"/>
+    <property name="configmanager.jar" value="${tcs_libdir}/${configmanager.path}/${configmanager.jar.name}"/>
+    
+    <property name="db_connection_factory.version" value="1.0"/>
+    <property name="db_connection_factory.jar.name" value="db_connection_factory.jar"/>
+    <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}"/>
+    <property name="db_connection_factory.jar" value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}"/>
+    
+    <property name="base_exception.version" value="1.0"/>
     <property name="base_exception.jar.name" value="base_exception.jar"/>
     <property name="base_exception.path" value="base_exception/${base_exception.version}"/>
     <property name="base_exception.jar" value="${tcs_libdir}/${base_exception.path}/${base_exception.jar.name}"/>
-
-    <property name="configuration_manager.version" value="2.1.5"/>
-    <property name="configuration_manager.jar.name" value="configuration_manager.jar"/>
-    <property name="configuration_manager.path" value="configuration_manager/${configuration_manager.version}"/>
-    <property name="configuration_manager.jar" value="${tcs_libdir}/${configuration_manager.path}/${configuration_manager.jar.name}"/>
-
-    <property name="database_abstraction.version" value="1.1"/>
-    <property name="database_abstraction.jar.name" value="database_abstraction.jar"/>
-    <property name="database_abstraction.path" value="database_abstraction/${database_abstraction.version}"/>
-    <property name="database_abstraction.jar" value="${tcs_libdir}/${database_abstraction.path}/${database_abstraction.jar.name}"/>
-
-    <property name="database_abstraction.version" value="1.1"/>
-    <property name="database_abstraction.jar.name" value="database_abstraction.jar"/>
-    <property name="database_abstraction.path" value="database_abstraction/${database_abstraction.version}"/>
-    <property name="database_abstraction.jar" value="${tcs_libdir}/${database_abstraction.path}/${database_abstraction.jar.name}"/>
-
-    <property name="database_abstraction.version" value="1.1"/>
-    <property name="database_abstraction.jar.name" value="database_abstraction.jar"/>
-    <property name="database_abstraction.path" value="database_abstraction/${database_abstraction.version}"/>
-    <property name="database_abstraction.jar" value="${tcs_libdir}/${database_abstraction.path}/${database_abstraction.jar.name}"/>
-
-    <property name="deliverable_management.version" value="1.0"/>
-    <property name="deliverable_management.jar.name" value="deliverable_management.jar"/>
-    <property name="deliverable_management.path" value="deliverable_management/${deliverable_management.version}"/>
-    <property name="deliverable_management.jar" value="${tcs_libdir}/${deliverable_management.path}/${deliverable_management.jar.name}"/>
-
-    <property name="guid_generator.version" value="1.0"/>
-    <property name="guid_generator.jar.name" value="guid_generator.jar"/>
-    <property name="guid_generator.path" value="guid_generator/${guid_generator.version}"/>
-    <property name="guid_generator.jar" value="${tcs_libdir}/${guid_generator.path}/${guid_generator.jar.name}"/>
-
-    <property name="logging_wrapper.version" value="2.0"/>
-    <property name="logging_wrapper.jar.name" value="logging_wrapper.jar"/>
-    <property name="logging_wrapper.path" value="logging_wrapper/${logging_wrapper.version}"/>
-    <property name="logging_wrapper.jar" value="${tcs_libdir}/${logging_wrapper.path}/${logging_wrapper.jar.name}"/>
-
-    <property name="object_factory.version" value="2.0.1"/>
-    <property name="object_factory.jar.name" value="object_factory.jar"/>
-    <property name="object_factory.path" value="object_factory/${object_factory.version}"/>
-    <property name="object_factory.jar" value="${tcs_libdir}/${object_factory.path}/${object_factory.jar.name}"/>
-
-    <property name="object_formatter.version" value="1.0"/>
-    <property name="object_formatter.jar.name" value="object_formatter.jar"/>
-    <property name="object_formatter.path" value="object_formatter/${object_formatter.version}"/>
-    <property name="object_formatter.jar" value="${tcs_libdir}/${object_formatter.path}/${object_formatter.jar.name}"/>
-
-    <property name="phase_management.version" value="1.0.2"/>
-    <property name="phase_management.jar.name" value="phase_management.jar"/>
-    <property name="phase_management.path" value="phase_management/${phase_management.version}"/>
-    <property name="phase_management.jar" value="${tcs_libdir}/${phase_management.path}/${phase_management.jar.name}"/>
-
-    <property name="project_management.version" value="1.0"/>
-    <property name="project_management.jar.name" value="project_management.jar"/>
-    <property name="project_management.path" value="project_management/${project_management.version}"/>
-    <property name="project_management.jar" value="${tcs_libdir}/${project_management.path}/${project_management.jar.name}"/>
-
+    
+    <property name="typesafe_enum.version" value="1.0"/>
+    <property name="typesafe_enum.jar.name" value="typesafe_enum.jar"/>
+    <property name="typesafe_enum.path" value="typesafe_enum/${typesafe_enum.version}"/>
+    <property name="typesafe_enum.jar" value="${tcs_libdir}/${typesafe_enum.path}/${typesafe_enum.jar.name}"/>
+    
+    <property name="email_engine.version" value="3.0"/>
+    <property name="email_engine.jar.name" value="email_engine.jar"/>
+    <property name="email_engine.path" value="email_engine/${email_engine.version}"/>
+    <property name="email_engine.jar" value="${tcs_libdir}/${email_engine.path}/${email_engine.jar.name}"/>
+    
+    <property name="guid_generator.version" value="1.0" />
+    <property name="guid_generator.jar.name" value="guid_generator.jar" />
+    <property name="guid_generator.path" value="guid_generator/${guid_generator.version}" />
+    <property name="guid_generator.jar" value="${tcs_libdir}/${guid_generator.path}/${guid_generator.jar.name}" />
+	
+    <property name="id_generator.version" value="3.0"/>
+    <property name="id_generator.jar.name" value="id_generator.jar"/>
+    <property name="id_generator.path" value="id_generator/${id_generator.version}"/>
+    <property name="id_generator.jar" value="${tcs_libdir}/${id_generator.path}/${id_generator.jar.name}"/>
+    
+    <property name="data_validation.version" value="1.0"/>
+    <property name="data_validation.jar.name" value="data_validation.jar"/>
+    <property name="data_validation.path" value="data_validation/${data_validation.version}"/>
+    <property name="data_validation.jar" value="${tcs_libdir}/${data_validation.path}/${data_validation.jar.name}"/>
+    
+    <property name="document_generator.version" value="2.0"/>
+    <property name="document_generator.jar.name" value="document_generator.jar"/>
+    <property name="document_generator.path" value="document_generator/${document_generator.version}"/>
+    <property name="document_generator.jar" value="${tcs_libdir}/${document_generator.path}/${document_generator.jar.name}"/>
+    
     <property name="project_phases.version" value="2.0"/>
     <property name="project_phases.jar.name" value="project_phases.jar"/>
     <property name="project_phases.path" value="project_phases/${project_phases.version}"/>
     <property name="project_phases.jar" value="${tcs_libdir}/${project_phases.path}/${project_phases.jar.name}"/>
 
+    <property name="phase_management.version" value="1.0.3"/>
+    <property name="phase_management.jar.name" value="phase_management.jar"/>
+    <property name="phase_management.path" value="phase_management/${phase_management.version}"/>
+    <property name="phase_management.jar" value="${tcs_libdir}/${phase_management.path}/${phase_management.jar.name}"/>
+    
     <property name="resource_management.version" value="1.1"/>
     <property name="resource_management.jar.name" value="resource_management.jar"/>
     <property name="resource_management.path" value="resource_management/${resource_management.version}"/>
     <property name="resource_management.jar" value="${tcs_libdir}/${resource_management.path}/${resource_management.jar.name}"/>
-
+    
+    <property name="review_score_aggregator.version" value="1.0"/>
+    <property name="review_score_aggregator.jar.name" value="review_score_aggregator.jar"/>
+    <property name="review_score_aggregator.path" value="review_score_aggregator/${review_score_aggregator.version}"/>
+    <property name="review_score_aggregator.jar" value="${tcs_libdir}/${review_score_aggregator.path}/${review_score_aggregator.jar.name}"/>
+    
+    <property name="deliverable_management.version" value="1.0.3"/>
+    <property name="deliverable_management.jar.name" value="deliverable_management.jar"/>
+    <property name="deliverable_management.path" value="deliverable_management/${deliverable_management.version}"/>
+    <property name="deliverable_management.jar" value="${tcs_libdir}/${deliverable_management.path}/${deliverable_management.jar.name}"/>
+    
+    <property name="review_management.version" value="1.0"/>
+    <property name="review_management.jar.name" value="review_management.jar"/>
+    <property name="review_management.path" value="review_management/${review_management.version}"/>
+    <property name="review_management.jar" value="${tcs_libdir}/${review_management.path}/${review_management.jar.name}"/>
+    
+    <property name="project_management.version" value="1.0"/>
+    <property name="project_management.jar.name" value="project_management.jar"/>
+    <property name="project_management.path" value="project_management/${project_management.version}"/>
+    <property name="project_management.jar" value="${tcs_libdir}/${project_management.path}/${project_management.jar.name}"/>
+    
+    <property name="scorecard_management.version" value="1.0.1"/>
+    <property name="scorecard_management.jar.name" value="scorecard_management.jar"/>
+    <property name="scorecard_management.path" value="scorecard_management/${scorecard_management.version}"/>
+    <property name="scorecard_management.jar" value="${tcs_libdir}/${scorecard_management.path}/${scorecard_management.jar.name}"/>
+    
+    <property name="review_data_structure.version" value="1.0"/>
+    <property name="review_data_structure.jar.name" value="review_data_structure.jar"/>
+    <property name="review_data_structure.path" value="review_data_structure/${review_data_structure.version}"/>
+    <property name="review_data_structure.jar" value="${tcs_libdir}/${review_data_structure.path}/${review_data_structure.jar.name}"/>
+    
+    <property name="scorecard_data_structure.version" value="1.0"/>
+    <property name="scorecard_data_structure.jar.name" value="scorecard_data_structure.jar"/>
+    <property name="scorecard_data_structure.path" value="scorecard_data_structure/${scorecard_data_structure.version}"/>
+    <property name="scorecard_data_structure.jar" value="${tcs_libdir}/${scorecard_data_structure.path}/${scorecard_data_structure.jar.name}"/>
+    
     <property name="search_builder.version" value="1.3.1"/>
     <property name="search_builder.jar.name" value="search_builder.jar"/>
     <property name="search_builder.path" value="search_builder/${search_builder.version}"/>
     <property name="search_builder.jar" value="${tcs_libdir}/${search_builder.path}/${search_builder.jar.name}"/>
-
-    <property name="typesafe_enum.version" value="1.0"/>
-    <property name="typesafe_enum.jar.name" value="typesafe_enum.jar"/>
-    <property name="typesafe_enum.path" value="typesafe_enum/${typesafe_enum.version}"/>
-    <property name="typesafe_enum.jar" value="${tcs_libdir}/${typesafe_enum.path}/${typesafe_enum.jar.name}"/>
-
+    
+    <property name="object_factory.version" value="2.0.1" />
+    <property name="object_factory.jar.name" value="object_factory.jar" />
+    <property name="object_factory.path" value="object_factory/${object_factory.version}" />
+    <property name="object_factory.jar" value="${tcs_libdir}/${object_factory.path}/${object_factory.jar.name}" />
+	
     <property name="workdays.version" value="1.0"/>
     <property name="workdays.jar.name" value="workdays.jar"/>
     <property name="workdays.path" value="workdays/${workdays.version}"/>
     <property name="workdays.jar" value="${tcs_libdir}/${workdays.path}/${workdays.jar.name}"/>
+    
+    <property name="auto_screening_management.version" value="1.0"/>
+    <property name="auto_screening_management.jar.name" value="auto_screening_management.jar"/>
+    <property name="auto_screening_management.path" value="auto_screening_management/${auto_screening_management.version}"/>
+    <property name="auto_screening_management.jar" value="${cronos_libdir}/${auto_screening_management.path}/${auto_screening_management.jar.name}"/>
 
+    <property name="user_project_data_store.version" value="1.0.1"/>
+    <property name="user_project_data_store.jar.name" value="user_project_data_store.jar"/>
+    <property name="user_project_data_store.path" value="user_project_data_store/${user_project_data_store.version}"/>
+    <property name="user_project_data_store.jar" value="${cronos_libdir}/${user_project_data_store.path}/${user_project_data_store.jar.name}"/>
+        
     <!-- 3rd Party Dependencies  -->
-    <property name="junit.jar" value="${ext_libdir}/junit/3.8.1/junit.jar"/>
-    <property name="activation.jar" value="${ext_libdir}/jaf/1.2/activation.jar"/>
-    <property name="axis.jar" value="${ext_libdir}/axis/1.4/axis.jar"/>
-    <property name="commons-discovery.jar" value="${ext_libdir}/axis/1.4/lib/commons-discovery-0.2.jar"/>
-    <property name="commons-logging.jar" value="${ext_libdir}/axis/1.4/lib/commons-logging-1.0.4.jar"/>
-    <property name="jaxrpc.jar" value="${ext_libdir}/axis/1.4/lib/jaxrpc.jar"/>
-    <property name="saaj.jar" value="${ext_libdir}/axis/1.4/lib/saaj.jar"/>
-    <property name="wsdl4j.jar" value="${ext_libdir}/axis/1.4/lib/wsdl4j-1.5.1.jar"/>
-    <property name="mailapi.jar" value="${ext_libdir}/javamail/1.4/mailapi.jar"/>
-
-
+    <property name="junit.jar" value="${ext_libdir}/junit/3.8.2/junit.jar"/>
+    <property name="mail.jar" value="${ext_libdir}/javamail/1.3.2/mail.jar"/>
+    <property name="activation.jar" value="${ext_libdir}/jaf/1.0.2/activation.jar"/>
+	
     <path id="buildlibs">
-        <pathelement location="${auto_screening_management.jar}" />
-        <pathelement location="${base_exception.jar}" />
-        <pathelement location="${configuration_manager.jar}" />
-        <pathelement location="${database_abstraction.jar}" />
-        <pathelement location="${deliverable_management.jar}" />
-        <pathelement location="${guid_generator.jar}" />
-        <pathelement location="${logging_wrapper.jar}" />
-        <pathelement location="${object_factory.jar}" />
-        <pathelement location="${object_formatter.jar}" />
-        <pathelement location="${phase_management.jar}" />
-        <pathelement location="${project_management.jar}" />
-        <pathelement location="${project_phases.jar}" />
-        <pathelement location="${resource_management.jar}" />
-        <pathelement location="${configuration_manager.jar}" />
-        <pathelement location="${search_builder.jar}" />
-        <pathelement location="${typesafe_enum.jar}" />
-        <pathelement location="${workdays.jar}" />
-
+        <pathelement location="${junit.jar}" />
+        <pathelement location="${mail.jar}" />
         <pathelement location="${activation.jar}" />
-        <pathelement location="${axis.jar}" />
-        <pathelement location="${commons-discovery.jar}" />
-        <pathelement location="${commons-logging.jar}" />
-        <pathelement location="${jaxrpc.jar}" />
-        <pathelement location="${saaj.jar}" />
-        <pathelement location="${wsdl4j.jar}" />
-        <pathelement location="${mailapi.jar}" />
+    	<pathelement location="${logging_wrapper.jar}" />
+        <pathelement location="${configmanager.jar}" />
+        <pathelement location="${id_generator.jar}" />
+        <pathelement location="${data_validation.jar}" />
+        <pathelement location="${db_connection_factory.jar}" />
+        <pathelement location="${base_exception.jar}" />
+        <pathelement location="${typesafe_enum.jar}" />
+        <pathelement location="${email_engine.jar}" />
+        <pathelement location="${document_generator.jar}" />
+        <pathelement location="${project_phases.jar}" />
+        <pathelement location="${user_project_data_store.jar}" />
+        <pathelement location="${search_builder.jar}" />
+        <pathelement location="${phase_management.jar}" />
+        <pathelement location="${auto_screening_management.jar}" />
+        <pathelement location="${review_score_aggregator.jar}" />
+        <pathelement location="${review_data_structure.jar}" />
+        <pathelement location="${scorecard_data_structure.jar}" />
+        <pathelement location="${resource_management.jar}" />
+        <pathelement location="${deliverable_management.jar}" />
+        <pathelement location="${review_management.jar}" />
+        <pathelement location="${project_management.jar}" />
+        <pathelement location="${scorecard_management.jar}" />
+    	<pathelement location="${object_factory.jar}" />
+    	<pathelement location="${guid_generator.jar}" />
+        <pathelement location="${workdays.jar}" />
+        <pathelement location="${configdir}" />
+        <pathelement location="${testfiles}" />
     </path>
 
     <path id="test.build.classpath">
         <pathelement location="${build_testclassdir}"/>
         <pathelement location="${build_classdir}"/>
-        <pathelement location="test_files"/>
-
         <path refid="buildlibs"/>
-        <pathelement location="${junit.jar}" />        
     </path>
-
-
 
     <path id="runtime.classpath">
         <pathelement location="${build_classdir}"/>
         <path refid="buildlibs"/>
     </path>
 
-    <taskdef resource="checkstyletask.properties"/>
-
-    <target name="checkstyle" depends="compile">
-        <mkdir dir="${testlogdir}"/>
-        <checkstyle config="${ext_libdir}/tcs_checkstyle_config/tc_checks.xml" classpath="${ext_libdir}/tcs_checkstyle_config">
-            <fileset dir="src/java/main" includes="**/*.java"/>
-            <formatter type="plain" toFile="${testlogdir}/checkstyle.txt"/>
-            <property key="basedir" value="${ext_libdir}/tcs_checkstyle_config"/>
-        </checkstyle>
-    </target>
-
     <target name="compile">
         <mkdir dir="${build_classdir}"/>
-        <javac srcdir="${javamain}" destdir="${build_classdir}" includes="${packagedir}/**" debug="true"
-               verbose="${verbose}">
-            <classpath refid="buildlibs"/>
+        <javac srcdir="${javamain}" destdir="${build_classdir}" includes="${packagedir}/**" 
+        		debug="true" verbose="${verbose}"
+        		source="1.5" target="1.5"
+        >
+            <classpath refid="buildlibs" />
         </javac>
+    </target>
+
+    <target name="compile_targets">
+        <!-- test compile against 1.3 -->
+        <mkdir dir="${build_targetclassdir}"/>
+        <mkdir dir="${javatests}"/>
+        <javac srcdir="${javamain}"
+               destdir="${build_targetclassdir}"
+               includes="${packagedir}/**"
+	       debug="true"
+               verbose="${verbose}"
+               target="1.5" source="1.5"
+               extdirs=""
+               >
+            <classpath refid="buildlibs" />
+        </javac>
+
+        <!-- compile test cases -->
+        <javac srcdir="${javatests}"
+               destdir="${build_targetclassdir}"
+               includes="${packagedir}/**"
+	       debug="true"
+               verbose="${verbose}"
+               target="1.3"
+               bootclasspath="${java_1_3_bootclasspath}"
+               extdirs=""
+               >
+            <classpath refid="buildlibs" />
+        </javac>
+        <delete dir="${build_targetclassdir}"/>
     </target>
 
     <target name="compile_tests" depends="compile">
         <mkdir dir="${build_testclassdir}"/>
-        <javac srcdir="${javatests}" destdir="${build_testclassdir}" includes="${packagedir}/**" debug="true"
-               verbose="${verbose}">
-            <classpath refid="test.build.classpath"/>
+        <javac srcdir="${javatests}" destdir="${build_testclassdir}" includes="${packagedir}/**" debug="true" 
+        		verbose="${verbose}" source="1.5" target="1.5">
+            <classpath refid="test.build.classpath" />
         </javac>
     </target>
 
     <target name="test" depends="compile_tests">
         <mkdir dir="${testlogdir}"/>
-        <mkdir dir="${instrumented.dir}"/>
-        <delete file="${cobertura.datafile}" />
-        <cobertura-instrument todir="${instrumented.dir}" datafile="${cobertura.datafile}">
-            <!-- all included -->
-            <fileset dir="${build_classdir}">
-                <include name="**/*.class" />
-            </fileset>
-        </cobertura-instrument>
         <junit fork="true" haltonerror="false">
-            <sysproperty key="net.sourceforge.cobertura.datafile" file="${cobertura.datafile}" />
-
-            <classpath location="${instrumented.dir}" />
-            <classpath location="${build_testclassdir}" />
-            <classpath refid="test.build.classpath" />
-            <classpath refid="cobertura.classpath" />
-
+            <classpath refid="test.build.classpath"/>
             <test name="${package}.AllTests" todir="${testlogdir}">
                 <formatter type="plain" usefile="true"/>
                 <formatter type="xml" usefile="true"/>
             </test>
         </junit>
-    </target>
-
-    <target name="coveragereport" depends="test">
-        <cobertura-report format="html" destdir="${testlogdir}/coverage/" srcdir="${srcdir}" datafile="${cobertura.datafile}">
-            <fileset dir="${javamain}">
-                <include name="**/*.java" />
-            </fileset>
-            <fileset dir="${javatests}">
-                <include name="**/*.java" />
-            </fileset>
-        </cobertura-report>
     </target>
 
     <target name="reports" depends="test">
@@ -303,22 +312,22 @@
           </fileset>
           <report format="frames" todir="${reports}"/>
         </junitreport>
-
+        
         <echo>The execution of reports is complete.  Reports are available in /${reports}</echo>
     </target>
 
-    <target name="dist" depends="compile">
+    <target name="dist" depends="clean, compile">
         <mkdir dir="${dist_lib}/${component_path}"/>
-        <jar jarfile="${component.jar}" basedir="${build_classdir}"/>
+        <jar jarfile="${component.jar}" basedir="${build_classdir}" />
     </target>
 
     <target name="dist_tests" depends="compile_tests">
         <mkdir dir="${dist_lib}"/>
-        <jar jarfile="${component.tests.jar}" basedir="${build_testclassdir}"/>
+        <jar jarfile="${component.tests.jar}" basedir="${build_testclassdir}" />
     </target>
 
     <target name="javadoc" depends="compile">
-        <mkdir dir="${dist_javadocs}"/>
+        <mkdir dir="${dist_javadocs}" />
         <javadoc packagenames="${package}.*"
             sourcepath="${javamain}"
             classpath="${build_classdir}"
@@ -327,11 +336,11 @@
             windowtitle="Topcoder Software"
             header="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"
             footer="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"
-            bottom="&lt;font class=tcoder5&gt;Contact TopCoder Software at &lt;a href='http://www.topcodersoftware.com'&gt;www.topcodersoftware.com&lt;/a&gt;&lt;/font&gt;"
+            bottom="&lt;font class=tcoder5&gt;Contact TopCoder Software at &lt;a href='http://software.topcoder.com'&gt;software.topcoder.com&lt;/a&gt;&lt;/font&gt;"
             stylesheetfile="${javadocsdir}/stylesheet.css"
             verbose="${verbose}">
             <tag name="copyright" description="Copyright:" scope="types"/>
-        </javadoc>
+		</javadoc>
     </target>
 
     <target name="clean">
@@ -350,24 +359,12 @@
 
     <target name="dist_tcs" depends="clean,dist,javadoc">
         <!-- define tcs distribution format -->
-
+<!-- uncomment if configuration files exist.
         <mkdir dir="${dist_conf}"/>
         <copy todir="${dist_conf}">
             <fileset dir="${configdir}" />
         </copy>
-
-        <mkdir dir="${dist_coverage}"/>
-        <mkdir dir="${docs_coverage}"/>
-
-        <copy file="${testlogdir}/cobertura.ser" todir="${dist_docs}"/>
-        <copy file="${testlogdir}/cobertura.ser" todir="${docsdir}"/>
-
-        <copy todir="${dist_coverage}">
-            <fileset dir="${testlogdir}/coverage" />
-        </copy>
-        <copy todir="${docs_coverage}">
-            <fileset dir="${testlogdir}/coverage" />
-        </copy>
+-->
 
         <mkdir dir="${dist_src}"/>
         <copy todir="${dist_src}">
@@ -383,6 +380,8 @@
                 <include name="${component}_Component_Specification*"/>
                 <include name="${component}.zargo"/>
                 <include name="${component}.zuml"/>
+                <include name="*.xml"/>
+                <include name="*.sql"/>
             </fileset>
         </copy>
 
@@ -401,45 +400,34 @@
         <copy file="build_dist.xml" tofile="${build_tcsdistdir}/build.xml" />
         <copy file="README" tofile="${build_tcsdistdir}/README" />
         <jar jarfile="${component.dist.jar}" basedir="${build_distdir}" excludes="*.jar"/>
-
+        
         <antcall target="move_to_tcs"/>
     </target>
 
     <target name="package_docs" depends="javadoc">
         <mkdir dir="${dist_docpackage}" />
-        <mkdir dir="${dist_docpackage}/coverage" />
-
+    
         <jar jarfile="${dist_docpackage}/${javadoc.jar}" basedir="${build_tcsdistdir}/${javadocsdir}" />
-
-        <copy todir="${dist_docpackage}">
+        
+        <copy todir="${dist_docpackage}" >
             <fileset dir="${docsdir}">
                 <include name="${component}_Class_Diagram*"/>
                 <include name="${component}_Use_Case_Diagram*"/>
                 <include name="${component}_Sequence_Diagram*"/>
                 <include name="${component}_Requirements_Specification.pdf"/>
-                <include name="${component}_Requirements_Specification.rtf"/>
                 <include name="${component}_Component_Specification.pdf"/>
-                <include name="${component}_Component_Specification.rtf"/>
-            </fileset>
-
-            <fileset dir="${testlogdir}">
-                <include name="cobertura.ser"/>
             </fileset>
         </copy>
-
-        <copy todir="${dist_docpackage}/coverage">
-            <fileset dir="${testlogdir}/coverage" />
-        </copy>
-
+        
         <jar jarfile="${builddir}/${docpackage.jar}" basedir="${dist_docpackage}" />
     </target>
-
+    
     <target name="move_to_tcs">
-        <mkdir dir="${tcs_libdir}/${component_path}"/>
-        <mkdir dir="${tcs_libdir}/${component_path}/dist"/>
+        <mkdir dir="${cronos_libdir}/${component_path}"/>
+        <mkdir dir="${cronos_libdir}/${component_path}/dist"/>
 
-        <copy file="${component.jar}" todir="${tcs_libdir}/${component_path}"/>
-        <copy file="${component.dist.jar}" todir="${tcs_libdir}/${component_path}/dist"/>
+        <copy file="${component.jar}" todir="${cronos_libdir}/${component_path}"/>
+        <copy file="${component.dist.jar}" todir="${cronos_libdir}/${component_path}/dist"/>
     </target>
 
     <target name="dev_submission" depends="test">
@@ -460,7 +448,17 @@
 
     <target name="dev_dist">
         <!-- copy TCS Dependencies -->
-
+        <mkdir dir="${jar_tcs_libdir}/${configmanager.path}"/>
+        <copy file="${configmanager.jar}" todir="${jar_tcs_libdir}/${configmanager.path}" />
+        <mkdir dir="${jar_tcs_libdir}/${db_connection_factory.path}"/>
+        <copy file="${db_connection_factory.jar}" todir="${jar_tcs_libdir}/${db_connection_factory.path}" />
+        <mkdir dir="${jar_tcs_libdir}/${base_exception.path}"/>
+        <copy file="${base_exception.jar}" todir="${jar_tcs_libdir}/${base_exception.path}" />
+        <mkdir dir="${jar_tcs_libdir}/${email_engine.path}"/>
+        <copy file="${email_engine.jar}" todir="${jar_tcs_libdir}/${email_engine.path}" />
+        <mkdir dir="${jar_tcs_libdir}/${document_generator.path}"/>
+        <copy file="${document_generator.jar}" todir="${jar_tcs_libdir}/${document_generator.path}" />
+        
         <jar jarfile="${dev_dist.jar}"
              basedir="."
              includes="build.xml,

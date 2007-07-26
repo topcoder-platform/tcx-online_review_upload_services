@@ -12,11 +12,10 @@ import javax.activation.DataHandler;
  * <p>
  * Defines the web service contract for managing different type of uploads and set status of submissions.
  * </p>
- *
  * <p>
  * Thread safety: the implementations must be thread safe.
  * </p>
- *
+ * 
  * @author fabrizyo, cyberjag
  * @version 1.0
  */
@@ -25,13 +24,12 @@ public interface UploadExternalServices {
      * <p>
      * Adds a new submission for an user in a particular project.
      * </p>
-     *
      * <p>
      * If the project allows multiple submissions for users, it will add the new submission and return. If multiple
      * submission are not allowed for the project, firstly it will add the new submission, secondly mark previous
      * submissions as deleted and then return.
      * </p>
-     *
+     * 
      * @param projectId
      *            the project's id
      * @param userId
@@ -57,14 +55,14 @@ public interface UploadExternalServices {
      *             if any id is &lt; 0, if any argument is <code>null</code> or trim to empty
      */
     public long uploadSubmission(long projectId, long userId, String filename, DataHandler submission)
-        throws RemoteException, UploadServicesException;
+            throws RemoteException, UploadServicesException;
 
     /**
      * <p>
      * Adds a new final fix upload for an user in a particular project. This submission always overwrite the
      * previous ones.
      * </p>
-     *
+     * 
      * @param projectId
      *            the project's id
      * @param userId
@@ -90,14 +88,14 @@ public interface UploadExternalServices {
      *             if any id is &lt; 0, if any argument is <code>null</code> or trim to empty
      */
     public long uploadFinalFix(long projectId, long userId, String filename, DataHandler finalFix)
-        throws RemoteException, UploadServicesException;
+            throws RemoteException, UploadServicesException;
 
     /**
      * <p>
      * Adds a new test case upload for an user in a particular project. This submission always overwrite the
      * previous ones.
      * </p>
-     *
+     * 
      * @param projectId
      *            the project's id
      * @param userId
@@ -123,13 +121,13 @@ public interface UploadExternalServices {
      *             if any id is &lt; 0, if any argument is <code>null</code> or trim to empty
      */
     public long uploadTestCases(long projectId, long userId, String filename, DataHandler testCases)
-        throws RemoteException, UploadServicesException;
+            throws RemoteException, UploadServicesException;
 
     /**
      * <p>
      * Sets the status of a existing submission.
      * </p>
-     *
+     * 
      * @param submissionId
      *            the submission's id
      * @param submissionStatusId
@@ -150,6 +148,30 @@ public interface UploadExternalServices {
      *             if any id is &lt; 0 or if operator is null or trim to empty
      */
     public void setSubmissionStatus(long submissionId, long submissionStatusId, String operator)
-        throws RemoteException, InvalidSubmissionException, InvalidSubmissionStatusException,
-        PersistenceException;
+            throws RemoteException, InvalidSubmissionException, InvalidSubmissionStatusException,
+            PersistenceException;
+
+    /**
+     * Adds the given user as a new submitter to the given project id.
+     * 
+     * @param projectId
+     *            the project to which the user needs to be added
+     * @param userId
+     *            the user to be added
+     * @return the added resource id
+     * @throws RemoteException
+     *             if an internal exception occurs (wrap it)
+     * @throws InvalidProjectException
+     *             if the project id is unknown
+     * @throws InvalidUserException
+     *             if the user id is unknown
+     * @throws InvalidProjectPhaseException
+     *             if the phase of the project is not Registration.
+     * @throws UploadServicesException
+     *             if any error occurs from UploadServices
+     * @throws IllegalArgumentException
+     *             if any id is &lt; 0
+     */
+    public long addSubmitter(long projectId, long userId) throws RemoteException, InvalidProjectException,
+            InvalidUserException, InvalidProjectPhaseException, UploadServicesException;
 }
