@@ -12,8 +12,6 @@ import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.util.log.Level;
-import com.topcoder.util.log.Log;
-import com.topcoder.util.log.LogManager;
 
 /**
  * <p>
@@ -72,7 +70,8 @@ public class DefaultManagersProvider implements ManagersProvider {
      * Represents the logger to log all operations, exceptions, etc. It is initialized statically.
      * </p>
      */
-    private static final Log LOG = LogManager.getLog(DefaultManagersProvider.class.getName());
+    private static final com.topcoder.util.log.Log LOG = com.topcoder.util.log.LogFactory
+			.getLog(DefaultManagersProvider.class.getName());
 
     /**
      * <p>

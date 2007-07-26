@@ -5,6 +5,7 @@
 package com.cronos.onlinereview.services.uploads;
 
 
+
 /**
  * <p>
  * Defines the contract for managing different type of uploads and set status of submissions.
@@ -129,4 +130,27 @@ public interface UploadServices {
      */
     public void setSubmissionStatus(long submissionId, long submissionStatusId, String operator)
         throws InvalidSubmissionException, InvalidSubmissionStatusException, PersistenceException;
+    
+
+    /**
+     * Adds the given user as a new submitter to the given project id.
+     * 
+     * @param projectId
+     *            the project to which the user needs to be added
+     * @param userId
+     *            the user to be added
+     * @return the added resource id
+     * @throws InvalidProjectException
+     *             if the project id is unknown
+     * @throws InvalidUserException
+     *             if the user id is unknown
+     * @throws InvalidProjectPhaseException
+     *             if the phase of the project is not Registration.
+     * @throws UploadServicesException
+     *             if any error occurs from UploadServices
+     * @throws IllegalArgumentException
+     *             if any id is &lt; 0
+     */
+    public long addSubmitter(long projectId, long userId) throws InvalidProjectException,
+            InvalidUserException,UploadServicesException, InvalidProjectPhaseException;
 }

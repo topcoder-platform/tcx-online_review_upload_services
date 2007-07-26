@@ -4,6 +4,10 @@
 
 package com.cronos.onlinereview.services.uploads.impl;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.MessageFormat;
+
 import com.cronos.onlinereview.services.uploads.ConfigurationException;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.UnknownNamespaceException;
@@ -53,7 +57,7 @@ final class Helper {
      */
     static void checkNull(Object obj, String paramName, Log log) {
         if (obj == null) {
-            log.log(Level.ERROR, "Parameter argument: {0} cannot be null.", new Object[] {paramName});
+            logFormat(log, Level.ERROR, "Parameter argument: {0} cannot be null.", new Object[] {paramName});
             throw new IllegalArgumentException("Parameter argument: '" + paramName + "' cannot be null!");
         }
     }
@@ -81,7 +85,7 @@ final class Helper {
 
         // check empty
         if (str.trim().length() == 0) {
-            log.log(Level.ERROR, "Parameter argument: {0} cannot be empty string.", new Object[] {paramName});
+            logFormat(log, Level.ERROR, "Parameter argument: {0} cannot be empty string.", new Object[] {paramName});
             throw new IllegalArgumentException("Parameter argument: '" + paramName + "' cannot be empty string!");
         }
     }
@@ -119,18 +123,18 @@ final class Helper {
             if (cls.isInstance(object)) {
                 return object;
             }
-            log.log(Level.FATAL, "Failed to create object {0}. Wrong class type in configuration.",
+            logFormat(log, Level.FATAL, "Failed to create object {0}. Wrong class type in configuration.",
                     new Object[] {cls.getName()});
             throw new ConfigurationException("Failed to create " + cls.getName()
                     + ". Wrong class type in configuration.");
         } catch (SpecificationConfigurationException e) {
-            log.log(Level.FATAL, e, "Failed to create object {0}.", new Object[] {cls.getName()});
+            logFormat(log, Level.FATAL, e, "Failed to create object {0}.", new Object[] {cls.getName()});
             throw new ConfigurationException("Failed to create " + cls.getName() + ".", e);
         } catch (IllegalReferenceException e) {
-            log.log(Level.FATAL, e, "Failed to create object {0}.", new Object[] {cls.getName()});
+            logFormat(log, Level.FATAL, e, "Failed to create object {0}.", new Object[] {cls.getName()});
             throw new ConfigurationException("Failed to create " + cls.getName() + ".", e);
         } catch (InvalidClassSpecificationException e) {
-            log.log(Level.FATAL, e, "Failed to create object {0}.", new Object[] {cls.getName()});
+            logFormat(log, Level.FATAL, e, "Failed to create object {0}.", new Object[] {cls.getName()});
             throw new ConfigurationException("Failed to create " + cls.getName() + ".", e);
         }
     }
@@ -160,7 +164,7 @@ final class Helper {
         throws ConfigurationException {
         String objectFactoryNamespace = readProperty(namespace, "objectFactoryNamespace", null, log, false);
         if (objectFactoryNamespace == null) {
-            log.log(Level.INFO, "No 'objectFactoryNamespace' present. Using the default class {0}",
+            logFormat(log, Level.INFO, "No 'objectFactoryNamespace' present. Using the default class {0}",
                     new Object[] {cls.getName()});
             return object;
         }
@@ -193,16 +197,18 @@ final class Helper {
             String value = manager.getString(namespace, key);
             if (value == null || value.trim().length() == 0) {
                 if (required) {
-                    log.log(Level.FATAL, "Missing the property {0} from configuration", new Object[] {key});
+                    logFormat(log, Level.FATAL, "Missing the property {0} from configuration", new Object[] {key});
                     throw new ConfigurationException("Missing '" + key + "' property.");
                 } else {
                     return defValue;
                 }
             }
-            log.log(Level.INFO, "Read the property {0} from configuration - {1}", new Object[] {key, value});
+            logFormat(log, Level.INFO, "Read the property {0} from configuration - {1}", new Object[] {key, value});
             return value;
         } catch (UnknownNamespaceException e) {
-            log.log(Level.FATAL, e, "Failed to read property {0} from configuaration.", new Object[] {key});
+            logFormat(log, Level.FATAL, e,
+                    "Failed to read property {0} from configuaration. Unknown namespace {1}.", new Object[] {key,
+                            namespace});
             throw new ConfigurationException("Failed to read '" + key + "' property.", e);
         }
     }
@@ -223,8 +229,28 @@ final class Helper {
      */
     static void checkId(long id, String paramName, Log log) {
         if (id < 0) {
-            log.log(Level.ERROR, "Parameter argument: {0} cannot be negative.", new Object[] {paramName});
+            logFormat(log, Level.ERROR, "Parameter argument: {0} cannot be negative.", new Object[] {paramName});
             throw new IllegalArgumentException("Parameter argument: '" + paramName + "' cannot be negative!");
         }
+    }
+    
+    public static void logFormat(Log log, Level level, String message) {
+    	log.log(level, message);
+    }
+    
+    public static void logFormat(Log log, Level level, String message, Object... params) {
+    	log.log(level, MessageFormat.format(message, params));
+    }
+    
+    public static void logFormat(Log log, Level level, Throwable error, String message, Object... params) {
+    	if (error != null) {
+    		StringWriter buffer = new StringWriter();
+    		buffer.append("\n");
+    		error.printStackTrace(new PrintWriter(buffer));
+    		log.log(level, MessageFormat.format(message, params) + buffer.toString());
+    	} else {
+    		log.log(level, MessageFormat.format(message, params));
+    	}
+    	
     }
 }

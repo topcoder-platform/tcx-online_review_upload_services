@@ -57,7 +57,7 @@ public final class TestHelper {
     /**
      * The end point of the Axis UploadService.
      */
-    public static final String END_POINT = "http://localhost:8080/axis/services/UploadService";
+    public static final String END_POINT = "http://localhost:8888/axis/services/UploadService";
 
     /**
      * No instances allowed.
