@@ -122,7 +122,7 @@ public class DefaultUploadServices implements UploadServices {
      * Represents the logger to log all operations, exceptions, etc. It is initialized statically.
      * </p>
      */
-    private static final com.topcoder.util.log.Log LOG = com.topcoder.util.log.LogFactory
+    private static final com.topcoder.util.log.Log LOG = com.topcoder.util.log.LogManager
             .getLog(DefaultUploadServices.class.getName());
 
     /**
