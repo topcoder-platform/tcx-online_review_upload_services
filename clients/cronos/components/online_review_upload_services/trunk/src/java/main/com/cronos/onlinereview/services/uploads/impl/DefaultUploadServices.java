@@ -300,7 +300,7 @@ public class DefaultUploadServices implements UploadServices {
                                 new Object[] {projectId, userId});
 
                         // associate the submission with the submitter resource
-                        resource.setSubmissions(new Long[]{submission.getId()});
+                        resource.addSubmission(submission.getId());
 
                         Helper.logFormat(LOG, Level.INFO, "Added submission {0} to resource.",
                                 new Object[] {submission.getId()});
