@@ -234,7 +234,9 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
             newFile.delete();
             throw e;
         } finally {
-            new File(submission.getName()).delete();
+        	if (submission.getName() != null) {
+        	    new File(submission.getName()).delete();
+        	}
             Helper.logFormat(LOG, Level.DEBUG,
                     "Exited DefaultUploadExternalServices#uploadSubmission(long, long, String, DataHandler)");
         }
@@ -284,7 +286,9 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
             newFile.delete();
             throw e;
         } finally {
-            new File(finalFix.getName()).delete();
+        	if (finalFix.getName() != null) {
+                new File(finalFix.getName()).delete();
+        	}
             Helper.logFormat(LOG, Level.DEBUG,
                     "Exited DefaultUploadExternalServices#uploadFinalFix(long, long, String, DataHandler)");
         }
@@ -334,7 +338,9 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
             newFile.delete();
             throw e;
         } finally {
-            new File(testCases.getName()).delete();
+        	if (testCases.getName() != null) {
+                new File(testCases.getName()).delete();
+        	}
             Helper.logFormat(LOG, Level.DEBUG,
                     "Exited DefaultUploadExternalServices#uploadTestCases(long, long, String, DataHandler)");
         }
