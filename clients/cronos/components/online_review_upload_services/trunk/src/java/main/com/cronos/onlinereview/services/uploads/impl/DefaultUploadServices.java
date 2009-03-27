@@ -408,7 +408,7 @@ public class DefaultUploadServices implements UploadServices {
         Resource resource = getResource(projectId, userId, new String[] {"Submitter"});
 
         // Check that the user is the winner
-        Long winnerId = (Long) project.getProperty("Winner External Reference ID");
+        Long winnerId = new Long(Long.parseLong(project.getProperty("Winner External Reference ID")));
         if (winnerId != userId) {
             throw new InvalidUserException("The given user is not the winner", userId);
         }
@@ -998,9 +998,9 @@ public class DefaultUploadServices implements UploadServices {
             resource.setProperty("Payment", null);
             resource.setProperty("Payment Status", "No");
             // Set resource properties copied from external user
-            resource.setProperty("External Reference ID", new Long(userId));
+            resource.setProperty("External Reference ID", Long.toString(userId));
 
-            resource.setProperty("Registration Date", new Date());
+            resource.setProperty("Registration Date", new Date().toString());
 
             // Save the resource in the persistence level
             resourceManager.updateResource(resource, Long.toString(userId));
