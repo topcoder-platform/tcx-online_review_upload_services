@@ -32,10 +32,8 @@ public class InvalidUserException extends UploadServicesException {
      * Constructs the exception with error message and <code>userId</code>.
      * </p>
      *
-     * @param message
-     *            the error message
-     * @param userId
-     *            the user id
+     * @param message the error message
+     * @param userId  the user id
      */
     public InvalidUserException(String message, long userId) {
         super(message);
@@ -47,12 +45,9 @@ public class InvalidUserException extends UploadServicesException {
      * Constructs the exception with error message, inner cause and <code>userId</code>.
      * </p>
      *
-     * @param message
-     *            the error message
-     * @param cause
-     *            the cause of this exception
-     * @param userId
-     *            the user id
+     * @param message the error message
+     * @param cause   the cause of this exception
+     * @param userId  the user id
      */
     public InvalidUserException(String message, Throwable cause, long userId) {
         super(message, cause);

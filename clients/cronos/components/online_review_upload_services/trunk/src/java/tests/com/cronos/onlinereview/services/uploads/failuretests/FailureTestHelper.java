@@ -3,14 +3,15 @@
  */
 package com.cronos.onlinereview.services.uploads.failuretests;
 
-import java.io.File;
-import java.util.Iterator;
 import com.topcoder.util.config.ConfigManager;
 
+import java.io.File;
+
+import java.util.Iterator;
+
+
 /**
- * <p>
- * A helper class to perform those common operations which are helpful for the test.
- * </p>
+ * <p>A helper class to perform those common operations which are helpful for the test.</p>
  *
  * @author TCSDEVELOPER
  * @version 1.0
@@ -18,12 +19,15 @@ import com.topcoder.util.config.ConfigManager;
 public class FailureTestHelper {
 
     /**
-     * <p>
-     * The sample configuration file for this component.
-     * </p>
+     * Represents the test_files folder.
      */
-    public static final String CONFIG_FILE = "test_files" + File.separator + "failuretests" + File.separator
-        + "config.xml";
+    public static final String TEST_FILES = "test_files" + File.separator + "failuretests" + File.separator;
+    
+    /**
+     * <p>The sample configuration file for this component.</p>
+     */
+    public static final String CONFIG_FILE = "test_files" + File.separator + "failuretests" + File.separator +
+        "config.xml";
 
     /**
      * <p>
@@ -34,9 +38,7 @@ public class FailureTestHelper {
     }
 
     /**
-     * <p>
-     * Uses the given file to config the configuration manager.
-     * </p>
+     * <p>Uses the given file to config the configuration manager.</p>
      *
      * @param fileName config file to set up environment
      *
@@ -52,8 +54,21 @@ public class FailureTestHelper {
 
     /**
      * <p>
-     * Clears all the namespaces from the configuration manager.
+     * Loads the configuration from the given configuration file with specified namespace.
      * </p>
+     *
+     * @param namespace namespace under which config will be loaded
+     * @param file      the file to load
+     *
+     * @throws Exception exception to junit.
+     */
+    public static void loadXMLConfig(String namespace, String file) throws Exception {
+        ConfigManager cm = ConfigManager.getInstance();
+        cm.add(namespace, new File(file).getCanonicalPath(), ConfigManager.CONFIG_XML_FORMAT);
+    }
+
+    /**
+     * <p>Clears all the namespaces from the configuration manager.</p>
      *
      * @throws Exception to JUnit.
      */
@@ -64,5 +79,4 @@ public class FailureTestHelper {
             cm.removeNamespace((String) i.next());
         }
     }
-
 }

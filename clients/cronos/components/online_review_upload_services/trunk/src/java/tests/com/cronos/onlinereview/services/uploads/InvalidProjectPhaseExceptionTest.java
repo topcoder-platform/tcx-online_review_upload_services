@@ -49,7 +49,6 @@ public class InvalidProjectPhaseExceptionTest extends TestCase {
      * Throwable cause, long projectPhaseId)}</code>
      * constructor. Creates an instance and get its attributes for test.
      * </p>
-     *
      */
     public void testInvalidProjectPhaseException_accuracy_2() {
         InvalidProjectPhaseException exception = new InvalidProjectPhaseException(
@@ -67,7 +66,6 @@ public class InvalidProjectPhaseExceptionTest extends TestCase {
      * <p>
      * Expects the same which is set.
      * </p>
-     *
      */
     public void testGetProjectPhaseId_accuracy() {
         InvalidProjectPhaseException exception = new InvalidProjectPhaseException(

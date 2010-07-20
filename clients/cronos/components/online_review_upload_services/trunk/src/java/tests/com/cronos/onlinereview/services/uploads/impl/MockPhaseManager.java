@@ -1,9 +1,7 @@
 /*
- * Copyright (C) 2007 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2010 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.services.uploads.impl;
-
-import java.util.Date;
 
 import com.topcoder.date.workdays.DefaultWorkdays;
 import com.topcoder.date.workdays.Workdays;
@@ -18,11 +16,13 @@ import com.topcoder.project.phases.PhaseStatus;
 import com.topcoder.project.phases.PhaseType;
 import com.topcoder.project.phases.Project;
 
+import java.util.Date;
+
 /**
  * A mock PhaseManager implementation for testing purpose.
  *
- * @author cyberjag
- * @version 1.0
+ * @author cyberjag, TCSDEVELOPER
+ * @version 1.1
  */
 public class MockPhaseManager implements PhaseManager {
 
@@ -39,12 +39,10 @@ public class MockPhaseManager implements PhaseManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            project
-     * @param arg1
-     *            description
-     * @throws PhaseManagementException
-     *             not thrown
+     * @param arg0 project
+     * @param arg1 description
+     *
+     * @throws PhaseManagementException not thrown
      */
     public void updatePhases(Project arg0, String arg1) throws PhaseManagementException {
     }
@@ -52,11 +50,11 @@ public class MockPhaseManager implements PhaseManager {
     /**
      * A mock implementation. Will throw exception if is throwError is true.
      *
-     * @param arg0
-     *            id
+     * @param arg0 id
+     *
      * @return project or null based on state
-     * @throws PhaseManagementException
-     *             if throwError is set
+     *
+     * @throws PhaseManagementException if throwError is set
      */
     public Project getPhases(long arg0) throws PhaseManagementException {
         if (isThrowError()) {
@@ -71,11 +69,11 @@ public class MockPhaseManager implements PhaseManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            project id
+     * @param arg0 project id
+     *
      * @return always null
-     * @throws PhaseManagementException
-     *             will not be thrown
+     *
+     * @throws PhaseManagementException will not be thrown
      */
     public Project[] getPhases(long[] arg0) throws PhaseManagementException {
         return null;
@@ -85,8 +83,8 @@ public class MockPhaseManager implements PhaseManager {
      * Not implemented.
      *
      * @return always null
-     * @throws PhaseManagementException
-     *             will not be thrown
+     *
+     * @throws PhaseManagementException will not be thrown
      */
     public PhaseType[] getAllPhaseTypes() throws PhaseManagementException {
         return null;
@@ -96,8 +94,8 @@ public class MockPhaseManager implements PhaseManager {
      * Not implemented.
      *
      * @return always null
-     * @throws PhaseManagementException
-     *             will not be thrown
+     *
+     * @throws PhaseManagementException will not be thrown
      */
     public PhaseStatus[] getAllPhaseStatuses() throws PhaseManagementException {
         return null;
@@ -106,11 +104,11 @@ public class MockPhaseManager implements PhaseManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            phase
+     * @param arg0 phase
+     *
      * @return always false
-     * @throws PhaseManagementException
-     *             will not be thrown
+     *
+     * @throws PhaseManagementException will not be thrown
      */
     public boolean canStart(Phase arg0) throws PhaseManagementException {
         return false;
@@ -119,12 +117,10 @@ public class MockPhaseManager implements PhaseManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            phase
-     * @param arg1
-     *            desc
-     * @throws PhaseManagementException
-     *             will not be thrown
+     * @param arg0 phase
+     * @param arg1 desc
+     *
+     * @throws PhaseManagementException will not be thrown
      */
     public void start(Phase arg0, String arg1) throws PhaseManagementException {
     }
@@ -132,11 +128,11 @@ public class MockPhaseManager implements PhaseManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            phase
+     * @param arg0 phase
+     *
      * @return always false
-     * @throws PhaseManagementException
-     *             will not be thrown
+     *
+     * @throws PhaseManagementException will not be thrown
      */
     public boolean canEnd(Phase arg0) throws PhaseManagementException {
         return false;
@@ -145,12 +141,10 @@ public class MockPhaseManager implements PhaseManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            phase
-     * @param arg1
-     *            desc
-     * @throws PhaseManagementException
-     *             will not be thrown
+     * @param arg0 phase
+     * @param arg1 desc
+     *
+     * @throws PhaseManagementException will not be thrown
      */
     public void end(Phase arg0, String arg1) throws PhaseManagementException {
     }
@@ -158,11 +152,11 @@ public class MockPhaseManager implements PhaseManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            phase
+     * @param arg0 phase
+     *
      * @return always false
-     * @throws PhaseManagementException
-     *             will not be thrown
+     *
+     * @throws PhaseManagementException will not be thrown
      */
     public boolean canCancel(Phase arg0) throws PhaseManagementException {
         return false;
@@ -171,12 +165,10 @@ public class MockPhaseManager implements PhaseManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            phase
-     * @param arg1
-     *            desc
-     * @throws PhaseManagementException
-     *             will not be thrown
+     * @param arg0 phase
+     * @param arg1 desc
+     *
+     * @throws PhaseManagementException will not be thrown
      */
     public void cancel(Phase arg0, String arg1) throws PhaseManagementException {
     }
@@ -184,12 +176,9 @@ public class MockPhaseManager implements PhaseManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            project id
-     * @param arg1
-     *            phase type
-     * @param arg2
-     *            operation
+     * @param arg0 project id
+     * @param arg1 phase type
+     * @param arg2 operation
      */
     public void registerHandler(PhaseHandler arg0, PhaseType arg1, PhaseOperationEnum arg2) {
     }
@@ -197,10 +186,9 @@ public class MockPhaseManager implements PhaseManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            phase
-     * @param arg1
-     *            operation
+     * @param arg0 phase
+     * @param arg1 operation
+     *
      * @return always null
      */
     public PhaseHandler unregisterHandler(PhaseType arg0, PhaseOperationEnum arg1) {
@@ -219,8 +207,8 @@ public class MockPhaseManager implements PhaseManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            phase handler
+     * @param arg0 phase handler
+     *
      * @return always null
      */
     public HandlerRegistryInfo[] getHandlerRegistrationInfo(PhaseHandler arg0) {
@@ -230,8 +218,7 @@ public class MockPhaseManager implements PhaseManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            phase validator
+     * @param arg0 phase validator
      */
     public void setPhaseValidator(PhaseValidator arg0) {
     }
@@ -248,10 +235,9 @@ public class MockPhaseManager implements PhaseManager {
     /**
      * Sets the state.
      *
-     * @param state
-     *            the state to set
+     * @param state the state to set
      */
-    static void setState(int state) {
+    public static void setState(int state) {
         MockPhaseManager.state = state;
     }
 
@@ -260,15 +246,14 @@ public class MockPhaseManager implements PhaseManager {
      *
      * @return the state
      */
-    static int getState() {
+    public static int getState() {
         return state;
     }
 
     /**
      * Sets the throwError.
      *
-     * @param throwError
-     *            the throwError to set
+     * @param throwError the throwError to set
      */
     static void setThrowError(boolean throwError) {
         MockPhaseManager.throwError = throwError;
@@ -288,8 +273,8 @@ public class MockPhaseManager implements PhaseManager {
 /**
  * A mock Project class for testing purpose.
  *
- * @author cyberjag
- * @version 1.0
+ * @author cyberjag, TCDEVELOPER
+ * @version 1.1
  */
 class MockProject extends Project {
 
@@ -301,10 +286,8 @@ class MockProject extends Project {
     /**
      * Default constructor.
      *
-     * @param arg0
-     *            date
-     * @param arg1
-     *            workdays
+     * @param arg0 date
+     * @param arg1 workdays
      */
     public MockProject(Date arg0, Workdays arg1) {
         super(arg0, arg1);
@@ -329,16 +312,18 @@ class MockProject extends Project {
             }
         }
         phases[0].setPhaseType(new PhaseType(1, "Submission"));
-        phases[2].setPhaseType(new PhaseType(3, "Review"));
-        phases[3].setPhaseType(new PhaseType(4, "Final Fix"));
+        phases[1].setPhaseType(new PhaseType(2, "Review"));
+        phases[2].setPhaseType(new PhaseType(3, "Final Fix"));
+        // added in version 1.1
+        phases[3].setPhaseType(new PhaseType(4, "Specification Submission"));
+
         return phases;
     }
 
     /**
      * Sets the state.
      *
-     * @param state
-     *            the state to set
+     * @param state the state to set
      */
     static void setState(int state) {
         MockProject.state = state;

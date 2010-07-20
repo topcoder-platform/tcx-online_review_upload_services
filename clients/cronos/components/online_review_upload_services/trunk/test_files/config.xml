@@ -27,6 +27,17 @@
 		<Property name="managersProviderIdentifier">
 			<Value>managersProvider</Value>
 		</Property>
+
+        <!-- used by getNextComponentInquiryId -->
+        <Property name="component_inquiry.tablename">
+			<Value>id_sequences</Value>
+		</Property>
+        <Property name="component_inquiry.name">
+			<Value>name</Value>
+		</Property>
+        <Property name="component_inquiry.current_value">
+			<Value>value</Value>
+		</Property>
 	</Config>
 	
 	<Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadExternalServices">
@@ -87,5 +98,35 @@
 			<Value>na</Value>
 		</Property>
 	</Config>
+
+    <Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+        <Property name="connections">
+            <Property name="default">
+                <Value>dbconnection</Value>
+            </Property>
+            <Property name="dbconnection">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://localhost:9088/or:informixserver=tc</Value>
+                    </Property>
+                    <Property name="SelectMethod">
+                        <Value>cursor</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>informix</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>111111</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
 </CMConfig>
 	

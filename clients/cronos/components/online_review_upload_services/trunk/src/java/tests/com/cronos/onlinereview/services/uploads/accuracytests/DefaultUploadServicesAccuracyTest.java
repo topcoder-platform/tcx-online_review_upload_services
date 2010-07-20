@@ -19,8 +19,9 @@ import com.topcoder.management.resource.Resource;
  * This Junit Test suite contains the accuracy test cases for {@link DefaultUploadServices} class.
  * </p>
  *
- * @author kshatriyan
- * @version 1.0
+ * @author kshatriyan, TCSDEVELOPER
+ * @since 1.0
+ * @version 1.1
  */
 public class DefaultUploadServicesAccuracyTest extends TestCase {
 
@@ -34,7 +35,6 @@ public class DefaultUploadServicesAccuracyTest extends TestCase {
      */
     private MockResourceManager resourceManager = null;
 
-
     /**
      * Used for testing.
      */
@@ -44,7 +44,6 @@ public class DefaultUploadServicesAccuracyTest extends TestCase {
      * Used for testing.
      */
     private MockScreeningManager screeningManager = null;
-
 
     /**
      * <p>
@@ -58,7 +57,7 @@ public class DefaultUploadServicesAccuracyTest extends TestCase {
         AccuracyHelper.loadConfig();
         defaultUploadServices = new DefaultUploadServices();
         ManagersProvider managersProvider = (ManagersProvider) AccuracyHelper.getFieldValue(defaultUploadServices,
-                "managersProvider");
+            "managersProvider");
         resourceManager = (MockResourceManager) managersProvider.getResourceManager();
         screeningManager = (MockScreeningManager) managersProvider.getScreeningManager();
         uploadManager = (MockUploadManager) managersProvider.getUploadManager();
@@ -133,8 +132,7 @@ public class DefaultUploadServicesAccuracyTest extends TestCase {
      *             throw exception to JUnit.
      */
     public void testAccuracy_DefaultUploadServices2() throws Exception {
-        DefaultUploadServices defaultUploadServices = new DefaultUploadServices(DefaultUploadServices.class
-                .getName());
+        DefaultUploadServices defaultUploadServices = new DefaultUploadServices(DefaultUploadServices.class.getName());
         // check for null
         assertNotNull("DefaultUploadServices creation failed", defaultUploadServices);
     }
@@ -151,8 +149,8 @@ public class DefaultUploadServicesAccuracyTest extends TestCase {
      *             throw exception to JUnit.
      */
     public void testAccuracy_uploadSubmission() throws Exception {
-        assertEquals("uploadSubmission failed", defaultUploadServices.uploadSubmission(AccuracyHelper.PROJECT_ID, AccuracyHelper.USER_ID,
-                AccuracyHelper.FILE_NAME), AccuracyHelper.SUBMISSION_ID);
+        assertEquals("uploadSubmission failed", defaultUploadServices.uploadSubmission(AccuracyHelper.PROJECT_ID,
+            AccuracyHelper.USER_ID, AccuracyHelper.FILE_NAME), AccuracyHelper.SUBMISSION_ID);
 
         // verify upload persistence
         Upload upload = uploadManager.getCreatedUpload();
@@ -161,21 +159,17 @@ public class DefaultUploadServicesAccuracyTest extends TestCase {
         assertEquals("uploadSubmission failed", upload.getOwner(), AccuracyHelper.USER_ID);
         assertEquals("uploadSubmission failed", upload.getProject(), AccuracyHelper.PROJECT_ID);
         assertEquals("uploadSubmission failed", upload.getParameter(), AccuracyHelper.FILE_NAME);
-        assertEquals("uploadSubmission failed", AccuracyHelper.USER_ID+"", uploadManager.getCreatedUploadUserId());
+        assertEquals("uploadSubmission failed", AccuracyHelper.USER_ID + "", uploadManager.getCreatedUploadUserId());
 
         // verify submission
         Submission submission = uploadManager.getCreatedSubmission();
         assertEquals("uploadSubmission failed", submission.getSubmissionStatus().getName(), "Active");
-        assertEquals("uploadSubmission failed", AccuracyHelper.USER_ID+"", uploadManager.getCreatedSubmissionUserId());
+        assertEquals("uploadSubmission failed", AccuracyHelper.USER_ID + "", uploadManager.getCreatedSubmissionUserId());
 
         // verify the resource is added
         Resource resource = resourceManager.getUpdateResource();
 
-        assertEquals("uploadSubmission failed", AccuracyHelper.USER_ID+"", resourceManager.getUpdateResourceUserId());
-
-        // verify screening initiation
-        assertEquals("uploadSubmission failed", screeningManager.getSubmissionId(), AccuracyHelper.SUBMISSION_ID);
-        assertEquals("uploadSubmission failed", AccuracyHelper.USER_ID+"", screeningManager.getUserId());
+        assertEquals("uploadSubmission failed", AccuracyHelper.USER_ID + "", resourceManager.getUpdateResourceUserId());
 
         // verify previous submissions are not marked for deletion
         Submission submissions = uploadManager.searchSubmissions(null)[0];
@@ -194,8 +188,8 @@ public class DefaultUploadServicesAccuracyTest extends TestCase {
      *             throw exception to JUnit.
      */
     public void testAccuracy_uploadFinalFix() throws Exception {
-        assertEquals("uploadFinalFix failed", defaultUploadServices.uploadFinalFix(AccuracyHelper.PROJECT_ID, AccuracyHelper.USER_ID,
-                AccuracyHelper.FILE_NAME), -1);
+        assertEquals("uploadFinalFix failed", defaultUploadServices.uploadFinalFix(AccuracyHelper.PROJECT_ID,
+            AccuracyHelper.USER_ID, AccuracyHelper.FILE_NAME), -1);
 
         // verify upload persistence
         Upload upload = uploadManager.getCreatedUpload();
@@ -204,15 +198,11 @@ public class DefaultUploadServicesAccuracyTest extends TestCase {
         assertEquals("uploadFinalFix failed", upload.getOwner(), AccuracyHelper.USER_ID);
         assertEquals("uploadFinalFix failed", upload.getProject(), AccuracyHelper.PROJECT_ID);
         assertEquals("uploadFinalFix failed", upload.getParameter(), AccuracyHelper.FILE_NAME);
-        assertEquals("uploadFinalFix failed", AccuracyHelper.USER_ID+"", uploadManager.getCreatedUploadUserId());
+        assertEquals("uploadFinalFix failed", AccuracyHelper.USER_ID + "", uploadManager.getCreatedUploadUserId());
 
         // verify screening is not initiated
         assertEquals("uploadFinalFix failed", screeningManager.getSubmissionId(), -1);
         assertEquals("uploadFinalFix failed", screeningManager.getUserId(), null);
-
-        // verify previous submissions are marked for deletion
-        Submission submissions = uploadManager.searchSubmissions(null)[0];
-        assertEquals("uploadFinalFix failed", submissions.getSubmissionStatus().getName(), "Deleted");
     }
 
     /**
@@ -227,21 +217,17 @@ public class DefaultUploadServicesAccuracyTest extends TestCase {
      *             throw exception to JUnit.
      */
     public void testAccuracy_uploadTestCases() throws Exception {
-        assertEquals("uploadTestCases failed", defaultUploadServices.uploadTestCases(AccuracyHelper.PROJECT_ID, AccuracyHelper.USER_ID,
-                AccuracyHelper.FILE_NAME), -1);
+        assertEquals("uploadTestCases failed", defaultUploadServices.uploadTestCases(AccuracyHelper.PROJECT_ID,
+            AccuracyHelper.USER_ID, AccuracyHelper.FILE_NAME), -1);
 
         // verify upload persistence
         Upload upload = uploadManager.getCreatedUpload();
         assertEquals("uploadTestCases failed", upload.getUploadStatus().getName(), "Active");
-        assertEquals("uploadTestCases failed", upload.getUploadType().getName(), "Review");
+        assertEquals("uploadTestCases failed", upload.getUploadType().getName(), "Test Case");
         assertEquals("uploadTestCases failed", upload.getOwner(), AccuracyHelper.USER_ID);
         assertEquals("uploadTestCases failed", upload.getProject(), AccuracyHelper.PROJECT_ID);
         assertEquals("uploadTestCases failed", upload.getParameter(), AccuracyHelper.FILE_NAME);
-        assertEquals("uploadTestCases failed", AccuracyHelper.USER_ID+"", uploadManager.getCreatedUploadUserId());
-
-        // verify previous submissions are marked for deletion
-        Submission submissions = uploadManager.searchSubmissions(null)[0];
-        assertEquals("uploadTestCases failed", submissions.getSubmissionStatus().getName(), "Deleted");
+        assertEquals("uploadTestCases failed", AccuracyHelper.USER_ID + "", uploadManager.getCreatedUploadUserId());
     }
 
     /**
@@ -256,10 +242,44 @@ public class DefaultUploadServicesAccuracyTest extends TestCase {
      *             throw exception to JUnit.
      */
     public void testAccuracy_setSubmissionStatus() throws Exception {
-         defaultUploadServices.setSubmissionStatus(AccuracyHelper.SUBMISSION_ID, AccuracyHelper.SUBMISSION_STATUS_ID, "operator");
-         Submission submission = uploadManager.getUpdatedSubmission();
-         assertEquals("setSubmissionStatus failed", submission.getSubmissionStatus().getId(), AccuracyHelper.SUBMISSION_STATUS_ID);
-         assertEquals("setSubmissionStatus failed", submission.getId(), AccuracyHelper.SUBMISSION_ID);
-         assertEquals("setSubmissionStatus failed", "operator", uploadManager.getUpdatedSubmissionUserId());
+        defaultUploadServices.setSubmissionStatus(AccuracyHelper.SUBMISSION_ID, AccuracyHelper.SUBMISSION_STATUS_ID,
+            "operator");
+        Submission submission = uploadManager.getUpdatedSubmission();
+        assertEquals("setSubmissionStatus failed", submission.getSubmissionStatus().getId(),
+            AccuracyHelper.SUBMISSION_STATUS_ID);
+        assertEquals("setSubmissionStatus failed", submission.getId(), AccuracyHelper.SUBMISSION_ID);
+        assertEquals("setSubmissionStatus failed", "operator", uploadManager.getUpdatedSubmissionUserId());
+    }
+
+    /**
+     * <p>
+     * Accuracy test for {@link DefaultUploadServices#uploadSpecification(long, long, String)}.
+     * </p>
+     *
+     * @throws Exception
+     *             throw exception to JUnit.
+     */
+    public void testUploadSpecification() throws Exception {
+        defaultUploadServices.uploadSpecification(AccuracyHelper.PROJECT_ID, AccuracyHelper.USER_ID, "input.jar");
+
+        // verify upload persistence
+        Upload upload = uploadManager.getCreatedUpload();
+        assertEquals("uploadSpecification is incorrect.", "Active", upload.getUploadStatus().getName());
+        assertEquals("uploadSpecification is incorrect.", "Submission", upload.getUploadType().getName());
+        assertEquals("uploadSpecification is incorrect.", 1, upload.getOwner());
+        assertEquals("uploadSpecification is incorrect.", AccuracyHelper.PROJECT_ID, upload.getProject());
+        assertEquals("uploadSpecification is incorrect.", "input.jar", upload.getParameter());
+        assertEquals("uploadSpecification is incorrect.", AccuracyHelper.USER_ID + "", uploadManager
+            .getCreatedUploadUserId());
+
+        // verify submission
+        Submission submission = uploadManager.getCreatedSubmission();
+        assertEquals("uploadSpecification failed", "Active", submission.getSubmissionStatus().getName());
+        assertEquals("uploadSpecification failed", "Specification Submission", submission.getSubmissionType().getName());
+        assertEquals("uploadSpecification failed", AccuracyHelper.USER_ID + "", uploadManager
+            .getCreatedSubmissionUserId());
+
+        assertEquals("uploadSpecification failed", AccuracyHelper.USER_ID + "", resourceManager
+            .getUpdateResourceUserId());
     }
 }

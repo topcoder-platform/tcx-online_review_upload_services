@@ -26,8 +26,7 @@ public class UploadServicesException extends BaseException {
      * Constructs the exception with error message.
      * </p>
      *
-     * @param message
-     *            the error message
+     * @param message the error message
      */
     public UploadServicesException(String message) {
         super(message);
@@ -38,10 +37,8 @@ public class UploadServicesException extends BaseException {
      * Constructs the exception with error message and inner cause.
      * </p>
      *
-     * @param message
-     *            the error message
-     * @param cause
-     *            the cause of this exception
+     * @param message the error message
+     * @param cause   the cause of this exception
      */
     public UploadServicesException(String message, Throwable cause) {
         super(message, cause);

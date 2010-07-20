@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * <p>
  * This test case aggregates all Accuracy test cases.
  * </p>
- * 
+ *
  * @author kshatriyan
  * @version 1.0
  */
@@ -19,7 +19,7 @@ public class AccuracyTests extends TestCase {
 
     /**
      * Aggregates all Accuracy test cases.
-     * 
+     *
      * @return aggregates all Accuracy test cases.
      */
     public static Test suite() {

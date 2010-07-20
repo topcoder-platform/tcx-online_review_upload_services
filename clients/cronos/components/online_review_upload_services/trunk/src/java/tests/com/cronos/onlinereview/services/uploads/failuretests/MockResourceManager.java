@@ -8,7 +8,9 @@ import com.topcoder.management.resource.NotificationType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
+
 import com.topcoder.search.builder.filter.Filter;
+
 
 /**
  * Mock ResourceManager for testing purpose.
@@ -17,18 +19,14 @@ import com.topcoder.search.builder.filter.Filter;
  * @version 1.0
  */
 public class MockResourceManager implements ResourceManager {
-    /**
-     * A static state variable for the mock.
-     */
+    /** A static state variable for the mock. */
     private static int state = 0;
 
     /**
      * Not implemented.
      *
-     * @param resource
-     *            resource
-     * @param operator
-     *            operator
+     * @param resource resource
+     * @param operator operator
      */
     public void updateResource(Resource resource, String operator) {
     }
@@ -36,10 +34,8 @@ public class MockResourceManager implements ResourceManager {
     /**
      * Not implemented.
      *
-     * @param resource
-     *            resource
-     * @param operator
-     *            operator
+     * @param resource resource
+     * @param operator operator
      */
     public void removeResource(Resource resource, String operator) {
     }
@@ -47,12 +43,9 @@ public class MockResourceManager implements ResourceManager {
     /**
      * Not implemented.
      *
-     * @param resources
-     *            resources
-     * @param project
-     *            project id
-     * @param operator
-     *            operator
+     * @param resources resources
+     * @param project project id
+     * @param operator operator
      */
     public void updateResources(Resource[] resources, long project, String operator) {
     }
@@ -60,8 +53,8 @@ public class MockResourceManager implements ResourceManager {
     /**
      * Not implemented.
      *
-     * @param id
-     *            id
+     * @param id id
+     *
      * @return always null.
      */
     public Resource getResource(long id) {
@@ -71,8 +64,8 @@ public class MockResourceManager implements ResourceManager {
     /**
      * Not implemented.
      *
-     * @param filter
-     *            filter
+     * @param filter filter
+     *
      * @return always null.
      */
     public Resource[] searchResources(Filter filter) {
@@ -80,18 +73,18 @@ public class MockResourceManager implements ResourceManager {
             Resource[] resources = new Resource[1];
             resources[0] = new Resource();
             resources[0].setId(1);
+
             return resources;
         }
+
         return new Resource[0];
     }
 
     /**
      * Not implemented.
      *
-     * @param resourceRole
-     *            resource role
-     * @param operator
-     *            operator
+     * @param resourceRole resource role
+     * @param operator operator
      */
     public void updateResourceRole(ResourceRole resourceRole, String operator) {
     }
@@ -99,10 +92,8 @@ public class MockResourceManager implements ResourceManager {
     /**
      * Not implemented.
      *
-     * @param resourceRole
-     *            resource role
-     * @param operator
-     *            operator
+     * @param resourceRole resource role
+     * @param operator operator
      */
     public void removeResourceRole(ResourceRole resourceRole, String operator) {
     }
@@ -113,25 +104,30 @@ public class MockResourceManager implements ResourceManager {
      * @return resource roles.
      */
     public ResourceRole[] getAllResourceRoles() {
-        if (getState() == 0 || getState() == 1) {
-            ResourceRole[] roles = new ResourceRole[4];
+        if ((getState() == 0) || (getState() == 1)) {
+            ResourceRole[] roles = new ResourceRole[5];
+
             for (int i = 0; i < roles.length; i++) {
                 roles[i] = new ResourceRole(i + 1);
             }
+
             roles[0].setName("Submitter");
-            roles[1].setName("Accuracy Reviewer");
-            roles[2].setName("Failure Reviewer");
-            roles[3].setName("Stress Reviewer");
+            roles[1].setName("Specification Submitter");
+            roles[2].setName("Accuracy Reviewer");
+            roles[3].setName("Failure Reviewer");
+            roles[4].setName("Stress Reviewer");
+
             return roles;
         }
+
         return new ResourceRole[0];
     }
 
     /**
      * Not implemented.
      *
-     * @param filter
-     *            filter
+     * @param filter filter
+     *
      * @return always null.
      */
     public ResourceRole[] searchResourceRoles(Filter filter) {
@@ -141,14 +137,10 @@ public class MockResourceManager implements ResourceManager {
     /**
      * Not implemented.
      *
-     * @param users
-     *            users
-     * @param project
-     *            project id
-     * @param notificationType
-     *            notification type
-     * @param operator
-     *            operator
+     * @param users users
+     * @param project project id
+     * @param notificationType notification type
+     * @param operator operator
      */
     public void addNotifications(long[] users, long project, long notificationType, String operator) {
     }
@@ -156,14 +148,10 @@ public class MockResourceManager implements ResourceManager {
     /**
      * Not implemented.
      *
-     * @param users
-     *            users
-     * @param project
-     *            project id
-     * @param notificationType
-     *            notification type
-     * @param operator
-     *            operator
+     * @param users users
+     * @param project project id
+     * @param notificationType notification type
+     * @param operator operator
      */
     public void removeNotifications(long[] users, long project, long notificationType, String operator) {
     }
@@ -171,10 +159,9 @@ public class MockResourceManager implements ResourceManager {
     /**
      * Not implemented.
      *
-     * @param project
-     *            project id
-     * @param notificationType
-     *            notification type
+     * @param project project id
+     * @param notificationType notification type
+     *
      * @return always null.
      */
     public long[] getNotifications(long project, long notificationType) {
@@ -184,8 +171,8 @@ public class MockResourceManager implements ResourceManager {
     /**
      * Not implemented.
      *
-     * @param filter
-     *            filter
+     * @param filter filter
+     *
      * @return always null.
      */
     public Notification[] searchNotifications(Filter filter) {
@@ -195,10 +182,8 @@ public class MockResourceManager implements ResourceManager {
     /**
      * Not implemented.
      *
-     * @param notificationType
-     *            notification type
-     * @param operator
-     *            operator
+     * @param notificationType notification type
+     * @param operator operator
      */
     public void updateNotificationType(NotificationType notificationType, String operator) {
     }
@@ -206,10 +191,8 @@ public class MockResourceManager implements ResourceManager {
     /**
      * Not implemented.
      *
-     * @param notificationType
-     *            notification type
-     * @param operator
-     *            operator
+     * @param notificationType notification type
+     * @param operator operator
      */
     public void removeNotificationType(NotificationType notificationType, String operator) {
     }
@@ -217,8 +200,8 @@ public class MockResourceManager implements ResourceManager {
     /**
      * Not implemented.
      *
-     * @param filter
-     *            filter
+     * @param filter filter
+     *
      * @return always null.
      */
     public NotificationType[] searchNotificationTypes(Filter filter) {
@@ -237,8 +220,7 @@ public class MockResourceManager implements ResourceManager {
     /**
      * Sets the state.
      *
-     * @param state
-     *            the state to set
+     * @param state the state to set
      */
     static void setState(int state) {
         MockResourceManager.state = state;
@@ -252,5 +234,4 @@ public class MockResourceManager implements ResourceManager {
     static int getState() {
         return state;
     }
-
 }

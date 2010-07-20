@@ -34,14 +34,12 @@ public class MockScreeningManager implements ScreeningManager {
     /**
      * Mock implementation. Will throw exceptions based on state.
      *
-     * @param arg0
-     *            project id
-     * @param arg1
-     *            operator
-     * @throws PersistenceException
-     *             if the state is 1
+     * @param arg0 project id
+     * @param arg1 operator
+     *
+     * @throws PersistenceException if the state is 1
      * @throws ScreeningTaskAlreadyExistsException
-     *             if the state is 2
+     *                              if the state is 2
      */
     public void initiateScreening(long arg0, String arg1) throws PersistenceException,
             ScreeningTaskAlreadyExistsException {
@@ -58,13 +56,13 @@ public class MockScreeningManager implements ScreeningManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            id
+     * @param arg0 id
+     *
      * @return always null
-     * @throws PersistenceException
-     *             not thrown
+     *
+     * @throws PersistenceException not thrown
      * @throws ScreeningTaskDoesNotExistException
-     *             not thrown
+     *                              not thrown
      */
     public ScreeningTask getScreeningDetails(long arg0) throws PersistenceException,
             ScreeningTaskDoesNotExistException {
@@ -74,13 +72,13 @@ public class MockScreeningManager implements ScreeningManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            id
+     * @param arg0 id
+     *
      * @return always null
-     * @throws PersistenceException
-     *             not thrown
+     *
+     * @throws PersistenceException not thrown
      * @throws ScreeningTaskDoesNotExistException
-     *             not thrown
+     *                              not thrown
      */
     public ScreeningTask[] getScreeningTasks(long[] arg0) throws PersistenceException,
             ScreeningTaskDoesNotExistException {
@@ -90,15 +88,14 @@ public class MockScreeningManager implements ScreeningManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            id
-     * @param arg1
-     *            boolean
+     * @param arg0 id
+     * @param arg1 boolean
+     *
      * @return always null
-     * @throws PersistenceException
-     *             not thrown
+     *
+     * @throws PersistenceException not thrown
      * @throws ScreeningTaskDoesNotExistException
-     *             not thrown
+     *                              not thrown
      */
     public ScreeningTask[] getScreeningTasks(long[] arg0, boolean arg1) throws PersistenceException,
             ScreeningTaskDoesNotExistException {
@@ -108,10 +105,9 @@ public class MockScreeningManager implements ScreeningManager {
     /**
      * Sets the state.
      *
-     * @param state
-     *            the state to set
+     * @param state the state to set
      */
-    static void setState(int state) {
+    public static void setState(int state) {
         MockScreeningManager.state = state;
     }
 
@@ -120,7 +116,7 @@ public class MockScreeningManager implements ScreeningManager {
      *
      * @return the state
      */
-    static int getState() {
+    public static int getState() {
         return state;
     }
 

@@ -1,0 +1,52 @@
+
+Final Fix 3:
+ * I added all test cases to submission, now they all execute successfully (see the test log). Thank you for your cooperation.
+
+Here is list of changes I made:
+
+Final Fix 2:
+Point 4.1.2: added @version 1.1 tag to DefaultUploadServices#uploadSubmission
+
+Point 6.1.1: I could not compile the accuracy tests,
+             as for failure test they should work now, but you will need to add 'Specification Submission' ResourceRole to
+             com.cronos.onlinereview.services.uploads.failuretests.MockResourceManager#getAllResourceRoles and also
+             please note that this component uses logging wrapper 1.2 which requires namespace "com.topcoder.util.log"
+             to be present in ConfigManager, you can use my logging.xml file.
+
+Final Fix 1:
+Point 1.1.1:
+ * InvalidProjectPhaseException is thrown when Specification Submission phase is not opened.
+ * Modified submitter role to 'Specification Submitter'
+ * Corrected log message in DefaultUploadExternalServices#uploadSpecification
+ * Designer confirmed that current upload type is correct, see thread: http://forums.topcoder.com/?module=Thread&threadID=680986&start=0&mc=4
+
+Point 1.1.2: Please confirm that the submission compiles in Java 1.5.
+
+Point 3.1.2: Log removed from uploadSpecification, I leave that in the rest of methods which
+             were not in the scope of this competition.
+
+Point 3.1.3:
+ * First return statement has been removed.
+ * Refractored:
+   - close statement in DefaultUploadExternalServices#createNewFile
+   - refractored both finding SubmissionType and SubmissionStatus
+
+Point 3.1.4: Corrected userId conversion to string
+
+Point 3.1.5: Corrected log message
+
+Point 4.1.2: Not exactly know what you mean by: "DefaultUploadServices#uploadSubmission, you should add version tag" 
+      - the version tag should be added only to classes and interfaces
+
+Point 4.1.3:
+ * Corrected comment
+ * Added documentation for DefaultUploadServices#namespace field.
+
+Point 5.1.2:
+ * Added comment in CS.
+
+Point 5.1.3:
+ * Corrected assertions in all test method created during this contest, I didn't modify the previous ones
+
+Point 6.1.1:
+ * TODO?

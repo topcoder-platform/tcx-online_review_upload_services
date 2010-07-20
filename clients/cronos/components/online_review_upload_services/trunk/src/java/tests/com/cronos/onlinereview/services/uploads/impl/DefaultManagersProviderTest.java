@@ -1,22 +1,21 @@
 /*
- * Copyright (C) 2007 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2010 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.services.uploads.impl;
 
+import com.cronos.onlinereview.services.uploads.ConfigurationException;
+import com.cronos.onlinereview.services.uploads.TestHelper;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import com.cronos.onlinereview.services.uploads.ConfigurationException;
-import com.cronos.onlinereview.services.uploads.TestHelper;
 
 /**
  * <p>
  * Tests the functionality of <code>{@link DefaultManagersProvider}</code> class.
  * </p>
  *
- * @author cyberjag
- * @version 1.0
+ * @author cyberjag, TCSDEVELOPER
+ * @version 1.1
  */
 public class DefaultManagersProviderTest extends TestCase {
     /**
@@ -42,8 +41,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Sets up the test environment.
      * </p>
      *
-     * @throws Exception
-     *             throws exception if any.
+     * @throws Exception throws exception if any.
      */
     protected void setUp() throws Exception {
         TestHelper.loadConfigs("config.xml");
@@ -55,8 +53,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Tears down the test environment.
      * </p>
      *
-     * @throws Exception
-     *             throws exception if any.
+     * @throws Exception throws exception if any.
      */
     protected void tearDown() throws Exception {
         TestHelper.releaseConfigs();
@@ -72,7 +69,6 @@ public class DefaultManagersProviderTest extends TestCase {
      * <p>
      * Expects non null instance.
      * </p>
-     *
      */
     public void testDefaultManagersProvider_accuracy_1() {
         assertNotNull("Failed to create DefaultManagersProvider", defaultManagersProvider);
@@ -91,8 +87,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects <code>ConfigurationException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_failure_1() throws Exception {
         TestHelper.releaseConfigs();
@@ -114,8 +109,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects non null instance.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_accuracy_2() throws Exception {
         defaultManagersProvider = new DefaultManagersProvider(
@@ -136,7 +130,6 @@ public class DefaultManagersProviderTest extends TestCase {
      * <p>
      * Expects <code>ConfigurationException</code>.
      * </p>
-     *
      */
     public void testDefaultManagersProvider_failure_2() {
         try {
@@ -161,8 +154,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_failure_3() throws Exception {
         try {
@@ -187,8 +179,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_failure_4() throws Exception {
         try {
@@ -213,8 +204,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects <code>ConfigurationException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_failure_5() throws Exception {
         TestHelper.loadConfigs("config_obj_missing.xml");
@@ -240,8 +230,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects <code>ConfigurationException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_failure_6() throws Exception {
         TestHelper.loadConfigs("config_res_missing.xml");
@@ -267,8 +256,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects <code>ConfigurationException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_failure_7() throws Exception {
         TestHelper.loadConfigs("config_pha_missing.xml");
@@ -294,8 +282,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects <code>ConfigurationException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_failure_8() throws Exception {
         TestHelper.loadConfigs("config_pro_missing.xml");
@@ -321,8 +308,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects <code>ConfigurationException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_failure_9() throws Exception {
         TestHelper.loadConfigs("config_scr_missing.xml");
@@ -348,8 +334,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects <code>ConfigurationException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_failure_10() throws Exception {
         TestHelper.loadConfigs("config_upl_missing.xml");
@@ -375,8 +360,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects non null instance.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_accuracy_3() throws Exception {
         defaultManagersProvider = new DefaultManagersProvider(new MockResourceManager(), new MockProjectManager(),
@@ -402,8 +386,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_failure_11() throws Exception {
         try {
@@ -433,8 +416,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_failure_12() throws Exception {
         try {
@@ -464,8 +446,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_failure_13() throws Exception {
         try {
@@ -495,8 +476,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_failure_14() throws Exception {
         try {
@@ -526,8 +506,7 @@ public class DefaultManagersProviderTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultManagersProvider_failure_15() throws Exception {
         try {
@@ -547,7 +526,6 @@ public class DefaultManagersProviderTest extends TestCase {
      * <p>
      * Expects non null instance.
      * </p>
-     *
      */
     public void testGetResourceManager_accuracy() {
         assertNotNull("Failed to get resource manager", defaultManagersProvider.getResourceManager());
@@ -561,7 +539,6 @@ public class DefaultManagersProviderTest extends TestCase {
      * <p>
      * Expects non null instance.
      * </p>
-     *
      */
     public void testGetProjectManager_accuracy() {
         assertNotNull("Failed to get resource manager", defaultManagersProvider.getResourceManager());
@@ -575,7 +552,6 @@ public class DefaultManagersProviderTest extends TestCase {
      * <p>
      * Expects non null instance.
      * </p>
-     *
      */
     public void testGetPhaseManager_accuracy() {
         assertNotNull("Failed to get phase manager", defaultManagersProvider.getPhaseManager());
@@ -589,7 +565,6 @@ public class DefaultManagersProviderTest extends TestCase {
      * <p>
      * Expects non null instance.
      * </p>
-     *
      */
     public void testGetScreeningManager_accuracy() {
         assertNotNull("Failed to get screening manager", defaultManagersProvider.getScreeningManager());
@@ -603,7 +578,6 @@ public class DefaultManagersProviderTest extends TestCase {
      * <p>
      * Expects non null instance.
      * </p>
-     *
      */
     public void testGetUploadManager_accuracy() {
         assertNotNull("Failed to get upload manager", defaultManagersProvider.getUploadManager());

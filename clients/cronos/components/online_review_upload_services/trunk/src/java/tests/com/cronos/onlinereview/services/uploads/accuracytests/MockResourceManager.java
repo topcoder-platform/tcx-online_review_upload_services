@@ -12,7 +12,7 @@ import com.topcoder.search.builder.filter.Filter;
 
 /**
  * Mock ResourceManager for testing.
- * 
+ *
  * @author kshatriyan
  * @version 1.0
  */
@@ -28,7 +28,7 @@ public class MockResourceManager implements ResourceManager {
     private String updateResourceUserId = null;
     /**
      * Not used.
-     * 
+     *
      * @param resource
      *            resource
      * @param operator
@@ -41,7 +41,7 @@ public class MockResourceManager implements ResourceManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param resource
      *            resource
      * @param operator
@@ -52,7 +52,7 @@ public class MockResourceManager implements ResourceManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param resources
      *            resources
      * @param project
@@ -65,7 +65,7 @@ public class MockResourceManager implements ResourceManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param id
      *            id
      * @return always null.
@@ -76,7 +76,7 @@ public class MockResourceManager implements ResourceManager {
 
     /**
      * Mock implementation.
-     * 
+     *
      * @param filter
      *            filter
      * @return an resource array.
@@ -90,7 +90,7 @@ public class MockResourceManager implements ResourceManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param resourceRole
      *            resource role
      * @param operator
@@ -101,7 +101,7 @@ public class MockResourceManager implements ResourceManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param resourceRole
      *            resource role
      * @param operator
@@ -112,24 +112,25 @@ public class MockResourceManager implements ResourceManager {
 
     /**
      * Returns a predefined set of roles.
-     * 
+     *
      * @return resource roles.
      */
     public ResourceRole[] getAllResourceRoles() {
-        ResourceRole[] roles = new ResourceRole[4];
+        ResourceRole[] roles = new ResourceRole[5];
         for (int i = 0; i < roles.length; i++) {
             roles[i] = new ResourceRole(i + 1);
         }
         roles[0].setName("Submitter");
-        roles[1].setName("Accuracy Reviewer");
-        roles[2].setName("Failure Reviewer");
-        roles[3].setName("Stress Reviewer");
+        roles[1].setName("Specification Submitter");
+        roles[2].setName("Accuracy Reviewer");
+        roles[3].setName("Failure Reviewer");
+        roles[4].setName("Stress Reviewer");
         return roles;
     }
 
     /**
      * Not used.
-     * 
+     *
      * @param filter
      *            filter
      * @return always null.
@@ -140,7 +141,7 @@ public class MockResourceManager implements ResourceManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param users
      *            users
      * @param project
@@ -155,7 +156,7 @@ public class MockResourceManager implements ResourceManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param users
      *            users
      * @param project
@@ -170,7 +171,7 @@ public class MockResourceManager implements ResourceManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param project
      *            project id
      * @param notificationType
@@ -183,7 +184,7 @@ public class MockResourceManager implements ResourceManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param filter
      *            filter
      * @return always null.
@@ -194,7 +195,7 @@ public class MockResourceManager implements ResourceManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param notificationType
      *            notification type
      * @param operator
@@ -205,7 +206,7 @@ public class MockResourceManager implements ResourceManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param notificationType
      *            notification type
      * @param operator
@@ -216,7 +217,7 @@ public class MockResourceManager implements ResourceManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param filter
      *            filter
      * @return always null.
@@ -227,7 +228,7 @@ public class MockResourceManager implements ResourceManager {
 
     /**
      * Not used.
-     * 
+     *
      * @return always null.
      */
     public NotificationType[] getAllNotificationTypes() {

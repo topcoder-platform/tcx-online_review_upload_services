@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2010 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.services.uploads.impl;
 
@@ -17,8 +17,8 @@ import com.topcoder.search.builder.filter.Filter;
 /**
  * A mock implementation of ProjectManager for testing purpose.
  *
- * @author cyberjag
- * @version 1.0
+ * @author cyberjag, TCSDEVELOPER
+ * @version 1.1
  */
 public class MockProjectManager implements ProjectManager {
     /**
@@ -34,14 +34,11 @@ public class MockProjectManager implements ProjectManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            project
-     * @param arg1
-     *            desc
-     * @throws PersistenceException
-     *             not thrown
-     * @throws ValidationException
-     *             not thrown
+     * @param arg0 project
+     * @param arg1 desc
+     *
+     * @throws PersistenceException not thrown
+     * @throws ValidationException  not thrown
      */
     public void createProject(Project arg0, String arg1) throws PersistenceException, ValidationException {
     }
@@ -49,16 +46,12 @@ public class MockProjectManager implements ProjectManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            project
-     * @param arg1
-     *            desc
-     * @param arg2
-     *            desc
-     * @throws PersistenceException
-     *             not thrown
-     * @throws ValidationException
-     *             not thrown
+     * @param arg0 project
+     * @param arg1 desc
+     * @param arg2 desc
+     *
+     * @throws PersistenceException not thrown
+     * @throws ValidationException  not thrown
      */
     public void updateProject(Project arg0, String arg1, String arg2) throws PersistenceException,
             ValidationException {
@@ -68,11 +61,11 @@ public class MockProjectManager implements ProjectManager {
     /**
      * A mock implementation. It will throw exception if the throwError flag is set.
      *
-     * @param arg0
-     *            project id
+     * @param arg0 project id
+     *
      * @return project
-     * @throws PersistenceException
-     *             if the flag is set
+     *
+     * @throws PersistenceException if the flag is set
      */
     public Project getProject(long arg0) throws PersistenceException {
         if (isThrowError()) {
@@ -84,6 +77,8 @@ public class MockProjectManager implements ProjectManager {
             ProjectStatus status = new ProjectStatus(1, "testing");
             Project project = new Project(arg0, category, status);
             project.setProperty("Winner External Reference ID", TestHelper.USER_ID);
+            // added in version 1.1
+            project.setProperty("Component ID", 1L);
             return project;
         }
         return null;
@@ -92,11 +87,11 @@ public class MockProjectManager implements ProjectManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            project id
+     * @param arg0 project id
+     *
      * @return always null
-     * @throws PersistenceException
-     *             not thrown
+     *
+     * @throws PersistenceException not thrown
      */
     public Project[] getProjects(long[] arg0) throws PersistenceException {
         return null;
@@ -105,11 +100,24 @@ public class MockProjectManager implements ProjectManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            filter
+     * @param creationDate creation date
+     *
+     * @return always returns empty array
+     *
+     * @throws PersistenceException not thrown
+     */
+    public Project[] getProjectsByCreateDate(int creationDate) throws PersistenceException {
+        return new Project[0];
+    }
+
+    /**
+     * Not implemented.
+     *
+     * @param arg0 filter
+     *
      * @return always null
-     * @throws PersistenceException
-     *             not thrown
+     *
+     * @throws PersistenceException not thrown
      */
     public Project[] searchProjects(Filter arg0) throws PersistenceException {
         return null;
@@ -118,11 +126,11 @@ public class MockProjectManager implements ProjectManager {
     /**
      * Not implemented.
      *
-     * @param arg0
-     *            project id
+     * @param arg0 project id
+     *
      * @return always null
-     * @throws PersistenceException
-     *             not thrown
+     *
+     * @throws PersistenceException not thrown
      */
     public Project[] getUserProjects(long arg0) throws PersistenceException {
         return null;
@@ -132,8 +140,8 @@ public class MockProjectManager implements ProjectManager {
      * Not implemented.
      *
      * @return always null
-     * @throws PersistenceException
-     *             not thrown
+     *
+     * @throws PersistenceException not thrown
      */
     public ProjectType[] getAllProjectTypes() throws PersistenceException {
         return null;
@@ -143,8 +151,8 @@ public class MockProjectManager implements ProjectManager {
      * Not implemented.
      *
      * @return always null
-     * @throws PersistenceException
-     *             not thrown
+     *
+     * @throws PersistenceException not thrown
      */
     public ProjectCategory[] getAllProjectCategories() throws PersistenceException {
         return null;
@@ -154,8 +162,8 @@ public class MockProjectManager implements ProjectManager {
      * Not implemented.
      *
      * @return always null
-     * @throws PersistenceException
-     *             not thrown
+     *
+     * @throws PersistenceException not thrown
      */
     public ProjectStatus[] getAllProjectStatuses() throws PersistenceException {
         return null;
@@ -165,8 +173,8 @@ public class MockProjectManager implements ProjectManager {
      * Not implemented.
      *
      * @return always null
-     * @throws PersistenceException
-     *             not thrown
+     *
+     * @throws PersistenceException not thrown
      */
     public ProjectPropertyType[] getAllProjectPropertyTypes() throws PersistenceException {
         return null;
@@ -175,10 +183,9 @@ public class MockProjectManager implements ProjectManager {
     /**
      * Sets the state.
      *
-     * @param state
-     *            the state to set
+     * @param state the state to set
      */
-    static void setState(int state) {
+    public static void setState(int state) {
         MockProjectManager.state = state;
     }
 
@@ -187,15 +194,14 @@ public class MockProjectManager implements ProjectManager {
      *
      * @return the state
      */
-    static int getState() {
+    public static int getState() {
         return state;
     }
 
     /**
      * Sets the throwError.
      *
-     * @param throwError
-     *            the throwError to set
+     * @param throwError the throwError to set
      */
     static void setThrowError(boolean throwError) {
         MockProjectManager.throwError = throwError;

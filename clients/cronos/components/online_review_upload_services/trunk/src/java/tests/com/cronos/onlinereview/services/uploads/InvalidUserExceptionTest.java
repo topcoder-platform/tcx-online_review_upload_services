@@ -64,7 +64,6 @@ public class InvalidUserExceptionTest extends TestCase {
      * <p>
      * Expects the same which is set.
      * </p>
-     *
      */
     public void testGetUserId_accuracy() {
         InvalidUserException exception = new InvalidUserException(TestHelper.EXCEPTION_MESSAGE,

@@ -20,14 +20,14 @@ import com.topcoder.project.phases.Project;
 
 /**
  * A mock PhaseManager implementation for testing.
- * 
+ *
  * @author kshatriyan
  * @version 1.0
  */
 public class MockPhaseManager implements PhaseManager {
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            project
      * @param arg1
@@ -40,7 +40,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * A mock implementation. Will throw exception if is throwError is true.
-     * 
+     *
      * @param arg0
      *            id
      * @return project or null based on state
@@ -53,7 +53,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            project id
      * @return always null
@@ -66,7 +66,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * Not used.
-     * 
+     *
      * @return always null
      * @throws PhaseManagementException
      *             will not be thrown
@@ -77,7 +77,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * Not used.
-     * 
+     *
      * @return always null
      * @throws PhaseManagementException
      *             will not be thrown
@@ -88,7 +88,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            phase
      * @return always false
@@ -101,7 +101,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            phase
      * @param arg1
@@ -114,7 +114,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            phase
      * @return always false
@@ -127,7 +127,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            phase
      * @param arg1
@@ -140,7 +140,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            phase
      * @return always false
@@ -153,7 +153,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            phase
      * @param arg1
@@ -166,7 +166,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            project id
      * @param arg1
@@ -179,7 +179,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            phase
      * @param arg1
@@ -192,7 +192,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * Not used.
-     * 
+     *
      * @return always null
      */
     public PhaseHandler[] getAllHandlers() {
@@ -201,7 +201,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            phase handler
      * @return always null
@@ -212,7 +212,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            phase validator
      */
@@ -221,7 +221,7 @@ public class MockPhaseManager implements PhaseManager {
 
     /**
      * Not used.
-     * 
+     *
      * @return always null
      */
     public PhaseValidator getPhaseValidator() {
@@ -231,7 +231,7 @@ public class MockPhaseManager implements PhaseManager {
 
 /**
  * A mock Project class for testing.
- * 
+ *
  * @author cyberjag
  * @version 1.0
  */
@@ -239,23 +239,23 @@ class MockProject extends Project {
 
     /**
      * Default constructor.
-     * 
+     *
      * @param arg0
      *            date
      * @param arg1
      *            workdays
      */
     public MockProject(Date arg0, Workdays arg1) {
-        super(arg0, arg1);
+    	super(arg0, arg1);
     }
 
     /**
      * Gets the Phases based on the state.
-     * 
+     *
      * @return phases or an empty array
      */
     public Phase[] getAllPhases() {
-        Phase[] phases = new Phase[4];
+        Phase[] phases = new Phase[5];
         for (int i = 0; i < phases.length; i++) {
             phases[i] = new Phase(this, i + 1);
             phases[i].setPhaseStatus(PhaseStatus.OPEN);
@@ -264,6 +264,7 @@ class MockProject extends Project {
         phases[1].setPhaseType(new PhaseType(2, "Screening"));
         phases[2].setPhaseType(new PhaseType(3, "Review"));
         phases[3].setPhaseType(new PhaseType(4, "Final Fix"));
+        phases[4].setPhaseType(new PhaseType(5, "Specification Submission"));
         return phases;
     }
 }

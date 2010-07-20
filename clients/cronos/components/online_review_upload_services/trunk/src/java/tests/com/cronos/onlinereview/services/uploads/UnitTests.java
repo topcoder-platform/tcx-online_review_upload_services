@@ -4,14 +4,13 @@
  */
 package com.cronos.onlinereview.services.uploads;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import com.cronos.onlinereview.services.uploads.impl.DefaultManagersProviderTest;
 import com.cronos.onlinereview.services.uploads.impl.DefaultUploadExternalServicesTest;
 import com.cronos.onlinereview.services.uploads.impl.DefaultUploadServicesTest;
 import com.cronos.onlinereview.services.uploads.impl.HelperTest;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * <p>
@@ -42,6 +41,7 @@ public class UnitTests extends TestCase {
         suite.addTest(DefaultUploadExternalServicesTest.suite());
         suite.addTest(DefaultUploadServicesTest.suite());
         suite.addTest(HelperTest.suite());
+
         suite.addTest(Demo.suite());
         return suite;
     }

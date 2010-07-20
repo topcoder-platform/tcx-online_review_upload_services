@@ -5,17 +5,22 @@
 package com.cronos.onlinereview.services.uploads.accuracytests;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Iterator;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
+import junit.framework.TestCase;
+
 import com.topcoder.util.config.ConfigManager;
 
 /**
  * Accuracy helper class.
- * 
+ *
  * @author kshatriyan
  * @version 1.0
  */
@@ -25,7 +30,7 @@ public final class AccuracyHelper {
      * Represents the current folder.
      */
     public static final String CURRENT_DIR = System.getProperty("user.dir") + File.separator + "test_files"
-            + File.separator;
+        + File.separator;
 
     /**
      * Represents the test_files folder.
@@ -73,7 +78,7 @@ public final class AccuracyHelper {
      * <p>
      * Loads the default configuration.
      * </p>
-     * 
+     *
      * @throws Exception
      *             exception to junit.
      */
@@ -81,13 +86,14 @@ public final class AccuracyHelper {
         release();
         ConfigManager cm = ConfigManager.getInstance();
         cm.add(TEST_FILES + "accuracy_config.xml");
+        cm.add("com.topcoder.util.log", TEST_FILES + "logging.xml", ConfigManager.CONFIG_XML_FORMAT);
     }
 
     /**
      * <p>
      * Releases the configurations.
      * </p>
-     * 
+     *
      * @throws Exception
      *             exception to junit.
      */
@@ -102,7 +108,7 @@ public final class AccuracyHelper {
      * <p>
      * Gets the field value of a given object.
      * </p>
-     * 
+     *
      * @param object
      *            the object where to get the field value.
      * @param fieldName
@@ -119,11 +125,43 @@ public final class AccuracyHelper {
 
     /**
      * Creates a data handler for the input file.
-     * 
+     *
      * @return the created data handler.
      */
     public static DataHandler getDataHandler() {
         DataHandler dataHandler = new DataHandler(new FileDataSource(TEST_FILES + "test/input.jar"));
         return dataHandler;
+    }
+
+    /**
+     * Read file content.
+     *
+     * @param file
+     *            the file to read.
+     * @return the byte array.
+     * @throws IOException
+     *             if failed to read.
+     */
+    public static byte[] read(File file) throws IOException {
+        InputStream is = new FileInputStream(file);
+
+        try {
+            // Get the size of the file
+            long length = file.length();
+
+            // Create the byte array to hold the data
+            byte[] bytes = new byte[(int) length];
+
+            // Read in the bytes
+            int offset = 0;
+            int numRead = 0;
+            while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) > 0) {
+                offset += numRead;
+            }
+            return bytes;
+        } finally {
+            // Close the input stream
+            is.close();
+        }
     }
 }

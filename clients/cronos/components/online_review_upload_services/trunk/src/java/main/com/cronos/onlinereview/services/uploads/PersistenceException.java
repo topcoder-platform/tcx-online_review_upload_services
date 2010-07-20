@@ -23,8 +23,7 @@ public class PersistenceException extends UploadServicesException {
      * Constructs the exception with error message.
      * </p>
      *
-     * @param message
-     *            the error message
+     * @param message the error message
      */
     public PersistenceException(String message) {
         super(message);
@@ -35,10 +34,8 @@ public class PersistenceException extends UploadServicesException {
      * Constructs the exception with error message and inner cause.
      * </p>
      *
-     * @param message
-     *            the error message
-     * @param cause
-     *            the cause of this exception
+     * @param message the error message
+     * @param cause   the cause of this exception
      */
     public PersistenceException(String message, Throwable cause) {
         super(message, cause);

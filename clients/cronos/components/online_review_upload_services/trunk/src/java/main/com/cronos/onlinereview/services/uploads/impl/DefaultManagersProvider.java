@@ -12,6 +12,7 @@ import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.util.log.Level;
+import com.topcoder.util.log.LogFactory;
 
 /**
  * <p>
@@ -70,8 +71,7 @@ public class DefaultManagersProvider implements ManagersProvider {
      * Represents the logger to log all operations, exceptions, etc. It is initialized statically.
      * </p>
      */
-    private static final com.topcoder.util.log.Log LOG = com.topcoder.util.log.LogManager
-			.getLog(DefaultManagersProvider.class.getName());
+    private static final com.topcoder.util.log.Log LOG = LogFactory.getLog(DefaultManagersProvider.class.getName());
 
     /**
      * <p>
@@ -153,8 +153,8 @@ public class DefaultManagersProvider implements ManagersProvider {
      * Creates <code>DefaultManagersProvider</code> using the configuration with default namespace.
      * </p>
      *
-     * @throws ConfigurationException
-     *             If any error occurs during accessing configuration. If bad configuration is detected.
+     * @throws ConfigurationException If any error occurs during accessing configuration.
+     *                                If bad configuration is detected.
      */
     public DefaultManagersProvider() throws ConfigurationException {
         this(DEFAULT_NAMESPACE);
@@ -165,12 +165,11 @@ public class DefaultManagersProvider implements ManagersProvider {
      * Creates <code>DefaultManagersProvider</code> using the configuration with specified namespace.
      * </p>
      *
-     * @param namespace
-     *            the namespace to load configuration
-     * @throws ConfigurationException
-     *             If any error occurs during accessing configuration. If bad configuration is detected.
-     * @throws IllegalArgumentException
-     *             if namespace is <code>null</code> or trim to empty
+     * @param namespace the namespace to load configuration
+     *
+     * @throws ConfigurationException   If any error occurs during accessing configuration.
+     *                                  If bad configuration is detected.
+     * @throws IllegalArgumentException if namespace is <code>null</code> or trim to empty
      */
     public DefaultManagersProvider(String namespace) throws ConfigurationException {
         Helper.checkString(namespace, "namespace", LOG);
@@ -196,21 +195,17 @@ public class DefaultManagersProvider implements ManagersProvider {
      * Creates <code>DefaultManagersProvider</code> with the specified managers.
      * </p>
      *
-     * @param resourceManager
-     *            the manager to manage the resources
-     * @param projectManager
-     *            the manager to manage the projects.
-     * @param phaseManager
-     *            the manager to manage the phases of a project.
-     * @param screeningManager
-     *            the manager to manage the auto screening tasks.
-     * @param uploadManager
-     *            the manager to manage the deliverables: Submission and Uploads.
-     * @throws IllegalArgumentException
-     *             if any argument is <code>null</code>
+     * @param resourceManager  the manager to manage the resources
+     * @param projectManager   the manager to manage the projects.
+     * @param phaseManager     the manager to manage the phases of a project.
+     * @param screeningManager the manager to manage the auto screening tasks.
+     * @param uploadManager    the manager to manage the deliverables: Submission and Uploads.
+     *
+     * @throws IllegalArgumentException if any argument is <code>null</code>
      */
     public DefaultManagersProvider(ResourceManager resourceManager, ProjectManager projectManager,
-            PhaseManager phaseManager, ScreeningManager screeningManager, UploadManager uploadManager) {
+                                   PhaseManager phaseManager, ScreeningManager screeningManager,
+                                   UploadManager uploadManager) {
         Helper.checkNull(resourceManager, "resourceManager", LOG);
         Helper.checkNull(projectManager, "projectManager", LOG);
         Helper.checkNull(phaseManager, "phaseManager", LOG);
