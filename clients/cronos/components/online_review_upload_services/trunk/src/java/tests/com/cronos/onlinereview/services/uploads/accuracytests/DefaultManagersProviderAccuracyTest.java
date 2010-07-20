@@ -18,7 +18,7 @@ import com.topcoder.management.resource.ResourceManager;
  * <p>
  * This Junit Test suite contains the accuracy test cases for {@link DefaultManagersProvider} class.
  * </p>
- * 
+ *
  * @author kshatriyan
  * @version 1.0
  */
@@ -33,7 +33,7 @@ public class DefaultManagersProviderAccuracyTest extends TestCase {
      * <p>
      * Sets up the environment for the TestCase.
      * </p>
-     * 
+     *
      * @throws Exception
      *             throw exception to JUnit.
      */
@@ -46,7 +46,7 @@ public class DefaultManagersProviderAccuracyTest extends TestCase {
      * <p>
      * Tears down the environment after the TestCase.
      * </p>
-     * 
+     *
      * @throws Exception
      *             throw exception to JUnit.
      */
@@ -59,7 +59,7 @@ public class DefaultManagersProviderAccuracyTest extends TestCase {
      * <p>
      * Aggregates all tests in this class.
      * </p>
-     * 
+     *
      * @return Test suite aggregating all tests.
      */
     public static Test suite() {
@@ -73,7 +73,7 @@ public class DefaultManagersProviderAccuracyTest extends TestCase {
      * <p>
      * Creates an instance and checks its instantiation and the variable initialization.
      * </p>
-     * 
+     *
      * @throws Exception
      *             throw exception to JUnit.
      */
@@ -95,7 +95,7 @@ public class DefaultManagersProviderAccuracyTest extends TestCase {
      * <p>
      * Creates an instance and checks its instantiation and the variable initialization.
      * </p>
-     * 
+     *
      * @throws Exception
      *             throw exception to JUnit.
      */
@@ -121,7 +121,7 @@ public class DefaultManagersProviderAccuracyTest extends TestCase {
      * <p>
      * Creates an instance and checks its instantiation and the variable initialization.
      * </p>
-     * 
+     *
      * @throws Exception
      *             throw exception to JUnit.
      */

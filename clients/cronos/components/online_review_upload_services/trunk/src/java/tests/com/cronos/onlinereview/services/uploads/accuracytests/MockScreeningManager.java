@@ -11,7 +11,7 @@ import com.cronos.onlinereview.autoscreening.management.ScreeningTaskDoesNotExis
 
 /**
  * A mock implementation of ScreeningManager.
- * 
+ *
  * @author kshatriyan
  * @version 1.0
  */
@@ -29,7 +29,7 @@ public class MockScreeningManager implements ScreeningManager {
 
     /**
      * Mock implementation.
-     * 
+     *
      * @param arg0
      *            project id
      * @param arg1
@@ -47,7 +47,7 @@ public class MockScreeningManager implements ScreeningManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            id
      * @return always null
@@ -63,7 +63,7 @@ public class MockScreeningManager implements ScreeningManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            id
      * @return always null
@@ -79,7 +79,7 @@ public class MockScreeningManager implements ScreeningManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            id
      * @param arg1

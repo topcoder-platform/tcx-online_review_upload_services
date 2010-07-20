@@ -48,7 +48,6 @@ public class InvalidSubmissionExceptionTest extends TestCase {
      * Throwable cause, long submissionId)}</code>
      * constructor. Creates an instance and get its attributes for test.
      * </p>
-     *
      */
     public void testInvalidSubmissionException_accuracy_2() {
         InvalidSubmissionException exception = new InvalidSubmissionException(TestHelper.EXCEPTION_MESSAGE,
@@ -66,7 +65,6 @@ public class InvalidSubmissionExceptionTest extends TestCase {
      * <p>
      * Expects the same which is set.
      * </p>
-     *
      */
     public void testGetSubmissionId_accuracy() {
         InvalidSubmissionException exception = new InvalidSubmissionException(TestHelper.EXCEPTION_MESSAGE,

@@ -30,7 +30,6 @@ public interface ManagersProvider {
      * retrieve this manager and perform all its operations.
      * </p>
      *
-     *
      * @return a <code>ResourceManager</code> instance
      */
     public ResourceManager getResourceManager();

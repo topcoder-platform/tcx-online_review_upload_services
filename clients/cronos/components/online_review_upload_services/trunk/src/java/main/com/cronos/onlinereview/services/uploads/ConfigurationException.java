@@ -24,8 +24,7 @@ public class ConfigurationException extends UploadServicesException {
      * Constructs the exception with error message.
      * </p>
      *
-     * @param message
-     *            the error message
+     * @param message the error message
      */
     public ConfigurationException(String message) {
         super(message);
@@ -36,10 +35,8 @@ public class ConfigurationException extends UploadServicesException {
      * Constructs the exception with error message and inner cause.
      * </p>
      *
-     * @param message
-     *            the error message
-     * @param cause
-     *            the cause of this exception
+     * @param message the error message
+     * @param cause   the cause of this exception
      */
     public ConfigurationException(String message, Throwable cause) {
         super(message, cause);

@@ -33,7 +33,6 @@ public class InvalidProjectExceptionTest extends TestCase {
      * <code>{@link InvalidProjectException#InvalidProjectException(String message, long projectId)}</code>
      * constructor. Creates an instance and get its attributes for test.
      * </p>
-     *
      */
     public void testInvalidProjectException_accuracy_1() {
         InvalidProjectException exception = new InvalidProjectException(TestHelper.EXCEPTION_MESSAGE,
@@ -49,7 +48,6 @@ public class InvalidProjectExceptionTest extends TestCase {
      * long projectId)}</code>
      * constructor. Creates an instance and get its attributes for test.
      * </p>
-     *
      */
     public void testInvalidProjectException_accuracy_2() {
         InvalidProjectException exception = new InvalidProjectException(TestHelper.EXCEPTION_MESSAGE,
@@ -67,7 +65,6 @@ public class InvalidProjectExceptionTest extends TestCase {
      * <p>
      * Expects the same which is set.
      * </p>
-     *
      */
     public void testGetProjectId_accuracy() {
         InvalidProjectException exception = new InvalidProjectException(TestHelper.EXCEPTION_MESSAGE,

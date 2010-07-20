@@ -13,7 +13,7 @@ import com.cronos.onlinereview.services.uploads.UploadServicesException;
  * <p>
  * This Junit Test suite contains the accuracy test cases for {@link UploadServicesException} class.
  * </p>
- * 
+ *
  * @author kshatriyan
  * @version 1.0
  */
@@ -28,7 +28,7 @@ public class UploadServicesExceptionAccuracyTest extends TestCase {
      * <p>
      * Aggregates all tests in this class.
      * </p>
-     * 
+     *
      * @return Test suite aggregating all tests.
      */
     public static Test suite() {

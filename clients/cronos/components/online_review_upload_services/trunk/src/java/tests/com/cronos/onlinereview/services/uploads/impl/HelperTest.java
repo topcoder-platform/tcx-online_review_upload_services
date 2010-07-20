@@ -3,15 +3,14 @@
  */
 package com.cronos.onlinereview.services.uploads.impl;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import com.cronos.onlinereview.services.uploads.ConfigurationException;
 import com.cronos.onlinereview.services.uploads.TestHelper;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.util.log.Log;
-import com.topcoder.util.log.LogManager;
+import com.topcoder.util.log.LogFactory;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * <p>
@@ -27,7 +26,7 @@ public class HelperTest extends TestCase {
      * Logger used during tesing.
      * </p>
      */
-    private static final Log LOG = LogManager.getLog();
+    private static final Log LOG = LogFactory.getLog();
 
     /**
      * <p>
@@ -42,13 +41,12 @@ public class HelperTest extends TestCase {
 
     /**
      * <p>
-     * Accuracy test of <code>{@link Helper#checkNull(Object obj, String paramName)}</code> method.
+     * Accuracy test of <code>{@link Helper#checkNull(Object, String, Log)}</code> method.
      * </p>
      *
      * <p>
      * Nothing happens for a valid object.
      * </p>
-     *
      */
     public void testCheckNull_accuracy() {
         Helper.checkNull(new Object(), "paramName", LOG);
@@ -56,7 +54,7 @@ public class HelperTest extends TestCase {
 
     /**
      * <p>
-     * Failure test of <code>{@link Helper#checkNull(Object obj, String paramName)}</code> method.
+     * Failure test of <code>{@link Helper#checkNull(Object, String, Log)}</code> method.
      * </p>
      *
      * <p>
@@ -66,7 +64,6 @@ public class HelperTest extends TestCase {
      * <p>
      * Expects <code>IllegalArgumentException</code>.
      * </p>
-     *
      */
     public void testCheckNull_failure() {
         try {
@@ -79,13 +76,12 @@ public class HelperTest extends TestCase {
 
     /**
      * <p>
-     * Accuracy test of <code>{@link Helper#checkString(String str, String paramName)}</code> method.
+     * Accuracy test of <code>{@link Helper#checkString(String, String, Log)}</code> method.
      * </p>
      *
      * <p>
      * Nothing happens for a valid string.
      * </p>
-     *
      */
     public void testCheckString_accuracy() {
         Helper.checkString("str", "paramName", LOG);
@@ -93,7 +89,7 @@ public class HelperTest extends TestCase {
 
     /**
      * <p>
-     * Failure test of <code>{@link Helper#checkString(String str, String paramName)}</code> method.
+     * Failure test of <code>{@link Helper#checkString(String, String, Log)}</code> method.
      * </p>
      *
      * <p>
@@ -103,7 +99,6 @@ public class HelperTest extends TestCase {
      * <p>
      * Expects <code>IllegalArgumentException</code>.
      * </p>
-     *
      */
     public void testCheckString_failure_1() {
         try {
@@ -116,7 +111,7 @@ public class HelperTest extends TestCase {
 
     /**
      * <p>
-     * Failure test of <code>{@link Helper#checkString(String str, String paramName)}</code> method.
+     * Failure test of <code>{@link Helper#checkString(String, String, Log)}</code> method.
      * </p>
      *
      * <p>
@@ -126,7 +121,6 @@ public class HelperTest extends TestCase {
      * <p>
      * Expects <code>IllegalArgumentException</code>.
      * </p>
-     *
      */
     public void testCheckString_failure_2() {
         try {
@@ -145,7 +139,6 @@ public class HelperTest extends TestCase {
      * <p>
      * Nothing happens for a valid id.
      * </p>
-     *
      */
     public void testCheckId_accuracy() {
         Helper.checkId(1, "paramName", LOG);
@@ -163,7 +156,6 @@ public class HelperTest extends TestCase {
      * <p>
      * Expects <code>IllegalArgumentException</code>.
      * </p>
-     *
      */
     public void testCheckId_failure() {
         try {
@@ -186,7 +178,6 @@ public class HelperTest extends TestCase {
      * <p>
      * Expects <code>ConfigurationException</code>.
      * </p>
-     *
      */
     public void testcreateObject_failure_1() {
         try {
@@ -208,8 +199,7 @@ public class HelperTest extends TestCase {
      * objectFactoryNamespace is null
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testcreateObject_accuracy() throws Exception {
         TestHelper.loadConfigs("config.xml");

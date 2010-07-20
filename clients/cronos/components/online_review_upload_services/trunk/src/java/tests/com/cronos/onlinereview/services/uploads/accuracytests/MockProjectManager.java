@@ -156,4 +156,9 @@ public class MockProjectManager implements ProjectManager {
     public ProjectPropertyType[] getAllProjectPropertyTypes() throws PersistenceException {
         return null;
     }
+
+	public Project[] getProjectsByCreateDate(int arg0)
+			throws PersistenceException {
+		return null;
+	}
 }

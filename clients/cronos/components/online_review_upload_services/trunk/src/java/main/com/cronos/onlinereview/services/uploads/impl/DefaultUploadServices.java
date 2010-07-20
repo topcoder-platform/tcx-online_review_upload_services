@@ -1,23 +1,7 @@
 /*
- * Copyright (C) 2007 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2010 TopCoder Inc., All Rights Reserved.
  */
-
 package com.cronos.onlinereview.services.uploads.impl;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 import com.cronos.onlinereview.autoscreening.management.ScreeningTaskAlreadyExistsException;
 import com.cronos.onlinereview.external.ConfigException;
@@ -41,6 +25,7 @@ import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
 import com.topcoder.db.connectionfactory.UnknownConnectionException;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.SubmissionStatus;
+import com.topcoder.management.deliverable.SubmissionType;
 import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.UploadStatus;
@@ -65,6 +50,22 @@ import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.UnknownNamespaceException;
 import com.topcoder.util.log.Level;
+import com.topcoder.util.log.LogFactory;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -75,7 +76,7 @@ import com.topcoder.util.log.Level;
  * </p>
  * <p>
  * A sample configuration file that can be used is given below.
- * 
+ *
  * <pre>
  *  &lt;Config name=&quot;com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices&quot;&gt;
  *      &lt;Property name=&quot;objectFactoryNamespace&quot;&gt;
@@ -86,15 +87,20 @@ import com.topcoder.util.log.Level;
  *      &lt;/Property&gt;
  *  &lt;/Config&gt;
  * </pre>
- * 
  * </p>
+ *
+ * <p>
+ * Changes in version 1.1: Added
+ * <code>{@link DefaultUploadServices#uploadSpecification(long, long, String)}</code> method.
+ * </p>
+ *
  * <p>
  * Thread safety: the thread safety is completely relied to the managers implementations because it's impossible to
  * change the other variables.
  * </p>
- * 
- * @author fabrizyo, cyberjag
- * @version 1.0
+ *
+ * @author fabrizyo, saarixx, cyberjag, TCSDEVELOPER
+ * @version 1.1
  */
 public class DefaultUploadServices implements UploadServices {
 
@@ -113,17 +119,17 @@ public class DefaultUploadServices implements UploadServices {
     public static final String DEFAULT_NAMESPACE = DefaultUploadServices.class.getName();
 
     /**
-     * Namespace used for the config details.
-     */
-    private final String namespace;
-
-    /**
      * <p>
      * Represents the logger to log all operations, exceptions, etc. It is initialized statically.
      * </p>
      */
-    private static final com.topcoder.util.log.Log LOG = com.topcoder.util.log.LogManager
-            .getLog(DefaultUploadServices.class.getName());
+    private static final com.topcoder.util.log.Log LOG = LogFactory.getLog(DefaultUploadServices.class.getName());
+
+    /**
+     * <p>The namespace used for the config details. Is initialized in the constructor and never changed after that.
+     * Cannot be null or empty. Is used in addSubmitter().</p>
+     */
+    private final String namespace;
 
     /**
      * <p>
@@ -138,11 +144,11 @@ public class DefaultUploadServices implements UploadServices {
      * <p>
      * Creates <code>DefaultUploadServices</code> with the specified managersProvider.
      * </p>
-     * 
-     * @param managersProvider
-     *            the provider of managers used by this class
-     * @throws IllegalArgumentException
-     *             if managersProvider argument is <code>null</code>
+     *
+     * @param managersProvider the provider of managers used by this class
+     *
+     * @throws IllegalArgumentException if managersProvider argument is <code>null</code>
+     * @since 1.0
      */
     public DefaultUploadServices(ManagersProvider managersProvider) {
         Helper.checkNull(managersProvider, "managersProvider", LOG);
@@ -154,9 +160,10 @@ public class DefaultUploadServices implements UploadServices {
      * <p>
      * Creates <code>DefaultUploadServices</code> using the configuration with default namespace.
      * </p>
-     * 
-     * @throws ConfigurationException
-     *             If any error occurs during accessing configuration. If bad configuration is detected.
+     *
+     * @throws ConfigurationException If any error occurs during accessing configuration.
+     *                                If bad configuration is detected.
+     * @since 1.0
      */
     public DefaultUploadServices() throws ConfigurationException {
         this(DEFAULT_NAMESPACE);
@@ -166,13 +173,13 @@ public class DefaultUploadServices implements UploadServices {
      * <p>
      * Creates <code>DefaultUploadServices</code> using the configuration with specified namespace.
      * </p>
-     * 
-     * @param namespace
-     *            the namespace to load configuration
-     * @throws ConfigurationException
-     *             If any error occurs during accessing configuration. If bad configuration is detected.
-     * @throws IllegalArgumentException
-     *             if namespace is <code>null</code> or trim to empty
+     *
+     * @param namespace the namespace to load configuration
+     *
+     * @throws ConfigurationException   If any error occurs during accessing configuration.
+     *                                  If bad configuration is detected.
+     * @throws IllegalArgumentException if namespace is <code>null</code> or trim to empty
+     * @since 1.0
      */
     public DefaultUploadServices(String namespace) throws ConfigurationException {
         Helper.checkString(namespace, "namespace", LOG);
@@ -195,26 +202,24 @@ public class DefaultUploadServices implements UploadServices {
      * submission are not allowed for the project firstly, it will add the new submission, secondly mark previous
      * submissions as deleted and then return.
      * </p>
-     * 
-     * @param projectId
-     *            the project's id
-     * @param userId
-     *            the user's id
-     * @param filename
-     *            the file name to use
+     *
+     * <p>
+     * Changes in 1.1: Added a step for setting submissionType of the created submission.
+     * </p>
+     *
+     * @param projectId the project's id
+     * @param userId    the user's id
+     * @param filename  the file name to use
+     *
      * @return the id of the new submission
-     * @throws PersistenceException
-     *             if some error occurs in persistence layer
-     * @throws UploadServicesException
-     *             if some other exception occurs in the process (wrap it)
-     * @throws InvalidProjectException
-     *             if the project does not exist
-     * @throws InvalidProjectPhaseException
-     *             if neither Submission or Screening phase are opened
-     * @throws InvalidUserException
-     *             if the user does not exist or has not the submitter role
-     * @throws IllegalArgumentException
-     *             if any id is &lt; 0, if filename is <code>null</code> or trim to empty
+     *
+     * @throws PersistenceException         if some error occurs in persistence layer
+     * @throws UploadServicesException      if some other exception occurs in the process (wrap it)
+     * @throws InvalidProjectException      if the project does not exist
+     * @throws InvalidProjectPhaseException if neither Submission or Screening phase are opened
+     * @throws InvalidUserException         if the user does not exist or has not the submitter role
+     * @throws IllegalArgumentException     if any id is &lt; 0, if filename is <code>null</code> or trim to empty
+     * @since 1.0
      */
     public long uploadSubmission(long projectId, long userId, String filename) throws UploadServicesException {
         Helper.logFormat(LOG, Level.DEBUG, "Entered DefaultUploadServices#uploadSubmission(long, long, String)");
@@ -228,19 +233,19 @@ public class DefaultUploadServices implements UploadServices {
         // check that the user exists and has the submitter role
         Resource resource = null;
         try {
-        	resource = getResource(projectId, userId, new String[] {"Submitter"});
+            resource = getResource(projectId, userId, new String[]{"Submitter"});
         } catch (InvalidUserException e) {
-        	Helper.logFormat(LOG, Level.INFO, "Creating submitter role for user: {0} in project {1}",
-                    new Object[] {userId, projectId});
-			try {
-				resource = managersProvider.getResourceManager().getResource(addSubmitter(projectId, userId));
-			} catch (ResourcePersistenceException e1) {
-				Helper.logFormat(LOG, Level.ERROR, e, "Failed to create submitter for user: {0} and project {1}.",
-	                    new Object[] {userId, projectId});
-	            throw new UploadServicesException("Failed to create submitter for user: " + userId + " and project "
-	                    + projectId + ".", e);
-			}
-		}
+            Helper.logFormat(LOG, Level.INFO, "Creating submitter role for user: {0} in project {1}",
+                    new Object[]{userId, projectId});
+            try {
+                resource = managersProvider.getResourceManager().getResource(addSubmitter(projectId, userId));
+            } catch (ResourcePersistenceException e1) {
+                Helper.logFormat(LOG, Level.ERROR, e, "Failed to create submitter for user: {0} and project {1}.",
+                        new Object[]{userId, projectId});
+                throw new UploadServicesException("Failed to create submitter for user: " + userId + " and project "
+                        + projectId + ".", e);
+            }
+        }
 
         try {
             com.topcoder.project.phases.Project projectPhases = managersProvider.getPhaseManager().getPhases(
@@ -250,44 +255,41 @@ public class DefaultUploadServices implements UploadServices {
             for (Phase phase : phases) {
                 if (phase.getPhaseType() != null) {
                     Helper.logFormat(LOG, Level.INFO, "Looping through phase {0} of the project.",
-                            new Object[] {phase.getPhaseType().getName()});
+                            new Object[]{phase.getPhaseType().getName()});
                 }
                 if (phase.getPhaseType() != null
                         && ("Submission".equals(phase.getPhaseType().getName()) || "Screening".equals(phase
-                                .getPhaseType().getName()))) {
+                        .getPhaseType().getName()))) {
                     Helper.logFormat(LOG, Level.INFO, "Current status for the phase {0} is {1} of the project.",
-                            new Object[] {phase.getPhaseType().getName(), phase.getPhaseStatus().getName()});
+                            new Object[]{phase.getPhaseType().getName(), phase.getPhaseStatus().getName()});
                     // check if submission or screening phase are open checking its the status
                     if (PhaseStatus.OPEN.getName().equals(phase.getPhaseStatus().getName())) {
                         // create a new Submission
                         Submission submission = new Submission();
 
                         Helper.logFormat(LOG, Level.INFO,
-                                "Current status for the phase {0} is {1} of the project.", new Object[] {
+                                "Current status for the phase {0} is {1} of the project.", new Object[]{
                                         phase.getPhaseType().getName(), phase.getPhaseStatus().getName()});
-                        // iterate over all SubmissionStatuses, get the SubmissionStatus with name "Active"
-                        // and set to submission
-                        SubmissionStatus[] submissionStatus = managersProvider.getUploadManager()
-                                .getAllSubmissionStatuses();
-                        for (SubmissionStatus status : submissionStatus) {
-                            if ("Active".equals(status.getName())) {
-                                submission.setSubmissionStatus(status);
-                                break;
-                            }
-                        }
+
+                        // gets the SubmissionStatus with name "Active" and set to submission
+                        submission.setSubmissionStatus(getSubmissionStatusByName("Active"));
+
+                        // Added in version 1.1
+                        // gets the SubmissionType with name "Contest Submission" and sets it to created submission
+                        submission.setSubmissionType(getSubmissionTypeByName("Contest Submission"));
 
                         Upload upload = createUpload(projectId, resource.getId(), filename, "Submission");
                         Helper.logFormat(LOG, Level.INFO,
                                 "Upload created for the  projectId {0}, userId {1} with filename {2}.",
-                                new Object[] {projectId, userId, filename});
+                                new Object[]{projectId, userId, filename});
 
-                        String operator = "" + userId;
+                        String operator = String.valueOf(userId);
                         // persist the upload
                         managersProvider.getUploadManager().createUpload(upload, operator);
 
                         Helper.logFormat(LOG, Level.INFO,
                                 "Created submission Upload for project {0}, user {1} with file name {2}.",
-                                new Object[] {projectId, userId, filename});
+                                new Object[]{projectId, userId, filename});
 
                         // set the upload.
                         submission.setUpload(upload);
@@ -297,24 +299,24 @@ public class DefaultUploadServices implements UploadServices {
                         managersProvider.getUploadManager().createSubmission(submission, operator);
 
                         Helper.logFormat(LOG, Level.INFO, "Created submission for project {0}, user {1}.",
-                                new Object[] {projectId, userId});
+                                new Object[]{projectId, userId});
 
                         // associate the submission with the submitter resource
                         resource.addSubmission(submission.getId());
 
                         Helper.logFormat(LOG, Level.INFO, "Added submission {0} to resource.",
-                                new Object[] {submission.getId()});
+                                new Object[]{submission.getId()});
 
                         // Persist the resource using ResourceManager#updateResource
                         managersProvider.getResourceManager().updateResource(resource, operator);
 
                         Helper.logFormat(LOG, Level.INFO, "Updated resource using the operator {0}.",
-                                new Object[] {operator});
+                                new Object[]{operator});
 
                         // initiate the screening
                         managersProvider.getScreeningManager().initiateScreening(upload.getId(), operator);
                         Helper.logFormat(LOG, Level.INFO,
-                                "Initiated screening for submission {0} using operator {1}.", new Object[] {
+                                "Initiated screening for submission {0} using operator {1}.", new Object[]{
                                         submission.getId(), operator});
 
                         // If the project DOESN'T allow multiple submissions hence its property "Allow
@@ -323,10 +325,10 @@ public class DefaultUploadServices implements UploadServices {
                                 .getProperty("Allow multiple submissions"));
 
                         if (!allow) {
-                            deletePreviousSubmissions(userId, resource, submissionStatus);
+                            deletePreviousSubmissions(userId, resource);
                             Helper.logFormat(LOG, Level.INFO,
                                     "Marked previous submissions for deletion for the user {0}.",
-                                    new Object[] {userId});
+                                    new Object[]{userId});
                         }
 
                         return submission.getId();
@@ -335,31 +337,31 @@ public class DefaultUploadServices implements UploadServices {
                 } // end of Submission or Screening
             } // end of for loop
             Helper.logFormat(LOG, Level.ERROR, "Failed to upload submission for the projectId {0}, userId {1}",
-                    new Object[] {project.getId(), userId});
+                    new Object[]{project.getId(), userId});
             throw new InvalidProjectException("Failed to upload submission for the project", project.getId());
         } catch (PhaseManagementException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload submission for user {0} and project {1}.",
-                    new Object[] {userId, projectId});
+                    new Object[]{userId, projectId});
             throw new UploadServicesException("Failed to upload submission for user " + userId + " and project "
                     + projectId + ".", e);
         } catch (UploadPersistenceException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload submission for user {0} and project {1}.",
-                    new Object[] {userId, projectId});
+                    new Object[]{userId, projectId});
             throw new PersistenceException("Failed to upload submission for user " + userId + " and project "
                     + projectId + ".", e);
         } catch (com.cronos.onlinereview.autoscreening.management.PersistenceException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload submission for user {0} and project {1}.",
-                    new Object[] {userId, projectId});
+                    new Object[]{userId, projectId});
             throw new PersistenceException("Failed to upload submission for user " + userId + " and project "
                     + projectId + ".", e);
         } catch (ScreeningTaskAlreadyExistsException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload submission for user {0} and project {1}.",
-                    new Object[] {userId, projectId});
+                    new Object[]{userId, projectId});
             throw new UploadServicesException("Failed to upload submission for user " + userId + " and project "
                     + projectId + ".", e);
         } catch (ResourcePersistenceException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload submission for user {0} and project {1}.",
-                    new Object[] {userId, projectId});
+                    new Object[]{userId, projectId});
             throw new UploadServicesException("Failed to upload submission for user " + userId + " and project "
                     + projectId + ".", e);
         } finally {
@@ -374,26 +376,20 @@ public class DefaultUploadServices implements UploadServices {
      * Adds a new final fix upload for an user in a particular project. This submission always overwrite the
      * previous ones.
      * </p>
-     * 
-     * @param projectId
-     *            the project's id
-     * @param userId
-     *            the user's id
-     * @param filename
-     *            the file name to use
+     *
+     * @param projectId the project's id
+     * @param userId    the user's id
+     * @param filename  the file name to use
+     *
      * @return the id of the created final fix submission.
-     * @throws InvalidProjectException
-     *             if the project does not exist
-     * @throws InvalidProjectPhaseException
-     *             if Final Fix phase is not opened
-     * @throws InvalidUserException
-     *             if the user does not exist or she/he is not winner submitter
-     * @throws PersistenceException
-     *             if some error occurs in persistence layer
-     * @throws UploadServicesException
-     *             if some other exception occurs in the process (wrap it)
-     * @throws IllegalArgumentException
-     *             if any id is &lt; 0, if filename is <code>null</code> or trim to empty
+     *
+     * @throws InvalidProjectException      if the project does not exist
+     * @throws InvalidProjectPhaseException if Final Fix phase is not opened
+     * @throws InvalidUserException         if the user does not exist or she/he is not winner submitter
+     * @throws PersistenceException         if some error occurs in persistence layer
+     * @throws UploadServicesException      if some other exception occurs in the process (wrap it)
+     * @throws IllegalArgumentException     if any id is &lt; 0, if filename is <code>null</code> or trim to empty
+     * @since 1.0
      */
     public long uploadFinalFix(long projectId, long userId, String filename) throws UploadServicesException {
         Helper.logFormat(LOG, Level.DEBUG, "Entered DefaultUploadServices#uploadFinalFix(long, long, String)");
@@ -405,12 +401,24 @@ public class DefaultUploadServices implements UploadServices {
         Project project = getProject(projectId);
 
         // check that the user exists and has the submitter role
-        Resource resource = getResource(projectId, userId, new String[] {"Submitter"});
+        Resource resource = getResource(projectId, userId, new String[]{"Submitter"});
 
         // Check that the user is the winner
-        Long winnerId = new Long(Long.parseLong(project.getProperty("Winner External Reference ID")));
-        if (winnerId != userId) {
-            throw new InvalidUserException("The given user is not the winner", userId);
+        // modified in version 1.1
+        Long winnerId;
+        try {
+            winnerId = getProjectLongValue(project, "Winner External Reference ID");
+
+            if (winnerId != userId) {
+                throw new InvalidUserException("The given user is not the winner", userId);
+            }
+        } catch (NumberFormatException exc) {
+            Helper.logFormat(LOG, Level.ERROR, exc, "Can not parse property 'Winner External Reference ID'" +
+                    " for user {0} and project {1}.",
+                    new Object[]{userId, projectId});
+
+            throw new UploadServicesException("Can not parse property 'Winner External Reference ID' for user "
+                    + userId + " and project " + projectId + ".", exc);
         }
 
         try {
@@ -426,7 +434,7 @@ public class DefaultUploadServices implements UploadServices {
                         // create a new Upload
                         Upload upload = createUpload(projectId, resource.getId(), filename, "Final Fix");
 
-                        String operator = "" + userId;
+                        String operator = String.valueOf(userId);
 
                         UploadManager uploadManager = managersProvider.getUploadManager();
 
@@ -435,7 +443,7 @@ public class DefaultUploadServices implements UploadServices {
 
                         Helper.logFormat(LOG, Level.INFO,
                                 "Created final fix Upload for project {0}, user {1} with file name {2}.",
-                                new Object[] {projectId, userId, filename});
+                                new Object[]{projectId, userId, filename});
 
                         // delete previous final fixes
                         Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
@@ -443,7 +451,7 @@ public class DefaultUploadServices implements UploadServices {
                         Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(upload.getUploadType()
                                 .getId());
 
-                        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterResource,
+                        Filter filter = new AndFilter(Arrays.asList(new Filter[]{filterProject, filterResource,
                                 filterType}));
 
                         Upload[] uploads = uploadManager.searchUploads(filter);
@@ -455,34 +463,34 @@ public class DefaultUploadServices implements UploadServices {
 
                         Helper.logFormat(LOG, Level.INFO,
                                 "Marked previous final fixes for deletion for the user {0}.",
-                                new Object[] {userId});
+                                new Object[]{userId});
 
                         return upload.getId();
 
                     }
                     Helper.logFormat(LOG, Level.ERROR,
-                            "The 'Final Fix' phase is not OPEN for phaseId {0}, userId {1}", new Object[] {
+                            "The 'Final Fix' phase is not OPEN for phaseId {0}, userId {1}", new Object[]{
                                     phase.getId(), userId});
                     throw new InvalidProjectPhaseException("The 'Final Fix' phase is not OPEN", phase.getId());
                 } // end of if Final Fix
 
             } // end of for loop
             Helper.logFormat(LOG, Level.ERROR, "Failed to upload final fix for the projectId {0}",
-                    new Object[] {project.getId()});
+                    new Object[]{project.getId()});
             throw new InvalidProjectException("Failed to upload final fix for the project", project.getId());
         } catch (PhaseManagementException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload final fix for user {0} and project {1}.",
-                    new Object[] {userId, projectId});
+                    new Object[]{userId, projectId});
             throw new UploadServicesException("Failed to upload final fix for user " + userId + " and project "
                     + projectId + ".", e);
         } catch (UploadPersistenceException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload final fix for user {0} and project {1}.",
-                    new Object[] {userId, projectId});
+                    new Object[]{userId, projectId});
             throw new PersistenceException("Failed to upload final fix for user " + userId + " and project "
                     + projectId + ".", e);
         } catch (SearchBuilderException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload final fix for user {0} and project {1}.",
-                    new Object[] {userId, projectId});
+                    new Object[]{userId, projectId});
             throw new PersistenceException("Failed to upload final fix for user " + userId + " and project "
                     + projectId + ".", e);
         } finally {
@@ -495,24 +503,19 @@ public class DefaultUploadServices implements UploadServices {
      * Adds a new test case upload for an user in a particular project. This submission always overwrite the
      * previous ones.
      * </p>
-     * 
-     * @param projectId
-     *            the project's id
-     * @param userId
-     *            the user's id
-     * @param filename
-     *            the file name to use
+     *
+     * @param projectId the project's id
+     * @param userId    the user's id
+     * @param filename  the file name to use
+     *
      * @return the id of the created test cases submission
-     * @throws InvalidProjectException
-     *             if the project does not exist
-     * @throws InvalidUserException
-     *             if the user does not exist or has not the reviewer role
-     * @throws PersistenceException
-     *             if some error occurs in persistence layer
-     * @throws UploadServicesException
-     *             if some other exception occurs in the process (wrap it)
-     * @throws IllegalArgumentException
-     *             if any id is &lt; 0, if filename is <code>null</code> or trim to empty
+     *
+     * @throws InvalidProjectException  if the project does not exist
+     * @throws InvalidUserException     if the user does not exist or has not the reviewer role
+     * @throws PersistenceException     if some error occurs in persistence layer
+     * @throws UploadServicesException  if some other exception occurs in the process (wrap it)
+     * @throws IllegalArgumentException if any id is &lt; 0, if filename is <code>null</code> or trim to empty
+     * @since 1.0
      */
     public long uploadTestCases(long projectId, long userId, String filename) throws UploadServicesException {
         Helper.logFormat(LOG, Level.DEBUG, "Entered DefaultUploadServices#uploadTestCases(long, long, String)");
@@ -524,7 +527,7 @@ public class DefaultUploadServices implements UploadServices {
         Project project = getProject(projectId);
 
         // check that the user exists and has the reviewer role
-        Resource resource = getResource(projectId, userId, new String[] {"Accuracy Reviewer", "Failure Reviewer",
+        Resource resource = getResource(projectId, userId, new String[]{"Accuracy Reviewer", "Failure Reviewer",
                 "Stress Reviewer"});
 
         try {
@@ -541,12 +544,12 @@ public class DefaultUploadServices implements UploadServices {
                         // create a new Upload
                         Upload upload = createUpload(projectId, resource.getId(), filename, "Test Case");
 
-                        String operator = "" + userId;
+                        String operator = String.valueOf(userId);
                         // persist the upload
                         managersProvider.getUploadManager().createUpload(upload, operator);
                         Helper.logFormat(LOG, Level.INFO,
                                 "Created test cases Upload for project {0}, user {1} with file name {2}.",
-                                new Object[] {projectId, userId, filename});
+                                new Object[]{projectId, userId, filename});
 
                         // delete the previous submissions
                         Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
@@ -556,7 +559,7 @@ public class DefaultUploadServices implements UploadServices {
                         Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(upload.getUploadType()
                                 .getId());
 
-                        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterResource,
+                        Filter filter = new AndFilter(Arrays.asList(new Filter[]{filterProject, filterResource,
                                 filterStatus, filterType}));
 
                         Upload[] uploads = managersProvider.getUploadManager().searchUploads(filter);
@@ -570,33 +573,33 @@ public class DefaultUploadServices implements UploadServices {
                         Helper
                                 .logFormat(LOG, Level.INFO,
                                         "Marked previous test cases for deletion for the user {0}.",
-                                        new Object[] {userId});
+                                        new Object[]{userId});
 
                         return upload.getId();
                     }
 
                     Helper.logFormat(LOG, Level.ERROR, "The 'Review' phase is not OPEN for phaseId {0}",
-                            new Object[] {phase.getId()});
+                            new Object[]{phase.getId()});
                     throw new InvalidProjectPhaseException("The 'Review' phase is not OPEN", phase.getId());
                 } // end of if Review
 
             } // end of for loop
             Helper.logFormat(LOG, Level.ERROR, "Failed to upload test case for the projectId {0}",
-                    new Object[] {project.getId()});
+                    new Object[]{project.getId()});
             throw new InvalidProjectException("Failed to upload test case for the project", project.getId());
         } catch (PhaseManagementException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload testcases for user {0} and project {1}.",
-                    new Object[] {userId, projectId});
+                    new Object[]{userId, projectId});
             throw new UploadServicesException("Failed to upload testcases for user " + userId + " and project "
                     + projectId + ".", e);
         } catch (UploadPersistenceException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload testcases for user {0} and project {1}.",
-                    new Object[] {userId, projectId});
+                    new Object[]{userId, projectId});
             throw new PersistenceException("Failed to upload testcases for user " + userId + " and project "
                     + projectId + ".", e);
         } catch (SearchBuilderException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload testcases for user {0} and project {1}.",
-                    new Object[] {userId, projectId});
+                    new Object[]{userId, projectId});
             throw new PersistenceException("Failed to upload testcases for user " + userId + " and project "
                     + projectId + ".", e);
         } finally {
@@ -605,24 +608,153 @@ public class DefaultUploadServices implements UploadServices {
     }
 
     /**
+     * <p>Adds a specification submission for a user in a particular project.</p>
+     *
+     * @param projectId the project's id
+     * @param userId    the user's id.
+     * @param filename  the file name to use.
+     *
+     * @return the id of the new submission.
+     *
+     * @throws IllegalArgumentException     if any id is < 0, if filename is null or trim to empty
+     * @throws InvalidProjectException      if the project doesn't exist.
+     * @throws InvalidProjectPhaseException if Specification Submission phase is not opened.
+     * @throws InvalidUserException         if the user doesn't exist or hasn't the Specification Submitter role.
+     * @throws PersistenceException         if some error occurs in persistence layer
+     * @throws UploadServicesException      if some other exception occurs in the process (wrap it)
+     * @since 1.1
+     */
+    public long uploadSpecification(long projectId, long userId, String filename) throws UploadServicesException {
+        // log method entry
+        Helper.logFormat(LOG, Level.DEBUG, "Entered DefaultUploadServices#uploadSpecification(long, long, String)");
+
+        // validate input
+        Helper.checkId(projectId, "projectId", LOG);
+        Helper.checkId(userId, "userId", LOG);
+        Helper.checkString(filename, "filename", LOG);
+
+        // get the project by it's id
+        Project project = getProject(projectId);
+
+        // check that the user exists and has the Specification submitter role
+        // it may throw InvalidUserException
+        Resource resource = getResource(projectId, userId, new String[]{"Specification Submitter"});
+
+        try {
+            // get all project phases
+            com.topcoder.project.phases.Project projectPhases = managersProvider.getPhaseManager().getPhases(
+                    projectId);
+            Phase[] phases = projectPhases.getAllPhases();
+
+            // iterate over the phases to find if the "Specification Submission" phase
+            for (Phase phase : phases) {
+                if (phase.getPhaseType() != null
+                        && ("Specification Submission".equals(phase.getPhaseType().getName()))) {
+
+                    Helper.logFormat(LOG, Level.INFO, "Current status for the phase {0} is {1} of the project.",
+                            new Object[]{phase.getPhaseType().getName(), phase.getPhaseStatus().getName()});
+
+                    // check if specification submission phase is open
+                    if (PhaseStatus.OPEN.getName().equals(phase.getPhaseStatus().getName())) {
+                        // create a new Submission
+                        Submission submission = new Submission();
+
+                        Helper.logFormat(LOG, Level.INFO,
+                                "Current status for the phase {0} is {1} of the project.", new Object[]{
+                                        phase.getPhaseType().getName(), phase.getPhaseStatus().getName()});
+
+                        // gets the SubmissionStatus with name "Active" and sets it to submission
+                        submission.setSubmissionStatus(getSubmissionStatusByName("Active"));
+
+                        // gets the SubmissionType with name "Specification Submission" and sets it to
+                        // submission
+                        submission.setSubmissionType(getSubmissionTypeByName("Specification Submission"));
+
+                        Upload upload = createUpload(projectId, resource.getId(), filename, "Submission");
+                        Helper.logFormat(LOG, Level.INFO,
+                                "Upload created for the  projectId {0}, userId {1} with filename {2}.",
+                                new Object[]{projectId, userId, filename});
+
+                        String operator = String.valueOf(userId);
+                        // persist the upload
+                        managersProvider.getUploadManager().createUpload(upload, operator);
+
+                        Helper.logFormat(LOG, Level.INFO,
+                                "Created specification Upload for project {0}, user {1} with file name {2}.",
+                                new Object[]{projectId, userId, filename});
+
+                        // set the upload.
+                        submission.setUpload(upload);
+
+                        // persist the submission with uploadManager.createSubmission with the useId as
+                        // operator
+                        managersProvider.getUploadManager().createSubmission(submission, operator);
+
+                        Helper.logFormat(LOG, Level.INFO, "Created specification for project {0}, user {1}.",
+                                new Object[]{projectId, userId});
+
+                        // associate the submission with the submitter resource
+                        resource.addSubmission(submission.getId());
+
+                        Helper.logFormat(LOG, Level.INFO, "Added specification {0} to resource.",
+                                new Object[]{submission.getId()});
+
+                        // persist the resource using ResourceManager#updateResource
+                        managersProvider.getResourceManager().updateResource(resource, operator);
+
+                        Helper.logFormat(LOG, Level.INFO, "Updated resource using the operator {0}.",
+                                new Object[]{operator});
+
+                        return submission.getId();
+                    }
+                    // throw exception if phase 'Specification Submission' is not opened
+                    Helper.logFormat(LOG, Level.ERROR,
+                            "The 'Specification Submission' phase is not OPEN for phaseId {0}, userId {1}",
+                            new Object[]{phase.getId(), userId});
+                    throw new InvalidProjectPhaseException("The 'Specification Submission' phase is not OPEN",
+                            phase.getId());
+                }
+                // end of Specification Submission
+            } // end of for loop
+            Helper.logFormat(LOG, Level.ERROR, "Failed to upload specification for the projectId {0}, userId {1}",
+                    new Object[]{project.getId(), userId});
+            throw new InvalidProjectException("Failed to upload specification for the project", project.getId());
+        } catch (PhaseManagementException e) {
+            Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload specification for user {0} and project {1}.",
+                    new Object[]{userId, projectId});
+            throw new UploadServicesException("Failed to upload specification for user " + userId + " and project "
+                    + projectId + ".", e);
+        } catch (UploadPersistenceException e) {
+            Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload specification for user {0} and project {1}.",
+                    new Object[]{userId, projectId});
+            throw new PersistenceException("Failed to upload specification for user " + userId + " and project "
+                    + projectId + ".", e);
+        } catch (ResourcePersistenceException e) {
+            Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload specification for user {0} and project {1}.",
+                    new Object[]{userId, projectId});
+            throw new UploadServicesException("Failed to upload specification for user " + userId + " and project "
+                    + projectId + ".", e);
+        } finally {
+            Helper.logFormat(LOG, Level.DEBUG,
+                    "Exited DefaultUploadServices#uploadSpecification(long, long, String)");
+        }
+    }
+
+    /**
      * <p>
      * Sets the status of a existing submission.
      * </p>
-     * 
-     * @param submissionId
-     *            the submission's id
-     * @param submissionStatusId
-     *            the submission status id
-     * @param operator
-     *            the operator which execute the operation
-     * @throws InvalidSubmissionException
-     *             if the submission does not exist
+     *
+     * @param submissionId       the submission's id
+     * @param submissionStatusId the submission status id
+     * @param operator           the operator which execute the operation
+     *
+     * @throws InvalidSubmissionException if the submission does not exist
      * @throws InvalidSubmissionStatusException
-     *             if the submission status does not exist
-     * @throws PersistenceException
-     *             if some error occurs in persistence layer
-     * @throws IllegalArgumentException
-     *             if any id is &lt; 0 or if operator is null or trim to empty
+     *                                    if the submission status does not exist
+     * @throws PersistenceException       if some error occurs in persistence layer
+     * @throws IllegalArgumentException   if any id is &lt; 0 or if operator is null or trim to empty
+     * @since 1.0
      */
     public void setSubmissionStatus(long submissionId, long submissionStatusId, String operator)
             throws InvalidSubmissionException, InvalidSubmissionStatusException, PersistenceException {
@@ -636,7 +768,7 @@ public class DefaultUploadServices implements UploadServices {
             Submission submission = managersProvider.getUploadManager().getSubmission(submissionId);
             if (submission == null) {
                 Helper.logFormat(LOG, Level.ERROR, "Failed to get submission with the given Id {0}",
-                        new Object[] {submissionId});
+                        new Object[]{submissionId});
                 throw new InvalidSubmissionException("Failed to get submission with the given Id", submissionId);
             }
 
@@ -646,20 +778,20 @@ public class DefaultUploadServices implements UploadServices {
                 if (status.getId() == submissionStatusId) {
                     submission.setSubmissionStatus(status);
                     managersProvider.getUploadManager().updateSubmission(submission, operator);
-                    Helper.logFormat(LOG, Level.INFO, "Updated submission {0} using operator {1}.", new Object[] {
+                    Helper.logFormat(LOG, Level.INFO, "Updated submission {0} using operator {1}.", new Object[]{
                             submission.getId(), operator});
                     return;
                 }
             }
 
             Helper.logFormat(LOG, Level.ERROR, "Failed to get submission status with the given id {0}",
-                    new Object[] {submissionStatusId});
+                    new Object[]{submissionStatusId});
             throw new InvalidSubmissionStatusException("Failed to get submission status with the given id",
                     submissionStatusId);
         } catch (UploadPersistenceException e) {
             Helper.logFormat(LOG, Level.ERROR, e,
                     "Failed to get the submission from persistence, submissionId - {0}, submissionStatusId - {1}",
-                    new Object[] {submissionId, submissionStatusId});
+                    new Object[]{submissionId, submissionStatusId});
             throw new PersistenceException("Failed to get the submission from the persistence", e);
         } finally {
             Helper.logFormat(LOG, Level.DEBUG,
@@ -669,14 +801,14 @@ public class DefaultUploadServices implements UploadServices {
 
     /**
      * Gets the <code>Project</code> from the persistence.
-     * 
-     * @param projectId
-     *            the project id to use
+     *
+     * @param projectId the project id to use
+     *
      * @return the <code>Project</code>
-     * @throws PersistenceException
-     *             if some error occurs in persistence layer
-     * @throws InvalidProjectException
-     *             if the project does not exist
+     *
+     * @throws PersistenceException    if some error occurs in persistence layer
+     * @throws InvalidProjectException if the project does not exist
+     * @since 1.0
      */
     private Project getProject(long projectId) throws PersistenceException, InvalidProjectException {
         Project project;
@@ -684,11 +816,11 @@ public class DefaultUploadServices implements UploadServices {
             project = managersProvider.getProjectManager().getProject(projectId);
         } catch (com.topcoder.management.project.PersistenceException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to get the project with Id {0}",
-                    new Object[] {projectId});
+                    new Object[]{projectId});
             throw new PersistenceException("Failed to get the project with Id " + projectId + ".", e);
         }
         if (project == null) {
-            Helper.logFormat(LOG, Level.ERROR, "Project does not exist - {0}", new Object[] {projectId});
+            Helper.logFormat(LOG, Level.ERROR, "Project does not exist - {0}", new Object[]{projectId});
             throw new InvalidProjectException("Project does not exist", projectId);
         }
         return project;
@@ -696,12 +828,13 @@ public class DefaultUploadServices implements UploadServices {
 
     /**
      * Gets the resource role id for the given role.
-     * 
-     * @param roles
-     *            the roles to use
+     *
+     * @param roles the roles to use
+     *
      * @return the resource role id or zero
-     * @throws UploadServicesException
-     *             if any while executing.
+     *
+     * @throws UploadServicesException if any while executing.
+     * @since 1.0
      */
     private Long[] getSubmitterRoleId(String[] roles) throws UploadServicesException {
         ResourceManager manager = managersProvider.getResourceManager();
@@ -725,22 +858,23 @@ public class DefaultUploadServices implements UploadServices {
 
     /**
      * Gets the <code>Resource</code> associated with the project and user with the given role.
-     * 
-     * @param projectId
-     *            the project id to use
-     * @param userId
-     *            the user's id
-     * @param roles
-     *            the roles for filtering
+     *
+     * @param projectId the project id to use
+     * @param userId    the user's id
+     * @param roles     the roles for filtering
+     *
      * @return the <code>Resource</code>
-     * @throws UploadServicesException
+     *
+     * @throws UploadServicesException if any error occurs
+     * @since 1.0
      */
     private Resource getResource(long projectId, long userId, String[] roles) throws UploadServicesException {
+
         ResourceManager manager = managersProvider.getResourceManager();
         Long[] submitterRoleIds = getSubmitterRoleId(roles);
         if (submitterRoleIds.length == 0) {
             Helper.logFormat(LOG, Level.ERROR, "There is no submitterRoleId for the given userId {0}",
-                    new Object[] {userId});
+                    new Object[]{userId});
             throw new InvalidUserException("There is no submitterRoleId for the given user", userId);
         }
 
@@ -753,26 +887,28 @@ public class DefaultUploadServices implements UploadServices {
         Filter submitterRoleIdFilter = new OrFilter(Arrays.asList(filters));
 
         // create the filter for searching resources
-        AndFilter filter = new AndFilter(Arrays.asList(new Filter[] {submitterRoleIdFilter,
+        AndFilter filter = new AndFilter(Arrays.asList(new Filter[]{submitterRoleIdFilter,
                 ResourceFilterBuilder.createProjectIdFilter(projectId),
                 ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID"),
-                ResourceFilterBuilder.createExtensionPropertyValueFilter("" + userId)}));
+                ResourceFilterBuilder.createExtensionPropertyValueFilter(String.valueOf(userId))}));
 
         Resource[] resources;
         try {
             resources = manager.searchResources(filter);
         } catch (SearchBuilderException e) {
-            Helper.logFormat(LOG, Level.ERROR, e, "SearchBuilderException : There is no resource for the given userId {0}", userId);
+            Helper.logFormat(LOG, Level.ERROR, e,
+                    "SearchBuilderException : There is no resource for the given userId {0}", userId);
             throw new InvalidUserException("SearchBuilderException : There is no resource for the given user", userId);
         } catch (ResourcePersistenceException e) {
-            Helper.logFormat(LOG, Level.ERROR, e, "ResourcePersistenceException : Problem retrieving the resource for the given userId {0}",
+            Helper.logFormat(LOG, Level.ERROR, e,
+                    "ResourcePersistenceException : Problem retrieving the resource for the given userId {0}",
                     userId);
             throw new InvalidUserException("Problem retrieving the resource for the given user", userId);
         }
 
         if (resources.length != 1) {
             Helper.logFormat(LOG, Level.ERROR, "There is no resource for the given userId {0}, resources: {1}",
-                    new Object[] {userId, Arrays.asList(resources)});
+                    new Object[]{userId, Arrays.asList(resources)});
             throw new InvalidUserException("There is no resource for the given user", userId);
         }
 
@@ -781,12 +917,13 @@ public class DefaultUploadServices implements UploadServices {
 
     /**
      * Gets the upload status by name.
-     * 
-     * @param name
-     *            the name of the status.
+     *
+     * @param name the name of the status.
+     *
      * @return the UploadStatus for the given name
-     * @throws UploadPersistenceException
-     *             if any.
+     *
+     * @throws UploadPersistenceException if any error occurs.
+     * @since 1.0
      */
     private UploadStatus getUploadStatusByName(String name) throws UploadPersistenceException {
         UploadStatus[] uploadStatus = managersProvider.getUploadManager().getAllUploadStatuses();
@@ -799,27 +936,73 @@ public class DefaultUploadServices implements UploadServices {
     }
 
     /**
+     * <p>Gets submission status by it's name.</p>
+     *
+     * @param submissionStatus name of the submission status to get
+     *
+     * @return the SubmissionStatus with given name
+     *
+     * @throws UploadPersistenceException if any error occurs
+     * @since 1.1
+     */
+    private SubmissionStatus getSubmissionStatusByName(String submissionStatus) throws
+            UploadPersistenceException {
+        SubmissionStatus[] submissionStatuses = managersProvider.getUploadManager()
+                .getAllSubmissionStatuses();
+
+        for (SubmissionStatus status : submissionStatuses) {
+            if (submissionStatus.equals(status.getName())) {
+                return status;
+            }
+        }
+
+        // return null if there were no matching submission status
+        return null;
+    }
+
+    /**
+     * <p>Gets submission type by it's name.</p>
+     *
+     * @param submissionType name of the submission type to get
+     *
+     * @return the SubmissionType with given name
+     *
+     * @throws UploadPersistenceException if any error occurs
+     * @since 1.1
+     */
+    private SubmissionType getSubmissionTypeByName(String submissionType) throws UploadPersistenceException {
+        SubmissionType[] submissionTypes = managersProvider.getUploadManager()
+                .getAllSubmissionTypes();
+
+        for (SubmissionType type : submissionTypes) {
+            if (submissionType.equals(type.getName())) {
+                return type;
+            }
+        }
+
+        // return null if there were no matching submission type
+        return null;
+    }
+
+    /**
      * Creates the <code>Upload</code> and set the required attributes.
-     * 
-     * @param projectId
-     *            the project id to use
-     * @param resourceId
-     *            the user's id
-     * @param filename
-     *            the filename to set as parameter
-     * @param uploadType
-     *            the type of upload
+     *
+     * @param projectId  the project id to use
+     * @param resourceId the user's id
+     * @param filename   the filename to set as parameter
+     * @param uploadType the type of upload
+     *
      * @return the created <code>Upload</code> instance
-     * @throws PersistenceException
-     *             if some error occurs in persistence layer
+     *
+     * @throws PersistenceException if some error occurs in persistence layer
+     * @since 1.0
      */
     private Upload createUpload(long projectId, long resourceId, String filename, String uploadType)
             throws PersistenceException {
         // create a new Upload
         Upload upload = new Upload();
 
-        // iterate over all UploadStatuses, get the UploadStatus with name "Active" and set to
-        // Upload
+        // iterate over all UploadStatuses, get the UploadStatus with name "Active" and set to Upload
         try {
             UploadStatus[] uploadStatus = managersProvider.getUploadManager().getAllUploadStatuses();
             for (UploadStatus status : uploadStatus) {
@@ -829,8 +1012,7 @@ public class DefaultUploadServices implements UploadServices {
                 }
             }
 
-            // iterate over all UploadTypes, get the UploadType with name uploadType and set to
-            // Upload
+            // iterate over all UploadTypes, get the UploadType with name uploadType and set to Upload
             UploadType[] uploadTypes = managersProvider.getUploadManager().getAllUploadTypes();
             for (UploadType type : uploadTypes) {
                 if (uploadType.equals(type.getName())) {
@@ -852,7 +1034,7 @@ public class DefaultUploadServices implements UploadServices {
 
         } catch (UploadPersistenceException e) {
             Helper.logFormat(LOG, Level.ERROR, e,
-                    "Failed to create Upload properly with projectId {0} and userId {1}", new Object[] {projectId,
+                    "Failed to create Upload properly with projectId {0} and userId {1}", new Object[]{projectId,
                             resourceId});
             throw new PersistenceException("Failed to create upload properly.", e);
         }
@@ -861,23 +1043,20 @@ public class DefaultUploadServices implements UploadServices {
 
     /**
      * Deletes the previous submissions for the given user.
-     * 
-     * @param userId
-     *            the user's id
-     * @param resource
-     *            the resource to create the filter
-     * @param submissionStatus
-     *            the submission status to get the Deleted submission status
-     * @throws PersistenceException
-     *             if some error occurs in persistence layer
-     * @throws InvalidSubmissionException
-     *             if the submission does not exist
+     *
+     * @param userId           the user's id
+     * @param resource         the resource to create the filter
+     *
+     * @throws PersistenceException       if some error occurs in persistence layer
+     * @throws InvalidSubmissionException if the submission does not exist
      * @throws InvalidSubmissionStatusException
-     *             if the submission status does not exist
-     * @throws UploadServicesException
-     *             if some other exception occurs in the process (wrap it)
+     *                                    if the submission status does not exist
+     * @throws UploadServicesException    if some other exception occurs in the process (wrap it)
+     *
+     * @version 1.1
+     * @since 1.0
      */
-    private void deletePreviousSubmissions(long userId, Resource resource, SubmissionStatus[] submissionStatus)
+    private void deletePreviousSubmissions(long userId, Resource resource)
             throws UploadServicesException {
         try {
             // Change previous submissions status to "Deleted"
@@ -887,13 +1066,13 @@ public class DefaultUploadServices implements UploadServices {
 
             // set the statuses of these submission to "Deleted"
             long delSubStatusId = 0;
-            for (SubmissionStatus status : submissionStatus) {
-                if ("Deleted".equals(status.getName())) {
-                    delSubStatusId = status.getId();
-                    break;
-                }
+
+            SubmissionStatus submissionStatus = getSubmissionStatusByName("Deleted");
+            if(submissionStatus != null) {
+                delSubStatusId = submissionStatus.getId();
             }
-            String operator = "" + userId;
+
+            String operator = String.valueOf(userId);
             for (Submission prevSubmission : prevSubmissions) {
                 // set delSubStatusId to submissions using the method in this class
                 setSubmissionStatus(prevSubmission.getId(), delSubStatusId, operator);
@@ -903,11 +1082,11 @@ public class DefaultUploadServices implements UploadServices {
             }
         } catch (UploadPersistenceException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to delete previous submissions for userId {0}",
-                    new Object[] {userId});
+                    new Object[]{userId});
             throw new PersistenceException("Failed to delete previous submissions.", e);
         } catch (SearchBuilderException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to delete previous submissions for userId {0}",
-                    new Object[] {userId});
+                    new Object[]{userId});
             throw new UploadServicesException("Failed to delete previous submissions.", e);
         }
 
@@ -916,22 +1095,18 @@ public class DefaultUploadServices implements UploadServices {
     /**
      * Adds the given user as a new submitter to the given project id. If the user is already added returns the the
      * id.
-     * 
-     * @param projectId
-     *            the project to which the user needs to be added
-     * @param userId
-     *            the user to be added
+     *
+     * @param projectId the project to which the user needs to be added
+     * @param userId    the user to be added
+     *
      * @return the added resource id
-     * @throws InvalidProjectException
-     *             if the project id is unknown
-     * @throws InvalidUserException
-     *             if the user id is unknown
-     * @throws InvalidProjectPhaseException
-     *             if the phase of the project is not Registration.
-     * @throws UploadServicesException
-     *             if any error occurs from UploadServices
-     * @throws IllegalArgumentException
-     *             if any id is &lt; 0
+     *
+     * @throws InvalidProjectException      if the project id is unknown
+     * @throws InvalidUserException         if the user id is unknown
+     * @throws InvalidProjectPhaseException if the phase of the project is not Registration.
+     * @throws UploadServicesException      if any error occurs from UploadServices
+     * @throws IllegalArgumentException     if any id is &lt; 0
+     * @since 1.0
      */
     public long addSubmitter(long projectId, long userId) throws InvalidProjectException, UploadServicesException,
             InvalidUserException, InvalidProjectPhaseException {
@@ -940,11 +1115,10 @@ public class DefaultUploadServices implements UploadServices {
         Helper.checkId(userId, "userId", LOG);
         Resource resource = null;
         try {
-            resource = getResource(projectId, userId, new String[] {"Submitter"});
-            return resource.getId();
+            resource = getResource(projectId, userId, new String[]{"Submitter"});
         } catch (InvalidUserException e) {
             // ignore
-        }        
+        }
         if (resource != null) {
             return resource.getId();
         }
@@ -961,7 +1135,7 @@ public class DefaultUploadServices implements UploadServices {
             // If there is no user with such handle, indicate an error
             if (user == null) {
                 Helper.logFormat(LOG, Level.ERROR, "Failed to get the user details for the userId {0}",
-                        new Object[] {userId});
+                        new Object[]{userId});
                 throw new InvalidUserException("The user id  is not found.", userId);
             }
             // Get all types of resource roles
@@ -1014,28 +1188,28 @@ public class DefaultUploadServices implements UploadServices {
             // Update all the time line notifications if the timelineNotificationId is retrieved properly
             if ("On".equals(project.getProperty("Timeline Notification"))
                     && timelineNotificationId != Long.MIN_VALUE) {
-                resourceManager.addNotifications(new long[] {userId}, project.getId(), timelineNotificationId,
+                resourceManager.addNotifications(new long[]{userId}, project.getId(), timelineNotificationId,
                         Long.toString(userId));
             }
             return resource.getId();
         } catch (com.topcoder.management.project.PersistenceException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to get the project for the projectId {0}",
-                    new Object[] {projectId});
+                    new Object[]{projectId});
             throw new InvalidProjectException("Exception occurred while getting the project.", e, projectId);
         } catch (ResourcePersistenceException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "ResourcePersistenceException occurred while "
-                    + "creating the resource for userId : {0} and projectId : {1}.", new Object[] {userId,
+                    + "creating the resource for userId : {0} and projectId : {1}.", new Object[]{userId,
                     projectId});
             throw new UploadServicesException(
                     "ResourcePersistenceException occurred while creating the resource.", e);
         } catch (ConfigException e) {
             Helper.logFormat(LOG, Level.ERROR, e,
                     "Config exception occurred while getting the user information for userId {0}.",
-                    new Object[] {userId});
+                    new Object[]{userId});
             throw new UploadServicesException("Config exception occurred while getting the user information.", e);
         } catch (RetrievalException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to get the user information for the userId {0}",
-                    new Object[] {userId});
+                    new Object[]{userId});
             throw new InvalidUserException("Exception occurred while getting the user information.", e, userId);
         } finally {
             Helper.logFormat(LOG, Level.DEBUG, "Exited DefaultUploadServices#addSubmitter(long, long)");
@@ -1044,13 +1218,12 @@ public class DefaultUploadServices implements UploadServices {
 
     /**
      * Populate project_result and component_inquiry for new submitters.
-     * 
-     * @param project
-     *            the project
-     * @param newSubmitters
-     *            new submitters external ids.
-     * @throws UploadServicesException
-     *             if error occurs
+     *
+     * @param project       the project
+     * @param newSubmitters new submitters external ids.
+     *
+     * @throws UploadServicesException if error occurs
+     * @since 1.0
      */
     private void populateProjectResult(Project project, Collection newSubmitters) throws UploadServicesException {
         Connection conn = null;
@@ -1086,7 +1259,8 @@ public class DefaultUploadServices implements UploadServices {
 
             componentInquiryStmt = conn
                     .prepareStatement("INSERT INTO component_inquiry "
-                            + "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id, agreed_to_terms, rating, version, create_time) "
+                            + "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id,"
+                            + " agreed_to_terms, rating, version, create_time) "
                             + "values (?, ?, ?, ?, ?, ?, 1, ?, ?, current)");
 
             existStmt = conn.prepareStatement("SELECT 1 FROM PROJECT_RESULT WHERE user_id = ? and project_id = ?");
@@ -1187,6 +1361,8 @@ public class DefaultUploadServices implements UploadServices {
             }
             ps.executeBatch();
             componentInquiryStmt.executeBatch();
+        } catch (NumberFormatException e) {
+            throw new UploadServicesException("Failed to parse long from project property", e);
         } catch (UnknownConnectionException e) {
             throw new UploadServicesException("Failed to create connection", e);
         } catch (ConfigurationException e) {
@@ -1210,14 +1386,14 @@ public class DefaultUploadServices implements UploadServices {
 
     /**
      * Retrieve and update next ComponentInquiryId.
-     * 
-     * @param conn
-     *            the connection
-     * @param count
-     *            the count of new submitters
+     *
+     * @param conn  the connection
+     * @param count the count of new submitters
+     *
      * @return next component_inquiry_id
-     * @throws UploadServicesException
-     *             if any exception while getting the values
+     *
+     * @throws UploadServicesException if any exception while getting the values
+     * @since 1.0
      */
     private long getNextComponentInquiryId(Connection conn, int count) throws UploadServicesException {
         LOG.log(Level.INFO, "Getting the next component inquiry id.");
@@ -1260,12 +1436,14 @@ public class DefaultUploadServices implements UploadServices {
 
     /**
      * Return project property long value.
-     * 
-     * @param project
-     *            the project object
-     * @param name
-     *            the property name
+     *
+     * @param project the project object
+     * @param name    the property name
+     *
      * @return the long value, 0 if it does not exist
+     *
+     * @throws NumberFormatException if property can not be parsed into long number
+     * @since 1.0
      */
     private static long getProjectLongValue(Project project, String name) {
         Object obj = project.getProperty(name);
@@ -1276,10 +1454,11 @@ public class DefaultUploadServices implements UploadServices {
     }
 
     /**
-     * Close JDBC resource.
-     * 
-     * @param obj
-     *            JDBC resource
+     * Closes JDBC resource.
+     *
+     * @param obj JDBC resource
+     *
+     * @since 1.0
      */
     private static void close(Object obj) {
         if (obj instanceof Connection) {
@@ -1305,12 +1484,13 @@ public class DefaultUploadServices implements UploadServices {
 
     /**
      * Return the property value of online_review namespace.
-     * 
-     * @param name
-     *            the property name
-     * @param defaultValue
-     *            the default value
+     *
+     * @param name         the property name
+     * @param defaultValue the default value
+     *
      * @return property value
+     *
+     * @since 1.0
      */
     private String getPropertyValue(String name, String defaultValue) {
         try {

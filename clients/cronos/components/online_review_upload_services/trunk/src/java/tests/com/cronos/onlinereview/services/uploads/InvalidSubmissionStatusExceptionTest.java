@@ -34,7 +34,6 @@ public class InvalidSubmissionStatusExceptionTest extends TestCase {
      * long submissionStatusId)}</code>
      * constructor. Creates an instance and get its attributes for test.
      * </p>
-     *
      */
     public void testInvalidSubmissionStatusException_accuracy_1() {
         InvalidSubmissionStatusException exception = new InvalidSubmissionStatusException(
@@ -50,7 +49,6 @@ public class InvalidSubmissionStatusExceptionTest extends TestCase {
      * Throwable cause, long submissionStatusId)}</code>
      * constructor. Creates an instance and get its attributes for test.
      * </p>
-     *
      */
     public void testInvalidSubmissionStatusException_accuracy_2() {
         InvalidSubmissionStatusException exception = new InvalidSubmissionStatusException(
@@ -69,7 +67,6 @@ public class InvalidSubmissionStatusExceptionTest extends TestCase {
      * <p>
      * Expects the same which is set.
      * </p>
-     *
      */
     public void testGetSubmissionStatusId_accuracy() {
         InvalidSubmissionStatusException exception = new InvalidSubmissionStatusException(

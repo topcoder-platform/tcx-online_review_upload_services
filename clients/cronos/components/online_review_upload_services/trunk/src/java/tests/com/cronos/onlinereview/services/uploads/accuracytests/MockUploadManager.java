@@ -5,6 +5,7 @@ package com.cronos.onlinereview.services.uploads.accuracytests;
 
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.SubmissionStatus;
+import com.topcoder.management.deliverable.SubmissionType;
 import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.UploadStatus;
@@ -15,7 +16,7 @@ import com.topcoder.search.builder.filter.Filter;
 
 /**
  * A mock implementation of UploadManager.
- * 
+ *
  * @author kshatriyan
  * @version 1.0
  */
@@ -50,14 +51,15 @@ public class MockUploadManager implements UploadManager {
      * Used for testing.
      */
     private String updatedSubmissionUserId;
-    
+
     /**
      * Used for testing.
      */
     private Submission submission = new Submission(10);
+
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            upload
      * @param arg1
@@ -72,7 +74,7 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            upload
      * @param arg1
@@ -85,7 +87,7 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            upload
      * @param arg1
@@ -98,7 +100,7 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            upload
      * @return always null
@@ -111,7 +113,7 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            filter
      * @return always null
@@ -121,12 +123,12 @@ public class MockUploadManager implements UploadManager {
      *             not thrown
      */
     public Upload[] searchUploads(Filter arg0) throws UploadPersistenceException, SearchBuilderException {
-        return null;
+        return new Upload[] { new Upload(1) };
     }
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            upload type
      * @param arg1
@@ -139,7 +141,7 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            upload type
      * @param arg1
@@ -152,7 +154,7 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            upload type
      * @param arg1
@@ -165,25 +167,31 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Mock implementation.
-     * 
+     *
      * @return upload types
      * @throws UploadPersistenceException
      *             not thrown
      */
     public UploadType[] getAllUploadTypes() throws UploadPersistenceException {
-        UploadType[] types = new UploadType[3];
+        UploadType[] types = new UploadType[4];
         types[0] = new UploadType();
         types[1] = new UploadType();
         types[2] = new UploadType();
+        types[3] = new UploadType();
         types[0].setName("Submission");
+        types[0].setId(1);
         types[1].setName("Review");
+        types[1].setId(2);
         types[2].setName("Final Fix");
+        types[2].setId(2);
+        types[3].setName("Test Case");
+        types[3].setId(3);
         return types;
     }
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            upload status
      * @param arg1
@@ -196,7 +204,7 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            upload status
      * @param arg1
@@ -209,7 +217,7 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            upload status
      * @param arg1
@@ -222,7 +230,7 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Mock implementation. Will throw exception if the throwError is set.
-     * 
+     *
      * @return upload status
      * @throws UploadPersistenceException
      *             will be thrown if the flag is set
@@ -231,12 +239,13 @@ public class MockUploadManager implements UploadManager {
         UploadStatus[] status = new UploadStatus[1];
         status[0] = new UploadStatus();
         status[0].setName("Active");
+        status[0].setId(1);
         return status;
     }
 
     /**
      * Mock implementation.
-     * 
+     *
      * @param arg0
      *            submission
      * @param arg1
@@ -252,7 +261,7 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            submission
      * @param arg1
@@ -262,12 +271,12 @@ public class MockUploadManager implements UploadManager {
      */
     public void updateSubmission(Submission arg0, String arg1) throws UploadPersistenceException {
         updatedSubmission = arg0;
-        updatedSubmissionUserId =arg1;
+        updatedSubmissionUserId = arg1;
     }
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            submission
      * @param arg1
@@ -280,7 +289,7 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Mock implementation.
-     * 
+     *
      * @param arg0
      *            id
      * @return submission
@@ -293,7 +302,7 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Mock implementation.
-     * 
+     *
      * @param arg0
      *            filter
      * @return submission array
@@ -303,12 +312,12 @@ public class MockUploadManager implements UploadManager {
      *             not thrown
      */
     public Submission[] searchSubmissions(Filter arg0) throws UploadPersistenceException, SearchBuilderException {
-        return new Submission[]{submission};
+        return new Submission[] { submission };
     }
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            submission status
      * @param arg1
@@ -321,7 +330,7 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            submission status
      * @param arg1
@@ -334,7 +343,7 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Not used.
-     * 
+     *
      * @param arg0
      *            submission status
      * @param arg1
@@ -347,7 +356,7 @@ public class MockUploadManager implements UploadManager {
 
     /**
      * Mock implementation.
-     * 
+     *
      * @return submission status
      * @throws UploadPersistenceException
      *             not thrown
@@ -401,5 +410,52 @@ public class MockUploadManager implements UploadManager {
      */
     public String getUpdatedSubmissionUserId() {
         return updatedSubmissionUserId;
+    }
+
+    /**
+     * Mock implementation.
+     *
+     * @param arg0
+     *            the submission type.
+     * @param arg1
+     *            the operator.
+     */
+    public void createSubmissionType(SubmissionType arg0, String arg1) throws UploadPersistenceException {
+    }
+
+    /**
+     * Mock implementation.
+     *
+     * @return all submission type.
+     */
+    public SubmissionType[] getAllSubmissionTypes() throws UploadPersistenceException {
+        SubmissionType[] types = new SubmissionType[2];
+        types[0] = new SubmissionType(1);
+        types[0].setName("Contest Submission");
+        types[1] = new SubmissionType(2);
+        types[1].setName("Specification Submission");
+        return types;
+    }
+
+    /**
+     * Mock implementation.
+     *
+     * @param arg0
+     *            the first argument.
+     * @param arg1
+     *            the second argument.
+     */
+    public void removeSubmissionType(SubmissionType arg0, String arg1) throws UploadPersistenceException {
+    }
+
+    /**
+     * Mock implementation.
+     *
+     * @param arg0
+     *            the first argument.
+     * @param arg1
+     *            the second argument.
+     */
+    public void updateSubmissionType(SubmissionType arg0, String arg1) throws UploadPersistenceException {
     }
 }

@@ -1,11 +1,7 @@
 /*
- * Copyright (C) 2007 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2010 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.services.uploads.impl;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import com.cronos.onlinereview.services.uploads.ConfigurationException;
 import com.cronos.onlinereview.services.uploads.InvalidProjectException;
@@ -19,16 +15,20 @@ import com.cronos.onlinereview.services.uploads.TestHelper;
 import com.cronos.onlinereview.services.uploads.UploadServicesException;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.Upload;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * <p>
  * Tests the functionality of <code>{@link DefaultUploadServices}</code> class.
  * </p>
  *
- * @author cyberjag
- * @version 1.0
+ * @author cyberjag, TCSDEVELOPER
+ * @version 1.1
  */
 public class DefaultUploadServicesTest extends TestCase {
+
     /**
      * <p>
      * Represents the <code>DefaultUploadServices</code> to test.
@@ -67,11 +67,12 @@ public class DefaultUploadServicesTest extends TestCase {
      * Sets up the test environment.
      * </p>
      *
-     * @throws Exception
-     *             throws exception if any.
+     * @throws Exception throws exception if any.
      */
     protected void setUp() throws Exception {
+        TestHelper.releaseConfigs();
         TestHelper.loadConfigs("config.xml");
+
         defaultUploadServices = new DefaultUploadServices();
         ManagersProvider managersProvider = (ManagersProvider) TestHelper.getFieldValue(defaultUploadServices,
                 "managersProvider");
@@ -79,6 +80,12 @@ public class DefaultUploadServicesTest extends TestCase {
         screeningManager = (MockScreeningManager) managersProvider.getScreeningManager();
         uploadManager = (MockUploadManager) managersProvider.getUploadManager();
 
+        MockProjectManager.setState(0);
+        MockPhaseManager.setState(0);
+        MockProject.setState(0);
+        MockResourceManager.setState(0);
+        MockScreeningManager.setState(0);
+        MockUploadManager.setState(0);
     }
 
     /**
@@ -86,8 +93,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Tears down the test environment.
      * </p>
      *
-     * @throws Exception
-     *             throws exception if any.
+     * @throws Exception throws exception if any.
      */
     protected void tearDown() throws Exception {
         TestHelper.releaseConfigs();
@@ -105,8 +111,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects non null instance.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultUploadServices_accuracy_1() throws Exception {
         ManagersProvider managersProvider = new DefaultManagersProvider();
@@ -128,7 +133,6 @@ public class DefaultUploadServicesTest extends TestCase {
      * <p>
      * Expects <code>IllegalArgumentException</code>.
      * </p>
-     *
      */
     public void testDefaultUploadServices_failure_1() {
         try {
@@ -148,7 +152,6 @@ public class DefaultUploadServicesTest extends TestCase {
      * <p>
      * Expects non null instance.
      * </p>
-     *
      */
     public void testDefaultUploadServices_accuracy_2() {
         assertNotNull("Failed to create DefaultUploadServices", defaultUploadServices);
@@ -167,8 +170,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>ConfigurationException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultUploadServices_failure_2() throws Exception {
         TestHelper.releaseConfigs();
@@ -190,8 +192,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects non null instance.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultUploadServices_accuracy_3() throws Exception {
         defaultUploadServices = new DefaultUploadServices(
@@ -213,8 +214,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultUploadServices_failure_3() throws Exception {
         try {
@@ -239,8 +239,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultUploadServices_failure_4() throws Exception {
         try {
@@ -264,7 +263,6 @@ public class DefaultUploadServicesTest extends TestCase {
      * <p>
      * Expects <code>ConfigurationException</code>.
      * </p>
-     *
      */
     public void testDefaultUploadServices_failure_5() {
         try {
@@ -289,8 +287,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>ConfigurationException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDefaultUploadServices_failure_6() throws Exception {
         TestHelper.loadConfigs("config_man_invalid.xml");
@@ -311,7 +308,6 @@ public class DefaultUploadServicesTest extends TestCase {
      * <p>
      * Expects non null instance.
      * </p>
-     *
      */
     public void testDefaultUploadServices_accuracy_4() {
         assertNotNull("Failed to create DefaultUploadServices", defaultUploadServices);
@@ -328,8 +324,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects the upload to happen without any error.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_accuracy() throws Exception {
         defaultUploadServices.uploadSubmission(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
@@ -338,22 +333,25 @@ public class DefaultUploadServicesTest extends TestCase {
         Upload upload = uploadManager.getCreatedUpload();
         assertEquals("uploadSubmission failed", upload.getUploadStatus().getName(), "Active");
         assertEquals("uploadSubmission failed", upload.getUploadType().getName(), "Submission");
-        assertEquals("uploadSubmission failed", upload.getOwner(), TestHelper.USER_ID);
+        assertEquals("uploadSubmission failed", upload.getOwner(), 1);
         assertEquals("uploadSubmission failed", upload.getProject(), TestHelper.PROJECT_ID);
         assertEquals("uploadSubmission failed", upload.getParameter(), "test_file.jar");
-        assertEquals("uploadSubmission failed", TestHelper.USER_ID + "", uploadManager.getCreatedUploadUserId());
+        assertEquals("uploadSubmission failed", String.valueOf(TestHelper.USER_ID),
+                uploadManager.getCreatedUploadUserId());
 
         // verify submission
         Submission submission = uploadManager.getCreatedSubmission();
         assertEquals("uploadSubmission failed", submission.getSubmissionStatus().getName(), "Active");
-        assertEquals("uploadSubmission failed", TestHelper.USER_ID + "", uploadManager
+        assertEquals("uploadSubmission failed", submission.getSubmissionType().getName(), "Contest Submission");
+        assertEquals("uploadSubmission failed", String.valueOf(TestHelper.USER_ID), uploadManager
                 .getCreatedSubmissionUserId());
 
-        assertEquals("uploadSubmission failed", TestHelper.USER_ID + "", resourceManager.getUpdateResourceUserId());
+        assertEquals("uploadSubmission failed", String.valueOf(TestHelper.USER_ID),
+                resourceManager.getUpdateResourceUserId());
 
         // verify screening initiation
-        assertEquals("uploadSubmission failed", screeningManager.getSubmissionId(), TestHelper.SUBMISSION_ID);
-        assertEquals("uploadSubmission failed", TestHelper.USER_ID + "", screeningManager.getUserId());
+        assertEquals("uploadSubmission failed", screeningManager.getSubmissionId(), -1);
+        assertEquals("uploadSubmission failed", String.valueOf(TestHelper.USER_ID), screeningManager.getUserId());
 
         // verify previous submissions are marked for deletion
         Submission submissions = uploadManager.searchSubmissions(null)[0];
@@ -375,8 +373,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_failure_1() throws Exception {
         try {
@@ -402,8 +399,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_failure_2() throws Exception {
         try {
@@ -429,8 +425,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_failure_3() throws Exception {
         try {
@@ -456,8 +451,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_failure_4() throws Exception {
         try {
@@ -483,8 +477,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidProjectException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_failure_5() throws Exception {
         MockProjectManager.setState(-1);
@@ -509,18 +502,17 @@ public class DefaultUploadServicesTest extends TestCase {
      * </p>
      *
      * <p>
-     * Expects <code>InvalidProjectPhaseException</code>.
+     * Expects <code>InvalidProjectException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_failure_6() throws Exception {
         MockProject.setState(1);
         try {
             defaultUploadServices.uploadSubmission(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
-            fail("Expect InvalidProjectPhaseException.");
-        } catch (InvalidProjectPhaseException e) {
+            fail("Expect InvalidProjectException.");
+        } catch (InvalidProjectException e) {
             // expect
             MockProject.setState(0);
         }
@@ -541,8 +533,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidUserException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_failure_7() throws Exception {
         MockResourceManager.setState(-1);
@@ -570,8 +561,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidUserException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_failure_8() throws Exception {
         MockResourceManager.setState(1);
@@ -595,8 +585,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>PersistenceException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_failure_9() throws Exception {
         MockUploadManager.setThrowError(true);
@@ -620,8 +609,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>UploadServicesException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_failure_10() throws Exception {
         MockPhaseManager.setThrowError(true);
@@ -649,8 +637,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidProjectException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_failure_11() throws Exception {
         MockProject.setState(2);
@@ -678,8 +665,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>PersistenceException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_failure_12() throws Exception {
         MockUploadManager.setThrowOnCreateError(true);
@@ -707,8 +693,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>PersistenceException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_failure_13() throws Exception {
         MockScreeningManager.setState(1);
@@ -736,8 +721,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>UploadServicesException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_failure_14() throws Exception {
         MockScreeningManager.setState(2);
@@ -765,8 +749,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>PersistenceException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadSubmission_failure_15() throws Exception {
         MockProjectManager.setThrowError(true);
@@ -790,8 +773,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects the upload to happen without any error.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadFinalFix_accuracy() throws Exception {
         defaultUploadServices.uploadFinalFix(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
@@ -800,18 +782,20 @@ public class DefaultUploadServicesTest extends TestCase {
         Upload upload = uploadManager.getCreatedUpload();
         assertEquals("uploadFinalFix failed", upload.getUploadStatus().getName(), "Active");
         assertEquals("uploadFinalFix failed", upload.getUploadType().getName(), "Final Fix");
-        assertEquals("uploadFinalFix failed", upload.getOwner(), TestHelper.USER_ID);
+        // modified in version 1.1 - excepted value is 1
+        assertEquals("uploadFinalFix failed", upload.getOwner(), 1);
         assertEquals("uploadFinalFix failed", upload.getProject(), TestHelper.PROJECT_ID);
         assertEquals("uploadFinalFix failed", upload.getParameter(), "test_file.jar");
-        assertEquals("uploadFinalFix failed", TestHelper.USER_ID + "", uploadManager.getCreatedUploadUserId());
+        assertEquals("uploadFinalFix failed", String.valueOf(TestHelper.USER_ID),
+                uploadManager.getCreatedUploadUserId());
 
         // verify screening is not initiated
         assertEquals("uploadFinalFix failed", screeningManager.getSubmissionId(), -1);
         assertEquals("uploadFinalFix failed", screeningManager.getUserId(), null);
 
         // verify previous submissions are marked for deletion
-        Submission submissions = uploadManager.searchSubmissions(null)[0];
-        assertEquals("uploadFinalFix failed", submissions.getSubmissionStatus().getName(), "Deleted");
+        Upload updatedUpload = uploadManager.getUpdatedUpload();
+        assertEquals("uploadFinalFix failed", updatedUpload.getUploadStatus().getName(), "Deleted");
     }
 
     /**
@@ -829,8 +813,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadFinalFix_failure_1() throws Exception {
         try {
@@ -856,8 +839,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadFinalFix_failure_2() throws Exception {
         try {
@@ -883,8 +865,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadFinalFix_failure_3() throws Exception {
         try {
@@ -910,8 +891,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadFinalFix_failure_4() throws Exception {
         try {
@@ -937,8 +917,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidProjectException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadFinalFix_failure_5() throws Exception {
         MockProjectManager.setState(-1);
@@ -966,8 +945,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidProjectPhaseException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadFinalFix_failure_6() throws Exception {
         MockProject.setState(1);
@@ -995,13 +973,12 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidUserException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadFinalFix_failure_7() throws Exception {
         MockResourceManager.setState(-1);
         try {
-            defaultUploadServices.uploadSubmission(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
+            defaultUploadServices.uploadFinalFix(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
             fail("Expect InvalidUserException.");
         } catch (InvalidUserException e) {
             // expect
@@ -1024,13 +1001,12 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidUserException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadFinalFix_failure_8() throws Exception {
         MockResourceManager.setState(1);
         try {
-            defaultUploadServices.uploadSubmission(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
+            defaultUploadServices.uploadFinalFix(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
             fail("Expect InvalidUserException.");
         } catch (InvalidUserException e) {
             // expect
@@ -1049,13 +1025,12 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>PersistenceException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any exception occurs
+     * @throws Exception if any exception occurs
      */
     public void testUploadFinalFix_failure_9() throws Exception {
         MockUploadManager.setThrowError(true);
         try {
-            defaultUploadServices.uploadSubmission(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
+            defaultUploadServices.uploadFinalFix(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
             fail("Expect PersistenceException.");
         } catch (PersistenceException e) {
             // expect
@@ -1074,7 +1049,6 @@ public class DefaultUploadServicesTest extends TestCase {
      * <p>
      * Expects <code>UploadServicesException</code>.
      * </p>
-     *
      */
     public void testUploadFinalFix_failure_10() {
         MockPhaseManager.setThrowError(true);
@@ -1102,8 +1076,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidProjectException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadFinalFix_failure_11() throws Exception {
         MockProject.setState(2);
@@ -1131,8 +1104,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>PersistenceException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadFinalFix_failure_12() throws Exception {
         MockUploadManager.setThrowOnCreateError(true);
@@ -1156,8 +1128,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects the upload to happen without any error.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadTestCases_accuracy() throws Exception {
         defaultUploadServices.uploadTestCases(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
@@ -1165,15 +1136,17 @@ public class DefaultUploadServicesTest extends TestCase {
         // verify upload persistence
         Upload upload = uploadManager.getCreatedUpload();
         assertEquals("uploadTestCases failed", upload.getUploadStatus().getName(), "Active");
-        assertEquals("uploadTestCases failed", upload.getUploadType().getName(), "Review");
-        assertEquals("uploadTestCases failed", upload.getOwner(), TestHelper.USER_ID);
+        assertEquals("uploadTestCases failed", upload.getUploadType().getName(), "Test Case");
+        // modified in version 1.1 - expected value is 1
+        assertEquals("uploadTestCases failed", upload.getOwner(), 1);
         assertEquals("uploadTestCases failed", upload.getProject(), TestHelper.PROJECT_ID);
         assertEquals("uploadTestCases failed", upload.getParameter(), "test_file.jar");
-        assertEquals("uploadTestCases failed", TestHelper.USER_ID + "", uploadManager.getCreatedUploadUserId());
+        assertEquals("uploadTestCases failed", String.valueOf(TestHelper.USER_ID),
+                uploadManager.getCreatedUploadUserId());
 
         // verify previous submissions are marked for deletion
-        Submission submissions = uploadManager.searchSubmissions(null)[0];
-        assertEquals("uploadTestCases failed", submissions.getSubmissionStatus().getName(), "Deleted");
+        Upload updatedUpload = uploadManager.getUpdatedUpload();
+        assertEquals("uploadTestCases failed", updatedUpload.getUploadStatus().getName(), "Deleted");
     }
 
     /**
@@ -1191,8 +1164,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadTestCases_failure_1() throws Exception {
         try {
@@ -1218,8 +1190,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadTestCases_failure_2() throws Exception {
         try {
@@ -1245,8 +1216,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadTestCases_failure_3() throws Exception {
         try {
@@ -1272,8 +1242,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadTestCases_failure_4() throws Exception {
         try {
@@ -1299,8 +1268,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidProjectException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadTestCases_failure_5() throws Exception {
         MockProjectManager.setState(-1);
@@ -1328,8 +1296,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidProjectPhaseException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadTestCases_failure_6() throws Exception {
         MockProject.setState(1);
@@ -1357,8 +1324,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidUserException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadTestCases_failure_7() throws Exception {
         MockResourceManager.setState(-1);
@@ -1386,8 +1352,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidUserException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadTestCases_failure_8() throws Exception {
         MockResourceManager.setState(1);
@@ -1411,8 +1376,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>PersistenceException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadTestCases_failure_9() throws Exception {
         MockUploadManager.setThrowError(true);
@@ -1436,8 +1400,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>UploadServicesException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadTestCases_failure_10() throws Exception {
         MockPhaseManager.setThrowError(true);
@@ -1465,8 +1428,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidProjectException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadTestCases_failure_11() throws Exception {
         MockProject.setState(2);
@@ -1494,8 +1456,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>PersistenceException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testUploadTestCases_failure_12() throws Exception {
         MockUploadManager.setThrowOnCreateError(true);
@@ -1520,8 +1481,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects the set submission to happen without any error.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testSetSubmissionStatus_accuracy() throws Exception {
         defaultUploadServices.setSubmissionStatus(TestHelper.SUBMISSION_ID, TestHelper.SUBMISSION_STATUS_ID, ""
@@ -1544,8 +1504,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testSetSubmissionStatus_failure_1() throws Exception {
         try {
@@ -1573,8 +1532,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testSetSubmissionStatus_failure_2() throws Exception {
         try {
@@ -1601,8 +1559,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testSetSubmissionStatus_failure_3() throws Exception {
         try {
@@ -1630,8 +1587,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>IllegalArgumentException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testSetSubmissionStatus_failure_4() throws Exception {
         try {
@@ -1658,8 +1614,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidSubmissionException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testSetSubmissionStatus_failure_5() throws Exception {
         MockUploadManager.setState(-1);
@@ -1688,8 +1643,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>InvalidSubmissionStatusException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testSetSubmissionStatus_failure_6() throws Exception {
         try {
@@ -1711,8 +1665,7 @@ public class DefaultUploadServicesTest extends TestCase {
      * Expects <code>PersistenceException</code>.
      * </p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testSetSubmissionStatus_failure_7() throws Exception {
         MockUploadManager.setThrowError(true);
@@ -1724,5 +1677,436 @@ public class DefaultUploadServicesTest extends TestCase {
             // expect
             MockUploadManager.setThrowError(false);
         }
+    }
+
+    /**
+     * <p>
+     * Accuracy test of
+     * <code>{@link DefaultUploadServices#uploadSpecification(long projectId, long userId, String filename)}</code>
+     * method.
+     * </p>
+     *
+     * <p>
+     * Expects the upload to happen without any error.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testUploadSpecification_accuracy() throws Exception {
+        defaultUploadServices.uploadSpecification(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
+
+        // verify upload persistence
+        Upload upload = uploadManager.getCreatedUpload();
+        assertEquals("uploadSpecification failed", "Active", upload.getUploadStatus().getName());
+        assertEquals("uploadSpecification failed", "Submission", upload.getUploadType().getName());
+        assertEquals("uploadSpecification failed", 1, upload.getOwner());
+        assertEquals("uploadSpecification failed", TestHelper.PROJECT_ID, upload.getProject());
+        assertEquals("uploadSpecification failed", "test_file.jar", upload.getParameter());
+        assertEquals("uploadSpecification failed", String.valueOf(TestHelper.USER_ID),
+                uploadManager.getCreatedUploadUserId());
+
+        // verify submission
+        Submission submission = uploadManager.getCreatedSubmission();
+        assertEquals("uploadSpecification failed", "Active", submission.getSubmissionStatus().getName());
+        assertEquals("uploadSpecification failed",
+                "Specification Submission", submission.getSubmissionType().getName());
+        assertEquals("uploadSpecification failed", String.valueOf(TestHelper.USER_ID), uploadManager
+                .getCreatedSubmissionUserId());
+
+        assertEquals("uploadSpecification failed", String.valueOf(TestHelper.USER_ID),
+                resourceManager.getUpdateResourceUserId());
+    }
+
+    /**
+     * <p>
+     * Failure test of
+     * <code>{@link DefaultUploadServices#uploadSpecification(long projectId, long userId, String filename)}</code>
+     * method.
+     * </p>
+     *
+     * <p>
+     * projectId is negative
+     * </p>
+     *
+     * <p>
+     * Expects <code>IllegalArgumentException</code>.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testUploadSpecification_failure_1() throws Exception {
+        try {
+            defaultUploadServices.uploadSpecification(-1, TestHelper.USER_ID, "test_file.jar");
+            fail("Expect IllegalArgumentException.");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    /**
+     * <p>
+     * Failure test of
+     * <code>{@link DefaultUploadServices#uploadSpecification(long projectId, long userId, String filename)}</code>
+     * method.
+     * </p>
+     *
+     * <p>
+     * userId is negative
+     * </p>
+     *
+     * <p>
+     * Expects <code>IllegalArgumentException</code>.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testUploadSpecification_failure_2() throws Exception {
+        try {
+            defaultUploadServices.uploadSpecification(TestHelper.PROJECT_ID, -1, "test_file.jar");
+            fail("Expect IllegalArgumentException.");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    /**
+     * <p>
+     * Failure test of
+     * <code>{@link DefaultUploadServices#uploadSpecification(long projectId, long userId, String filename)}</code>
+     * method.
+     * </p>
+     *
+     * <p>
+     * filename is null
+     * </p>
+     *
+     * <p>
+     * Expects <code>IllegalArgumentException</code>.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testUploadSpecification_failure_3() throws Exception {
+        try {
+            defaultUploadServices.uploadSpecification(TestHelper.PROJECT_ID, TestHelper.USER_ID, null);
+            fail("Expect IllegalArgumentException.");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    /**
+     * <p>
+     * Failure test of
+     * <code>{@link DefaultUploadServices#uploadSpecification(long projectId, long userId, String filename)}</code>
+     * method.
+     * </p>
+     *
+     * <p>
+     * filename is empty
+     * </p>
+     *
+     * <p>
+     * Expects <code>IllegalArgumentException</code>.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testUploadSpecification_failure_4() throws Exception {
+        try {
+            defaultUploadServices.uploadSpecification(TestHelper.PROJECT_ID, TestHelper.USER_ID, "");
+            fail("Expect IllegalArgumentException.");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    /**
+     * <p>
+     * Failure test of
+     * <code>{@link DefaultUploadServices#uploadSpecification(long projectId, long userId, String filename)}</code>
+     * method.
+     * </p>
+     *
+     * <p>
+     * project does not exist.
+     * </p>
+     *
+     * <p>
+     * Expects <code>InvalidProjectException</code>.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testUploadSpecification_failure_5() throws Exception {
+        MockProjectManager.setState(-1);
+        try {
+            defaultUploadServices.uploadSpecification(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
+            fail("Expect InvalidProjectException.");
+        } catch (InvalidProjectException e) {
+            // expect
+            MockProjectManager.setState(0);
+        }
+    }
+
+    /**
+     * <p>
+     * Failure test of
+     * <code>{@link DefaultUploadServices#uploadSpecification(long projectId, long userId, String filename)}</code>
+     * method.
+     * </p>
+     *
+     * <p>
+     * ProjectPhase already closed
+     * </p>
+     *
+     * <p>
+     * Expects <code>InvalidProjectPhaseException</code>.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testUploadSpecification_failure_6() throws Exception {
+        MockProject.setState(1);
+        try {
+            defaultUploadServices.uploadSpecification(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
+            fail("Expect InvalidProjectPhaseException.");
+        } catch (InvalidProjectPhaseException e) {
+            // expect
+            MockProject.setState(0);
+        }
+    }
+
+    /**
+     * <p>
+     * Failure test of
+     * <code>{@link DefaultUploadServices#uploadSpecification(long projectId, long userId, String filename)}</code>
+     * method.
+     * </p>
+     *
+     * <p>
+     * submitterRoleId is not present in ResourceRole.
+     * </p>
+     *
+     * <p>
+     * Expects <code>InvalidUserException</code>.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testUploadSpecification_failure_7() throws Exception {
+        MockResourceManager.setState(-1);
+        try {
+            defaultUploadServices.uploadSpecification(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
+            fail("Expect InvalidUserException.");
+        } catch (InvalidUserException e) {
+            // expect
+            MockResourceManager.setState(0);
+        }
+    }
+
+    /**
+     * <p>
+     * Failure test of
+     * <code>{@link DefaultUploadServices#uploadSpecification(long projectId, long userId, String filename)}</code>
+     * method.
+     * </p>
+     *
+     * <p>
+     * No resource available.
+     * </p>
+     *
+     * <p>
+     * Expects <code>InvalidUserException</code>.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testUploadSpecification_failure_8() throws Exception {
+        MockResourceManager.setState(1);
+        try {
+            defaultUploadServices.uploadSpecification(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
+            fail("Expect InvalidUserException.");
+        } catch (InvalidUserException e) {
+            // expect
+            MockResourceManager.setState(0);
+        }
+    }
+
+    /**
+     * <p>
+     * Failure test of
+     * <code>{@link DefaultUploadServices#uploadSpecification(long projectId, long userId, String filename)}</code>
+     * method.
+     * </p>
+     *
+     * <p>
+     * Expects <code>PersistenceException</code>.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testUploadSpecification_failure_9() throws Exception {
+        MockUploadManager.setThrowError(true);
+        try {
+            defaultUploadServices.uploadSpecification(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
+            fail("Expect PersistenceException.");
+        } catch (PersistenceException e) {
+            // expect
+            MockUploadManager.setThrowError(false);
+        }
+    }
+
+    /**
+     * <p>
+     * Failure test of
+     * <code>{@link DefaultUploadServices#uploadSpecification(long projectId, long userId, String filename)}</code>
+     * method.
+     * </p>
+     *
+     * <p>
+     * Expects <code>UploadServicesException</code>.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testUploadSpecification_failure_10() throws Exception {
+        MockPhaseManager.setThrowError(true);
+        try {
+            defaultUploadServices.uploadSpecification(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
+            fail("Expect UploadServicesException.");
+        } catch (UploadServicesException e) {
+            // expect
+            MockPhaseManager.setThrowError(false);
+        }
+    }
+
+    /**
+     * <p>
+     * Failure test of
+     * <code>{@link DefaultUploadServices#uploadSpecification(long projectId, long userId, String filename)}</code>
+     * method.
+     * </p>
+     *
+     * <p>
+     * No project phases available.
+     * </p>
+     *
+     * <p>
+     * Expects <code>InvalidProjectException</code>.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testUploadSpecification_failure_11() throws Exception {
+        MockProject.setState(2);
+        try {
+            defaultUploadServices.uploadSpecification(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
+            fail("Expect InvalidProjectException.");
+        } catch (InvalidProjectException e) {
+            // expect
+            MockProject.setState(0);
+        }
+    }
+
+    /**
+     * <p>
+     * Failure test of
+     * <code>{@link DefaultUploadServices#uploadSpecification(long projectId, long userId, String filename)}</code>
+     * method.
+     * </p>
+     *
+     * <p>
+     * Error in persisting Upload
+     * </p>
+     *
+     * <p>
+     * Expects <code>PersistenceException</code>.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testUploadSpecification_failure_12() throws Exception {
+        MockUploadManager.setThrowOnCreateError(true);
+        try {
+            defaultUploadServices.uploadSpecification(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
+            fail("Expect PersistenceException.");
+        } catch (PersistenceException e) {
+            // expect
+            MockUploadManager.setThrowOnCreateError(false);
+        }
+    }
+
+    /**
+     * <p>
+     * Failure test of
+     * <code>{@link DefaultUploadServices#uploadSpecification(long projectId, long userId, String filename)}</code>
+     * method.
+     * </p>
+     *
+     * <p>
+     * Error in retrieving project.
+     * </p>
+     *
+     * <p>
+     * Expects <code>PersistenceException</code>.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testUploadSpecification_failure_15() throws Exception {
+        MockProjectManager.setThrowError(true);
+        try {
+            defaultUploadServices.uploadSpecification(TestHelper.PROJECT_ID, TestHelper.USER_ID, "test_file.jar");
+            fail("Expect PersistenceException.");
+        } catch (PersistenceException e) {
+            // expect
+            MockProjectManager.setThrowError(false);
+        }
+    }
+
+    /**
+     * <p>
+     * Accuracy test of
+     * <code>{@link DefaultUploadServices#addSubmitter(long projectId, long userId)}</code>
+     * method.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testAddSubmitter1() throws Exception {
+        TestHelper.executeBatch(TestHelper.TEST_FILES + "delete.sql");
+        TestHelper.executeBatch(TestHelper.TEST_FILES + "insert.sql");
+
+        // this will force to execute fully the addSubmitter method
+        MockResourceManager.setState(1);
+
+        // the user id is set to 101 - the value which should exist in database
+        long id = defaultUploadServices.addSubmitter(TestHelper.PROJECT_ID, 101);
+
+        // verify upload persistence
+        assertEquals("invalid user id", "101", resourceManager.getUpdateResourceUserId());
+
+        TestHelper.executeBatch(TestHelper.TEST_FILES + "delete.sql");
+    }
+
+    /**
+     * <p>
+     * Accuracy test of
+     * <code>{@link DefaultUploadServices#addSubmitter(long projectId, long userId)}</code>
+     * method.
+     * </p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testAddSubmitter() throws Exception {
+        // this will force to execute fully the addSubmitter method
+        MockResourceManager.setState(0);
+
+        // the user id is set to 101 - the value which should exist in database
+        long id = defaultUploadServices.addSubmitter(TestHelper.PROJECT_ID, 101);
+
+        // verify upload persistence
+        assertEquals("invalid resource id", 1L, id);
     }
 }

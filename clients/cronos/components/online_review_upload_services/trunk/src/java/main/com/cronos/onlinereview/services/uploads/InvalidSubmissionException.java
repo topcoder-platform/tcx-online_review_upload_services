@@ -31,10 +31,8 @@ public class InvalidSubmissionException extends UploadServicesException {
      * Constructs the exception with error message and <code>submissionId</code>.
      * </p>
      *
-     * @param message
-     *            the error message
-     * @param submissionId
-     *            the id of invalid submission
+     * @param message      the error message
+     * @param submissionId the id of invalid submission
      */
     public InvalidSubmissionException(String message, long submissionId) {
         super(message);
@@ -46,12 +44,9 @@ public class InvalidSubmissionException extends UploadServicesException {
      * Constructs the exception with error message, inner cause and <code>submissionId</code>.
      * </p>
      *
-     * @param message
-     *            the error message
-     * @param cause
-     *            the cause of this exception
-     * @param submissionId
-     *            the id of invalid submission
+     * @param message      the error message
+     * @param cause        the cause of this exception
+     * @param submissionId the id of invalid submission
      */
     public InvalidSubmissionException(String message, Throwable cause, long submissionId) {
         super(message, cause);

@@ -3,31 +3,33 @@
  */
 package com.cronos.onlinereview.services.uploads;
 
-import java.io.File;
+import com.cronos.onlinereview.services.uploads.impl.DefaultUploadExternalServices;
+import com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices;
+import com.cronos.onlinereview.services.uploads.impl.MockPhaseManager;
+import com.cronos.onlinereview.services.uploads.impl.MockProjectManager;
+import com.cronos.onlinereview.services.uploads.impl.MockResourceManager;
+import com.cronos.onlinereview.services.uploads.impl.MockScreeningManager;
+import com.cronos.onlinereview.services.uploads.impl.MockUploadManager;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import org.apache.axis.encoding.XMLType;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ParameterMode;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import org.apache.axis.client.Call;
-import org.apache.axis.client.Service;
-import org.apache.axis.encoding.XMLType;
-
-import com.cronos.onlinereview.services.uploads.impl.DefaultUploadExternalServices;
-import com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices;
+import java.io.File;
 
 /**
  * <p>
  * Component demo showing the usage of the component.
  * </p>
  *
- * @author cyberjag
- * @version 1.0
+ * @author cyberjag, TCDEVELOPER
+ * @version 1.1
  */
 public class Demo extends TestCase {
 
@@ -47,10 +49,15 @@ public class Demo extends TestCase {
      * Sets up the test environment.
      * </p>
      *
-     * @throws Exception
-     *             throws exception if any.
+     * @throws Exception throws exception if any.
      */
     protected void setUp() throws Exception {
+        MockProjectManager.setState(0);
+        MockPhaseManager.setState(0);
+        MockResourceManager.setState(0);
+        MockScreeningManager.setState(0);
+        MockUploadManager.setState(0);
+
         TestHelper.loadConfigs("config.xml");
     }
 
@@ -59,8 +66,7 @@ public class Demo extends TestCase {
      * Tears down the test environment.
      * </p>
      *
-     * @throws Exception
-     *             throws exception if any.
+     * @throws Exception throws exception if any.
      */
     protected void tearDown() throws Exception {
         TestHelper.releaseConfigs();
@@ -71,8 +77,7 @@ public class Demo extends TestCase {
      * A typical usage scenario involves the full use of the methods of internal interface, for example from a Web
      * application.
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDemo1() throws Exception {
         // Create the implementation
@@ -95,6 +100,12 @@ public class Demo extends TestCase {
         long idTestCases = services.uploadTestCases(30, 600, "testCaseMyComponent");
         // test cases uploaded and the id of test cases is returned
 
+        // from version 1.1
+        // Upload the specification
+        long idSpecification = services.uploadSpecification(30, 600, "componentRS.rtf");
+        // specification uploaded and the id of specification is returned
+
+
         // change the status of submission previous uploaded to the status of id=1
         services.setSubmissionStatus(idSubmission, 1, "" + 30);
         // the submission status has changed
@@ -108,8 +119,7 @@ public class Demo extends TestCase {
      * will be generate and the client will use the web services without explicit SOAP call, all mechanism will be
      * completely transparent.
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDemo2() throws Exception {
         // Create the implementation
@@ -137,16 +147,20 @@ public class Demo extends TestCase {
         long idTestCases = services.uploadTestCases(30, 100, "testCaseMyComponent", dataHandler);
         // test cases uploaded and the id of test cases is returned
 
+        // from version 1.1
+        // Upload the specification
+        long idSpecification = services.uploadSpecification(30, 600, "my_rs.rtf", dataHandler);
+        // specification uploaded and the id of specification is returned
+
         // change the status of submission previous uploaded to the status of id=1
         services.setSubmissionStatus(idSubmission, 1, "" + 30);
         // the submission status has changed
     }
 
     /**
-     * Normal SOAP Call.
+     * <p>Calls the web service uploadTestCases endpoint.</p>
      *
-     * @throws Exception
-     *             if any error occurs
+     * @throws Exception if any error occurs
      */
     public void testDemo3() throws Exception {
         Long projectId = new Long(TestHelper.PROJECT_ID);
@@ -173,11 +187,44 @@ public class Demo extends TestCase {
         call.setReturnType(XMLType.XSD_LONG);
 
         // Invoke the webservice.
-        long id = (Long) call.invoke(new Object[] {projectId, userId, "sample_accuracy.jar", testCase });
+        long id = (Long) call.invoke(new Object[]{projectId, userId, "sample_accuracy.jar", testCase});
     }
 
     /**
-     * Clear all the files created using tesing.
+     * <p>Calls the web service uploadSpecification endpoint.</p>
+     *
+     * @throws Exception if any error occurs
+     */
+    public void testDemo4() throws Exception {
+        Long projectId = new Long(TestHelper.PROJECT_ID);
+        Long userId = new Long(TestHelper.USER_ID);
+        FileDataSource dataSource = new FileDataSource(TestHelper.TEST_FILES + "componentRS.rtf");
+        DataHandler specification = new DataHandler(dataSource);
+
+        // Create the service
+        Service service = new Service();
+
+        // Create the caller and set the endpoint
+        Call call = (Call) service.createCall();
+        call.setTargetEndpointAddress(new java.net.URL(TestHelper.END_POINT));
+
+        // Set the operation
+        call.setOperationName(new QName("http://onlinereview.topcoder.com", "uploadSpecification"));
+
+        QName qName = new QName("DataHandler");
+        call.addParameter("op1", XMLType.XSD_LONG, ParameterMode.IN);
+        call.addParameter("op2", XMLType.XSD_LONG, ParameterMode.IN);
+        call.addParameter("op3", XMLType.XSD_STRING, ParameterMode.IN);
+        call.addParameter(qName, XMLType.MIME_DATA_HANDLER, ParameterMode.IN);
+
+        call.setReturnType(XMLType.XSD_LONG);
+
+        // Invoke the webservice.
+        long submissionId = (Long) call.invoke(new Object[]{projectId, userId, "componentRS.rtf", specification});
+    }
+
+    /**
+     * Clear all the files created using testing.
      */
     private void clearFiles() {
         File file = new File("test_files/upload");

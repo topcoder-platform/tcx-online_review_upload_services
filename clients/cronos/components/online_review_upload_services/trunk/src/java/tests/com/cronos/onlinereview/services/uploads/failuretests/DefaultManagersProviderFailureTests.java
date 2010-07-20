@@ -3,75 +3,63 @@
  */
 package com.cronos.onlinereview.services.uploads.failuretests;
 
-import java.io.File;
-
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.services.uploads.ConfigurationException;
 import com.cronos.onlinereview.services.uploads.impl.DefaultManagersProvider;
+
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.ResourceManager;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import junit.framework.Test;
+
+import java.io.File;
+
 
 /**
- * <p>
- * Failure test cases for DefaultManagersProvider.
- * </p>
+ * <p>Failure test cases for DefaultManagersProvider.</p>
  *
  * @author victorsam
  * @version 1.0
  */
 public class DefaultManagersProviderFailureTests extends TestCase {
     /**
-     * <p>
-     * The ResourceManager instance used for testing.
-     * </p>
+     * <p>The ResourceManager instance used for testing.</p>
      */
     private ResourceManager resourceManager;
 
     /**
-     * <p>
-     * The ProjectManager instance used for testing.
-     * </p>
+     * <p>The ProjectManager instance used for testing.</p>
      */
     private ProjectManager projectManager;
 
     /**
-     * <p>
-     * The PhaseManager instance used for testing.
-     * </p>
+     * <p>The PhaseManager instance used for testing.</p>
      */
     private PhaseManager phaseManager;
 
     /**
-     * <p>
-     * The ScreeningManager instance used for testing.
-     * </p>
+     * <p>The ScreeningManager instance used for testing.</p>
      */
     private ScreeningManager screeningManager;
 
     /**
-     * <p>
-     * The UploadManager instance used for testing.
-     * </p>
+     * <p>The UploadManager instance used for testing.</p>
      */
     private UploadManager uploadManager;
 
     /**
-     * <p>
-     * Setup test environment.
-     * </p>
-     * @throws Exception to JUnit
+     * <p>Setup test environment.</p>
      *
+     * @throws Exception to JUnit
      */
     protected void setUp() throws Exception {
         FailureTestHelper.loadXMLConfig(FailureTestHelper.CONFIG_FILE);
-        FailureTestHelper.loadXMLConfig("test_files" + File.separator + "failuretests" + File.separator
-            + "invalid_config.xml");
+        FailureTestHelper.loadXMLConfig("test_files" + File.separator + "failuretests" + File.separator +
+            "invalid_config.xml");
 
         resourceManager = new MockResourceManager();
         projectManager = new MockProjectManager();
@@ -81,11 +69,9 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tears down test environment.
-     * </p>
-     * @throws Exception to JUnit
+     * <p>Tears down test environment.</p>
      *
+     * @throws Exception to JUnit
      */
     protected void tearDown() throws Exception {
         resourceManager = null;
@@ -98,9 +84,7 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Return all tests.
-     * </p>
+     * <p>Return all tests.</p>
      *
      * @return all tests
      */
@@ -109,10 +93,9 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * It tests the case that when namespace is null and expects IllegalArgumentException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. It tests the case
+     * that when namespace is null and expects IllegalArgumentException.</p>
+     *
      * @throws Exception to JUnit
      */
     public void testCtor_NullNamespace() throws Exception {
@@ -125,10 +108,9 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * It tests the case that when namespace is empty and expects IllegalArgumentException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. It tests the case
+     * that when namespace is empty and expects IllegalArgumentException.</p>
+     *
      * @throws Exception to JUnit
      */
     public void testCtor_EmptyNamespace() throws Exception {
@@ -141,10 +123,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_UnknowNamespace() {
         try {
@@ -156,10 +136,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_ObjectFactoryNamespaceMissing() {
         try {
@@ -171,10 +149,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_ObjectFactoryNamespaceEmpty() {
         try {
@@ -186,10 +162,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_ObjectFactoryNamespaceInvalid() {
         try {
@@ -201,10 +175,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_ResourceManagerIdentifierMissing() {
         try {
@@ -216,10 +188,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_ResourceManagerIdentifierEmpty() {
         try {
@@ -231,10 +201,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_ResourceManagerIdentifierInvalid() {
         try {
@@ -246,10 +214,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_PhaseManagerIdentifierMissing() {
         try {
@@ -261,10 +227,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_PhaseManagerIdentifierEmpty() {
         try {
@@ -276,10 +240,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_PhaseManagerIdentifierInvalid() {
         try {
@@ -291,10 +253,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_ProjectManagerIdentifierMissing() {
         try {
@@ -306,10 +266,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_ProjectManagerIdentifierEmpty() {
         try {
@@ -321,10 +279,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_ProjectManagerIdentifierInvalid() {
         try {
@@ -336,10 +292,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_ScreeningManagerIdentifierMissing() {
         try {
@@ -351,10 +305,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_ScreeningManagerIdentifierEmpty() {
         try {
@@ -366,10 +318,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_ScreeningManagerIdentifierInvalid() {
         try {
@@ -381,10 +331,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_UploadManagerIdentifierMissing() {
         try {
@@ -396,10 +344,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_UploadManagerIdentifierEmpty() {
         try {
@@ -411,10 +357,8 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure.
-     * Expects for ConfigurationException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(String) for failure. Expects for
+     * ConfigurationException.</p>
      */
     public void testCtor1_UploadManagerIdentifierInvalid() {
         try {
@@ -426,11 +370,9 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(ResourceManager,ProjectManager,
-     * PhaseManager,ScreeningManager,UploadManager) for failure.
-     * It tests the case that when resourceManager is null and expects IllegalArgumentException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(ResourceManager,ProjectManager,
+     * PhaseManager,ScreeningManager,UploadManager) for failure. It tests the case that when resourceManager is null
+     * and expects IllegalArgumentException.</p>
      */
     public void testCtor_NullResourceManager() {
         try {
@@ -442,11 +384,9 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(ResourceManager,ProjectManager,
-     * PhaseManager,ScreeningManager,UploadManager) for failure.
-     * It tests the case that when projectManager is null and expects IllegalArgumentException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(ResourceManager,ProjectManager,
+     * PhaseManager,ScreeningManager,UploadManager) for failure. It tests the case that when projectManager is null
+     * and expects IllegalArgumentException.</p>
      */
     public void testCtor_NullProjectManager() {
         try {
@@ -458,11 +398,9 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(ResourceManager,ProjectManager,
-     * PhaseManager,ScreeningManager,UploadManager) for failure.
-     * It tests the case that when phaseManager is null and expects IllegalArgumentException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(ResourceManager,ProjectManager,
+     * PhaseManager,ScreeningManager,UploadManager) for failure. It tests the case that when phaseManager is null and
+     * expects IllegalArgumentException.</p>
      */
     public void testCtor_NullPhaseManager() {
         try {
@@ -474,11 +412,9 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(ResourceManager,ProjectManager,
-     * PhaseManager,ScreeningManager,UploadManager) for failure.
-     * It tests the case that when screeningManager is null and expects IllegalArgumentException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(ResourceManager,ProjectManager,
+     * PhaseManager,ScreeningManager,UploadManager) for failure. It tests the case that when screeningManager is null
+     * and expects IllegalArgumentException.</p>
      */
     public void testCtor_NullScreeningManager() {
         try {
@@ -490,11 +426,9 @@ public class DefaultManagersProviderFailureTests extends TestCase {
     }
 
     /**
-     * <p>
-     * Tests ctor DefaultManagersProvider#DefaultManagersProvider(ResourceManager,ProjectManager,
-     * PhaseManager,ScreeningManager,UploadManager) for failure.
-     * It tests the case that when uploadManager is null and expects IllegalArgumentException.
-     * </p>
+     * <p>Tests ctor DefaultManagersProvider#DefaultManagersProvider(ResourceManager,ProjectManager,
+     * PhaseManager,ScreeningManager,UploadManager) for failure. It tests the case that when uploadManager is null and
+     * expects IllegalArgumentException.</p>
      */
     public void testCtor_NullUploadManager() {
         try {
@@ -504,5 +438,4 @@ public class DefaultManagersProviderFailureTests extends TestCase {
             //good
         }
     }
-
 }

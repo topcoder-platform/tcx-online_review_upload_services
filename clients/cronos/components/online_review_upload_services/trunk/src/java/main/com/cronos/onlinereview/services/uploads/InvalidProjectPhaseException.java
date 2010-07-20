@@ -36,10 +36,8 @@ public class InvalidProjectPhaseException extends UploadServicesException {
      * Constructs the exception with error message and <code>projectPhaseId</code>.
      * </p>
      *
-     * @param message
-     *            the error message
-     * @param projectPhaseId
-     *            the id of invalid project
+     * @param message        the error message
+     * @param projectPhaseId the id of invalid project
      */
     public InvalidProjectPhaseException(String message, long projectPhaseId) {
         super(message);
@@ -51,12 +49,9 @@ public class InvalidProjectPhaseException extends UploadServicesException {
      * Constructs the exception with error message, inner cause and <code>projectPhaseId</code>.
      * </p>
      *
-     * @param message
-     *            the error message
-     * @param cause
-     *            the cause of this exception
-     * @param projectPhaseId
-     *            the id of invalid project
+     * @param message        the error message
+     * @param cause          the cause of this exception
+     * @param projectPhaseId the id of invalid project
      */
     public InvalidProjectPhaseException(String message, Throwable cause, long projectPhaseId) {
         super(message, cause);
