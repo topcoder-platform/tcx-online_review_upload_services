@@ -41,7 +41,7 @@
     <property name="db_connection_factory.jar"
               value="${tcs_libdir}/db_connection_factory/1.1.0/db_connection_factory.jar"/>
 
-    <property name="activation.jar" value="${ext_libdir}/jaf/1.1/activation.jar"/>
+    <property name="activation.jar" value="${ext_libdir}/jaf/1.1.1/activation.jar"/>
     
     <!-- 3rd party dependencies -->
     <property name="junit.jar" value="${ext_libdir}/junit/4.6/junit-4.6.jar"/>
