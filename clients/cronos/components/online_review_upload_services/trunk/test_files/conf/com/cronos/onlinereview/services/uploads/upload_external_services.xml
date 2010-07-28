@@ -10,7 +10,7 @@
 			<Value>submission-{0}-{1}</Value>
 		</Property>
 		<Property name="fileStorageLocation">
-			<Value>C:/Program Files/Apache Software Foundation/Tomcat 6.0/webapps/axis/WEB-INF/classes/test_files/upload</Value>
+			<Value>E:/servers/apache-tomcat-6.0.26/webapps/axis/WEB-INF/classes/test_files/upload</Value>
 		</Property>
 	</Config>
 
