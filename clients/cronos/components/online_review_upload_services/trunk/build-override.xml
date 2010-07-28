@@ -11,7 +11,7 @@
     
     <!-- adds to classpath all libraries required by axis -->
     <path id="axis-all.classpath">
-        <fileset dir="${basedir}/${test_reflib}">
+        <fileset dir="${axis.dir}">
             <include name="**/*.jar"/>
         </fileset>
     </path>
@@ -46,12 +46,12 @@
         <!--Create a temporary directory where to store the .jar files from test_reflibs/-->
         <!--directory because in WEB-INF/ directory of the .war archive the .jar files must-->
         <!--be copied flatten  so <code>lib dir="${basedir}/${test_reflib}"</code> is not an option.-->
-        <copy todir="${test_reflibs_temp_dir}" flatten="true">
-            <fileset dir="${basedir}/${test_reflib}">
-                <include name="**/*.jar"/>
-                <exclude name="axis"/>
-            </fileset>
-        </copy>
+        <copy file="${workdays.jar}" todir="${test_reflibs_temp_dir}"/>
+        <copy file="${typesafe_enum.jar}" todir="${test_reflibs_temp_dir}"/>
+        <copy file="${object_formatter.jar}" todir="${test_reflibs_temp_dir}"/>
+        <copy file="${database_abstraction.jar}" todir="${test_reflibs_temp_dir}"/>
+        <copy file="${javamail.jar}" todir="${test_reflibs_temp_dir}"/>
+        <copy file="${ifxjdbc.jar}" todir="${test_reflibs_temp_dir}"/>
 
         <!-- package everything into war -->
         <war destfile="${axis.war}" basedir="${testfiles}/axis">
