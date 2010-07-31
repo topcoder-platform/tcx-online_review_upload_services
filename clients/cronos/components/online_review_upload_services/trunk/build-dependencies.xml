@@ -1,7 +1,7 @@
 <project name="Dependency Import" default="dist" basedir=".">
     <!-- properties used for building war -->    
     <!-- path to tomcat installation directory -->
-    <property name="tomcat.home" value="E:/servers/apache-tomcat-6.0.26"/>
+    <property name="tomcat.home" value="${tcs_libdir}/Tomcat/6.0.26"/>
 
     <!-- port on which tomcat is running (default: 8080) -->
     <property name="tomcat.port" value="8080"/>
@@ -40,21 +40,20 @@
               value="${tcs_libdir}/user_project_data_store/1.0.1/user_project_data_store.jar"/>
     <property name="db_connection_factory.jar"
               value="${tcs_libdir}/db_connection_factory/1.1.0/db_connection_factory.jar"/>
-    <property name="workdays.jar" value="${tcs_libdir}/workdays/1.0.0/workdays.jar"/>
+    <property name="workdays.jar" value="${tcs_libdir}/workdays/1.0.1/workdays.jar"/>
     <property name="typesafe_enum.jar" value="${tcs_libdir}/typesafe_enum/1.1.0/typesafe_enum.jar"/>
     <property name="object_formatter.jar" value="${tcs_libdir}/object_formatter/1.0.0/object_formatter.jar"/>
     <property name="database_abstraction.jar" value="${tcs_libdir}/database_abstraction/1.1.1/database_abstraction.jar"/>
 
     <property name="activation.jar" value="${ext_libdir}/jaf/1.1.1/activation.jar"/>
     <property name="javamail.jar" value="${ext_libdir}/javamail/1.4.1/mail.jar"/>
-    <property name="ifxjdbc.jar" value="${ext_libdir}/informix/ifxjdbc.jar"/>
+    <property name="ifxjdbc.jar" value="${ext_libdir}/informix/3.0/ifxjdbc.jar"/>
     
     <!-- 3rd party dependencies -->
     <property name="junit.jar" value="${ext_libdir}/junit/4.6/junit-4.6.jar"/>
-    <property name="axis.dir" value="${ext_libdir}/axis/1.4"/>
+    <property name="axis.dir" value="${ext_libdir}/axis/1.4.0"/>
 
     <path id="component.tcs-dependencies">
-
         <pathelement location="${configuration_manager.jar}"/>
         <pathelement location="${configuration_api.jar}"/>
         <pathelement location="${object_factory.jar}"/>
