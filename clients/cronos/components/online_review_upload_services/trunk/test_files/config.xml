@@ -113,16 +113,16 @@
                         <Value>com.informix.jdbc.IfxDriver</Value>
                     </Property>
                     <Property name="jdbc_url">
-                        <Value>jdbc:informix-sqli://localhost:9088/or:informixserver=tc</Value>
+                        <Value>jdbc:informix-sqli://50.16.133.122:2021/common_oltp:informixserver=informixoltp_tcp</Value>
                     </Property>
                     <Property name="SelectMethod">
                         <Value>cursor</Value>
                     </Property>
                     <Property name="user">
-                        <Value>informix</Value>
+                        <Value>coder</Value>
                     </Property>
                     <Property name="password">
-                        <Value>111111</Value>
+                        <Value>c0d3r4T</Value>
                     </Property>
                 </Property>
             </Property>
