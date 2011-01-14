@@ -8,6 +8,7 @@ import com.topcoder.management.resource.NotificationType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
+import com.topcoder.management.resource.persistence.ResourcePersistenceException;
 import com.topcoder.search.builder.filter.Filter;
 
 /**
@@ -38,28 +39,7 @@ public class MockResourceManager implements ResourceManager {
      * @param resource resource
      * @param operator operator
      */
-    public void updateResource(Resource resource, String operator) {
-        updateResource = resource;
-        updateResourceUserId = operator;
-    }
-
-    /**
-     * Not implemented.
-     *
-     * @param resource resource
-     * @param operator operator
-     */
     public void removeResource(Resource resource, String operator) {
-    }
-
-    /**
-     * Not implemented.
-     *
-     * @param resources resources
-     * @param project   project id
-     * @param operator  operator
-     */
-    public void updateResources(Resource[] resources, long project, String operator) {
     }
 
     /**
@@ -274,5 +254,39 @@ public class MockResourceManager implements ResourceManager {
     public String getUpdateResourceUserId() {
         return updateResourceUserId;
     }
+
+	@Override
+	public void addNotifications(long arg0, long[] arg1, long arg2, String arg3)
+			throws ResourcePersistenceException {
+	}
+
+	@Override
+	public long[] getNotificationsForUser(long arg0, long arg1)
+			throws ResourcePersistenceException {
+		return null;
+	}
+
+	@Override
+	public void removeNotifications(long arg0, long[] arg1, long arg2,
+			String arg3) throws ResourcePersistenceException {
+	}
+
+	@Override
+	public Resource[] searchResources(long arg0, long arg1)
+			throws ResourcePersistenceException {
+		return null;
+	}
+
+	@Override
+	public Resource updateResource(Resource arg0, String arg1)
+			throws ResourcePersistenceException {
+		return null;
+	}
+
+	@Override
+	public Resource[] updateResources(Resource[] arg0, long arg1, String arg2)
+			throws ResourcePersistenceException {
+		return null;
+	}
 
 }
