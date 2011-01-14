@@ -1144,8 +1144,10 @@ public class DefaultUploadExternalServicesTest extends TestCase {
     private void clearFiles() {
         File file = new File("test_files/upload");
         File[] files = file.listFiles();
-        for (File delFile : files) {
-            delFile.delete();
+        if (files != null) {
+	        for (File delFile : files) {
+	            delFile.delete();
+	        }
         }
     }
 

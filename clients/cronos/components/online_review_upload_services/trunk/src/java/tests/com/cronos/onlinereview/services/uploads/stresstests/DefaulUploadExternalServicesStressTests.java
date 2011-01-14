@@ -74,7 +74,7 @@ public class DefaulUploadExternalServicesStressTests extends TestCase {
         }
         file.createNewFile();
         BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 1000; i++) {
             for (int j = 0; j < 1000; j++) {
                 bw.write("111111111111111111111111111111111111111111111");
             }
