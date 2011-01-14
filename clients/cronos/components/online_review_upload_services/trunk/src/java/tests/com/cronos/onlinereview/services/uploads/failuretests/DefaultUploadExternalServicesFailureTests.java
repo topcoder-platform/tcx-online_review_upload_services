@@ -555,37 +555,4 @@ public class DefaultUploadExternalServicesFailureTests extends TestCase {
         }
     }
 
-    /**
-     * <p>Tests DefaultUploadServices#uploadSpecification(long,long,String,DataHandler) for failure. It tests
-     * the case that the project doesn't exist.</p>
-     *
-     * @throws Exception to JUnit
-     */
-    public void testUploadSpecification_failure6() throws Exception {
-        try {
-            services.uploadSpecification(1, 1, "testfile", dataHandler);
-            fail("InvalidProjectException expected.");
-        } catch (InvalidProjectException iae) {
-            //good
-        }
-    }
-
-    /**
-     * <p>Tests DefaultUploadServices#uploadSpecification(long,long,String,DataHandler) for failure. It tests
-     * the case that the resource doesn't exist.</p>
-     *
-     * @throws Exception to JUnit
-     */
-    public void testUploadSpecification_failure7() throws Exception {
-        MockResourceManager.setState(-1);
-        try {
-            services.uploadSpecification(10, 1, "testfile", dataHandler);
-            fail("InvalidUserException expected.");
-        } catch (InvalidUserException iae) {
-            //good
-            // should fail because no "Specification Submitter" role is defined
-        } finally {
-            MockResourceManager.setState(0);
-        }
-    }
 }

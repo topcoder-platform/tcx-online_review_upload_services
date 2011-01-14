@@ -448,6 +448,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
         InputStream inputStream = null;
         FileOutputStream outputStream = null;
         try {
+
             inputStream = dataHandler.getDataSource().getInputStream();
             outputStream = new FileOutputStream(newFile);
             // write all bytes from input to output

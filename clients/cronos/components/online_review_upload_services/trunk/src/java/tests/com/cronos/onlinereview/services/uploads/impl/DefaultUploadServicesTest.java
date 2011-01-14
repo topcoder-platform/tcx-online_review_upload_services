@@ -2074,31 +2074,6 @@ public class DefaultUploadServicesTest extends TestCase {
      *
      * @throws Exception if any error occurs
      */
-    public void testAddSubmitter1() throws Exception {
-        TestHelper.executeBatch(TestHelper.TEST_FILES + "delete.sql");
-        TestHelper.executeBatch(TestHelper.TEST_FILES + "insert.sql");
-
-        // this will force to execute fully the addSubmitter method
-        MockResourceManager.setState(1);
-
-        // the user id is set to 101 - the value which should exist in database
-        long id = defaultUploadServices.addSubmitter(TestHelper.PROJECT_ID, 101);
-
-        // verify upload persistence
-        assertEquals("invalid user id", "101", resourceManager.getUpdateResourceUserId());
-
-        TestHelper.executeBatch(TestHelper.TEST_FILES + "delete.sql");
-    }
-
-    /**
-     * <p>
-     * Accuracy test of
-     * <code>{@link DefaultUploadServices#addSubmitter(long projectId, long userId)}</code>
-     * method.
-     * </p>
-     *
-     * @throws Exception if any error occurs
-     */
     public void testAddSubmitter() throws Exception {
         // this will force to execute fully the addSubmitter method
         MockResourceManager.setState(0);

@@ -280,7 +280,9 @@ public class MockResourceManager implements ResourceManager {
 	@Override
 	public Resource updateResource(Resource arg0, String arg1)
 			throws ResourcePersistenceException {
-		return null;
+		this.updateResource = arg0;
+		this.updateResourceUserId = arg1;
+		return updateResource;
 	}
 
 	@Override
