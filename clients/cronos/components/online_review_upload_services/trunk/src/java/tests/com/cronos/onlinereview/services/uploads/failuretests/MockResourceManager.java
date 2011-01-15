@@ -217,35 +217,29 @@ public class MockResourceManager implements ResourceManager {
         return state;
     }
 
-	@Override
 	public void addNotifications(long arg0, long[] arg1, long arg2, String arg3)
 			throws ResourcePersistenceException {
 	}
 
-	@Override
 	public long[] getNotificationsForUser(long arg0, long arg1)
 			throws ResourcePersistenceException {
 		return null;
 	}
 
-	@Override
 	public void removeNotifications(long arg0, long[] arg1, long arg2,
 			String arg3) throws ResourcePersistenceException {
 	}
 
-	@Override
 	public Resource[] searchResources(long arg0, long arg1)
 			throws ResourcePersistenceException {
 		return null;
 	}
 
-	@Override
 	public Resource updateResource(Resource arg0, String arg1)
 			throws ResourcePersistenceException {
 		return null;
 	}
 
-	@Override
 	public Resource[] updateResources(Resource[] arg0, long arg1, String arg2)
 			throws ResourcePersistenceException {
 		return null;

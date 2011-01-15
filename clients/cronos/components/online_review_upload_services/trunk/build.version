@@ -5,5 +5,5 @@ component.package=com.cronos.onlinereview.services.uploads
 component.packagedir=com/cronos/onlinereview/services/uploads
 component.version.major=1
 component.version.minor=1
-component.version.micro=0
+component.version.micro=1
 component.version.build=1
