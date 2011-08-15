@@ -3,7 +3,6 @@
  */
 package com.cronos.onlinereview.services.uploads.impl;
 
-import com.cronos.onlinereview.autoscreening.management.ScreeningTaskAlreadyExistsException;
 import com.cronos.onlinereview.external.ConfigException;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.RetrievalException;
@@ -95,12 +94,19 @@ import java.util.Set;
  * </p>
  *
  * <p>
+ * Version 1.2 (Online Review Build From Sources) Change notes:
+ *   <ol>
+ *     <li>Removed dependency on Auto Screening.</li>
+ *   </ol>
+ * </p>
+ *
+ * <p>
  * Thread safety: the thread safety is completely relied to the managers implementations because it's impossible to
  * change the other variables.
  * </p>
  *
- * @author fabrizyo, saarixx, cyberjag, TCSDEVELOPER
- * @version 1.1
+ * @author fabrizyo, saarixx, cyberjag, lmmortal
+ * @version 1.2
  */
 public class DefaultUploadServices implements UploadServices {
 
@@ -313,12 +319,6 @@ public class DefaultUploadServices implements UploadServices {
                         Helper.logFormat(LOG, Level.INFO, "Updated resource using the operator {0}.",
                                 new Object[]{operator});
 
-                        // initiate the screening
-                        managersProvider.getScreeningManager().initiateScreening(upload.getId(), operator);
-                        Helper.logFormat(LOG, Level.INFO,
-                                "Initiated screening for submission {0} using operator {1}.", new Object[]{
-                                        submission.getId(), operator});
-
                         // If the project DOESN'T allow multiple submissions hence its property "Allow
                         // multiple submissions" will be false
                         Boolean allow = Boolean.parseBoolean((String) project
@@ -348,16 +348,6 @@ public class DefaultUploadServices implements UploadServices {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload submission for user {0} and project {1}.",
                     new Object[]{userId, projectId});
             throw new PersistenceException("Failed to upload submission for user " + userId + " and project "
-                    + projectId + ".", e);
-        } catch (com.cronos.onlinereview.autoscreening.management.PersistenceException e) {
-            Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload submission for user {0} and project {1}.",
-                    new Object[]{userId, projectId});
-            throw new PersistenceException("Failed to upload submission for user " + userId + " and project "
-                    + projectId + ".", e);
-        } catch (ScreeningTaskAlreadyExistsException e) {
-            Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload submission for user {0} and project {1}.",
-                    new Object[]{userId, projectId});
-            throw new UploadServicesException("Failed to upload submission for user " + userId + " and project "
                     + projectId + ".", e);
         } catch (ResourcePersistenceException e) {
             Helper.logFormat(LOG, Level.ERROR, e, "Failed to upload submission for user {0} and project {1}.",

@@ -4,7 +4,6 @@
 
 package com.cronos.onlinereview.services.uploads;
 
-import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.ProjectManager;
@@ -17,11 +16,18 @@ import com.topcoder.management.resource.ResourceManager;
  * </p>
  *
  * <p>
+ * Version 1.1 (Online Review Build From Sources) Change notes:
+ *   <ol>
+ *     <li>Removed dependency on Auto Screening.</li>
+ *   </ol>
+ * </p>
+ *
+ * <p>
  * Thread safety: the implementations are not required to be thread safe but stateless.
  * </p>
  *
- * @author fabrizyo, cyberjag
- * @version 1.0
+ * @author fabrizyo, cyberjag, lmmortal
+ * @version 1.1
  */
 public interface ManagersProvider {
     /**
@@ -53,16 +59,6 @@ public interface ManagersProvider {
      * @return a <code>PhaseManager</code> instance
      */
     public PhaseManager getPhaseManager();
-
-    /**
-     * <p>
-     * Returns a <code>ScreeningManager</code> instance. This is used in <code>UploadServices</code> to
-     * retrieve this manager and perform all its operations.
-     * </p>
-     *
-     * @return a <code>ScreeningManager</code> instance
-     */
-    public ScreeningManager getScreeningManager();
 
     /**
      * <p>
