@@ -4,7 +4,6 @@
 
 package com.cronos.onlinereview.services.uploads.impl;
 
-import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.services.uploads.ConfigurationException;
 import com.cronos.onlinereview.services.uploads.ManagersProvider;
 import com.topcoder.management.deliverable.UploadManager;
@@ -38,9 +37,6 @@ import com.topcoder.util.log.LogFactory;
  *      &lt;Property name=&quot;projectManagerIdentifier&quot;&gt;
  *          &lt;Value&gt;projectManager&lt;/Value&gt;
  *      &lt;/Property&gt;
- *      &lt;Property name=&quot;screeningManagerIdentifier&quot;&gt;
- *          &lt;Value&gt;screeningManager&lt;/Value&gt;
- *      &lt;/Property&gt;
  *      &lt;Property name=&quot;uploadManagerIdentifier&quot;&gt;
  *          &lt;Value&gt;uploadManager&lt;/Value&gt;
  *      &lt;/Property&gt;
@@ -50,11 +46,18 @@ import com.topcoder.util.log.LogFactory;
  * </p>
  *
  * <p>
+ * Version 1.1 (Online Review Build From Sources) Change notes:
+ *   <ol>
+ *     <li>Removed dependency on Auto Screening.</li>
+ *   </ol>
+ * </p>
+ *
+ * <p>
  * Thread safety: It's impossible to change the state of this class, hence the class is thread safe.
  * </p>
  *
- * @author fabrizyo, cyberjag
- * @version 1.0
+ * @author fabrizyo, cyberjag, lmmortal
+ * @version 1.1
  */
 public class DefaultManagersProvider implements ManagersProvider {
 
@@ -79,13 +82,6 @@ public class DefaultManagersProvider implements ManagersProvider {
      * </p>
      */
     private static final String UPLOAD_MANAGER_IDENTIFIER = "uploadManagerIdentifier";
-
-    /**
-     * <p>
-     * Represents the screening manager identifier used in the configuration file.
-     * </p>
-     */
-    private static final String SCREENING_MANAGER_IDENTIFIER = "screeningManagerIdentifier";
 
     /**
      * <p>
@@ -134,14 +130,6 @@ public class DefaultManagersProvider implements ManagersProvider {
 
     /**
      * <p>
-     * Represents the manager to manage the auto screening tasks. It is defined in constructor and can be accessed
-     * using {@link #getScreeningManager()}. It cannot be <code>null</code>.
-     * </p>
-     */
-    private final ScreeningManager screeningManager;
-
-    /**
-     * <p>
      * Represents the manager to manage the deliverables: Submission and Uploads. It is defined in constructor and
      * can be accessed using {@link #getUploadManager()}. It cannot be <code>null</code>.
      * </p>
@@ -182,9 +170,6 @@ public class DefaultManagersProvider implements ManagersProvider {
         this.phaseManager = (PhaseManager) Helper.createObject(namespace, PHASE_MANAGER_IDENTIFIER, null, LOG,
                 PhaseManager.class);
         LOG.log(Level.INFO, "PhaseManager created using ObjectFactory");
-        this.screeningManager = (ScreeningManager) Helper.createObject(namespace, SCREENING_MANAGER_IDENTIFIER,
-                null, LOG, ScreeningManager.class);
-        LOG.log(Level.INFO, "ScreeningManager created using ObjectFactory");
         this.uploadManager = (UploadManager) Helper.createObject(namespace, UPLOAD_MANAGER_IDENTIFIER, null, LOG,
                 UploadManager.class);
         LOG.log(Level.INFO, "UploadManager created using ObjectFactory");
@@ -198,24 +183,20 @@ public class DefaultManagersProvider implements ManagersProvider {
      * @param resourceManager  the manager to manage the resources
      * @param projectManager   the manager to manage the projects.
      * @param phaseManager     the manager to manage the phases of a project.
-     * @param screeningManager the manager to manage the auto screening tasks.
      * @param uploadManager    the manager to manage the deliverables: Submission and Uploads.
      *
      * @throws IllegalArgumentException if any argument is <code>null</code>
      */
     public DefaultManagersProvider(ResourceManager resourceManager, ProjectManager projectManager,
-                                   PhaseManager phaseManager, ScreeningManager screeningManager,
-                                   UploadManager uploadManager) {
+                                   PhaseManager phaseManager, UploadManager uploadManager) {
         Helper.checkNull(resourceManager, "resourceManager", LOG);
         Helper.checkNull(projectManager, "projectManager", LOG);
         Helper.checkNull(phaseManager, "phaseManager", LOG);
-        Helper.checkNull(screeningManager, "screeningManager", LOG);
         Helper.checkNull(uploadManager, "uploadManager", LOG);
 
         this.resourceManager = resourceManager;
         this.projectManager = projectManager;
         this.phaseManager = phaseManager;
-        this.screeningManager = screeningManager;
         this.uploadManager = uploadManager;
     }
 
@@ -267,23 +248,6 @@ public class DefaultManagersProvider implements ManagersProvider {
             return phaseManager;
         } finally {
             LOG.log(Level.DEBUG, "Exited DefaultManagersProvider#getPhaseManager()");
-        }
-    }
-
-    /**
-     * <p>
-     * Returns the <code>ScreeningManager</code> instance. This is used in <code>DefaultUploadService</code> to
-     * retrieve this manager and perform all its operations.
-     * </p>
-     *
-     * @return a <code>ScreeningManager</code> instance
-     */
-    public ScreeningManager getScreeningManager() {
-        LOG.log(Level.DEBUG, "Entered DefaultManagersProvider#getScreeningManager()");
-        try {
-            return screeningManager;
-        } finally {
-            LOG.log(Level.DEBUG, "Exited DefaultManagersProvider#getScreeningManager()");
         }
     }
 
