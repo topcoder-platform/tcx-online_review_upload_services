@@ -25,7 +25,7 @@
     <property name="object_factory_config_manager_plugin.jar"
               value="${tcs_libdir}/object_factory_config_manager_plugin/1.0.0/object_factory_config_manager_plugin.jar"/>
     <property name="base_exception.jar" value="${tcs_libdir}/base_exception/2.0.0/base_exception.jar"/>
-    <property name="logging_wrapper.jar" value="${tcs_libdir}/logging_wrapper/1.2.0/logging_wrapper.jar"/>
+    <property name="logging_wrapper.jar" value="${tcs_libdir}/logging_wrapper/2.0.0/logging_wrapper.jar"/>
     <property name="search_builder.jar" value="${tcs_libdir}/search_builder/1.4.0/search_builder.jar"/>
     <property name="phase_management.jar" value="${tcs_libdir}/phase_management/1.0.4/phase_management.jar"/>
     <property name="project_phases.jar" value="${tcs_libdir}/project_phases/2.0.1/project_phases.jar"/>
