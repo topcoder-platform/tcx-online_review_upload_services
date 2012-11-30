@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2012 TopCoder Inc., All Rights Reserved.
  */
 
 package com.cronos.onlinereview.services.uploads.impl;
@@ -29,7 +29,7 @@ import java.text.MessageFormat;
  * </p>
  *
  * @author cyberjag
- * @version 1.0
+ * @version 1.1.2
  */
 final class Helper {
 
@@ -149,7 +149,7 @@ final class Helper {
         throws ConfigurationException {
         String objectFactoryNamespace = readProperty(namespace, "objectFactoryNamespace", null, log, false);
         if (objectFactoryNamespace == null) {
-            logFormat(log, Level.INFO, "No 'objectFactoryNamespace' present. Using the default class {0}",
+            logFormat(log, Level.DEBUG, "No 'objectFactoryNamespace' present. Using the default class {0}",
                     new Object[]{cls.getName()});
             return object;
         }
@@ -184,7 +184,7 @@ final class Helper {
                     return defValue;
                 }
             }
-            logFormat(log, Level.INFO, "Read the property {0} from configuration - {1}", new Object[]{key, value});
+            logFormat(log, Level.DEBUG, "Read the property {0} from configuration - {1}", new Object[]{key, value});
             return value;
         } catch (UnknownNamespaceException e) {
             logFormat(log, Level.FATAL, e,

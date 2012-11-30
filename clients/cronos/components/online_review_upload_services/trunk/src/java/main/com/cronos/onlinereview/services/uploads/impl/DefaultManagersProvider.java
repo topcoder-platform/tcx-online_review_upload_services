@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2012 TopCoder Inc., All Rights Reserved.
  */
 
 package com.cronos.onlinereview.services.uploads.impl;
@@ -11,7 +11,7 @@ import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.util.log.Level;
-import com.topcoder.util.log.LogFactory;
+import com.topcoder.util.log.LogManager;
 
 /**
  * <p>
@@ -57,7 +57,7 @@ import com.topcoder.util.log.LogFactory;
  * </p>
  *
  * @author fabrizyo, cyberjag, lmmortal
- * @version 1.1
+ * @version 1.1.2
  */
 public class DefaultManagersProvider implements ManagersProvider {
 
@@ -74,7 +74,7 @@ public class DefaultManagersProvider implements ManagersProvider {
      * Represents the logger to log all operations, exceptions, etc. It is initialized statically.
      * </p>
      */
-    private static final com.topcoder.util.log.Log LOG = LogFactory.getLog(DefaultManagersProvider.class.getName());
+    private static final com.topcoder.util.log.Log LOG = LogManager.getLog(DefaultManagersProvider.class.getName());
 
     /**
      * <p>
@@ -163,16 +163,16 @@ public class DefaultManagersProvider implements ManagersProvider {
         Helper.checkString(namespace, "namespace", LOG);
         this.resourceManager = (ResourceManager) Helper.createObject(namespace, RESOURCE_MANAGER_IDENTIFIER, null,
                 LOG, ResourceManager.class);
-        LOG.log(Level.INFO, "ResourceManager created using ObjectFactory");
+        LOG.log(Level.DEBUG, "ResourceManager created using ObjectFactory");
         this.projectManager = (ProjectManager) Helper.createObject(namespace, PROJECT_MANAGER_IDENTIFIER, null,
                 LOG, ProjectManager.class);
-        LOG.log(Level.INFO, "ProjectManager created using ObjectFactory");
+        LOG.log(Level.DEBUG, "ProjectManager created using ObjectFactory");
         this.phaseManager = (PhaseManager) Helper.createObject(namespace, PHASE_MANAGER_IDENTIFIER, null, LOG,
                 PhaseManager.class);
-        LOG.log(Level.INFO, "PhaseManager created using ObjectFactory");
+        LOG.log(Level.DEBUG, "PhaseManager created using ObjectFactory");
         this.uploadManager = (UploadManager) Helper.createObject(namespace, UPLOAD_MANAGER_IDENTIFIER, null, LOG,
                 UploadManager.class);
-        LOG.log(Level.INFO, "UploadManager created using ObjectFactory");
+        LOG.log(Level.DEBUG, "UploadManager created using ObjectFactory");
     }
 
     /**

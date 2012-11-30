@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2012 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.services.uploads.impl;
 
@@ -49,7 +49,7 @@ import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.UnknownNamespaceException;
 import com.topcoder.util.log.Level;
-import com.topcoder.util.log.LogFactory;
+import com.topcoder.util.log.LogManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -106,7 +106,7 @@ import java.util.Set;
  * </p>
  *
  * @author fabrizyo, saarixx, cyberjag, lmmortal
- * @version 1.2
+ * @version 1.1.2
  */
 public class DefaultUploadServices implements UploadServices {
 
@@ -129,7 +129,7 @@ public class DefaultUploadServices implements UploadServices {
      * Represents the logger to log all operations, exceptions, etc. It is initialized statically.
      * </p>
      */
-    private static final com.topcoder.util.log.Log LOG = LogFactory.getLog(DefaultUploadServices.class.getName());
+    private static final com.topcoder.util.log.Log LOG = LogManager.getLog(DefaultUploadServices.class.getName());
 
     /**
      * <p>The namespace used for the config details. Is initialized in the constructor and never changed after that.
@@ -196,7 +196,7 @@ public class DefaultUploadServices implements UploadServices {
         }
         this.managersProvider = provider;
         this.namespace = namespace;
-        Helper.logFormat(LOG, Level.INFO, "ManagersProvider created using ObjectFactory");
+        Helper.logFormat(LOG, Level.DEBUG, "ManagersProvider created using ObjectFactory");
     }
 
     /**
@@ -241,7 +241,7 @@ public class DefaultUploadServices implements UploadServices {
         try {
             resource = getResource(projectId, userId, new String[]{"Submitter"});
         } catch (InvalidUserException e) {
-            Helper.logFormat(LOG, Level.INFO, "Creating submitter role for user: {0} in project {1}",
+            Helper.logFormat(LOG, Level.DEBUG, "Creating submitter role for user: {0} in project {1}",
                     new Object[]{userId, projectId});
             try {
                 resource = managersProvider.getResourceManager().getResource(addSubmitter(projectId, userId));
@@ -260,20 +260,20 @@ public class DefaultUploadServices implements UploadServices {
             // iterate over the phases to find if the type is "Submission" or "Screening"
             for (Phase phase : phases) {
                 if (phase.getPhaseType() != null) {
-                    Helper.logFormat(LOG, Level.INFO, "Looping through phase {0} of the project.",
+                    Helper.logFormat(LOG, Level.DEBUG, "Looping through phase {0} of the project.",
                             new Object[]{phase.getPhaseType().getName()});
                 }
                 if (phase.getPhaseType() != null
                         && ("Submission".equals(phase.getPhaseType().getName()) || "Screening".equals(phase
                         .getPhaseType().getName()))) {
-                    Helper.logFormat(LOG, Level.INFO, "Current status for the phase {0} is {1} of the project.",
+                    Helper.logFormat(LOG, Level.DEBUG, "Current status for the phase {0} is {1} of the project.",
                             new Object[]{phase.getPhaseType().getName(), phase.getPhaseStatus().getName()});
                     // check if submission or screening phase are open checking its the status
                     if (PhaseStatus.OPEN.getName().equals(phase.getPhaseStatus().getName())) {
                         // create a new Submission
                         Submission submission = new Submission();
 
-                        Helper.logFormat(LOG, Level.INFO,
+                        Helper.logFormat(LOG, Level.DEBUG,
                                 "Current status for the phase {0} is {1} of the project.", new Object[]{
                                         phase.getPhaseType().getName(), phase.getPhaseStatus().getName()});
 
@@ -285,7 +285,7 @@ public class DefaultUploadServices implements UploadServices {
                         submission.setSubmissionType(getSubmissionTypeByName("Contest Submission"));
 
                         Upload upload = createUpload(projectId, resource.getId(), filename, "Submission");
-                        Helper.logFormat(LOG, Level.INFO,
+                        Helper.logFormat(LOG, Level.DEBUG,
                                 "Upload created for the  projectId {0}, userId {1} with filename {2}.",
                                 new Object[]{projectId, userId, filename});
 
@@ -293,7 +293,7 @@ public class DefaultUploadServices implements UploadServices {
                         // persist the upload
                         managersProvider.getUploadManager().createUpload(upload, operator);
 
-                        Helper.logFormat(LOG, Level.INFO,
+                        Helper.logFormat(LOG, Level.DEBUG,
                                 "Created submission Upload for project {0}, user {1} with file name {2}.",
                                 new Object[]{projectId, userId, filename});
 
@@ -304,19 +304,19 @@ public class DefaultUploadServices implements UploadServices {
                         // operator
                         managersProvider.getUploadManager().createSubmission(submission, operator);
 
-                        Helper.logFormat(LOG, Level.INFO, "Created submission for project {0}, user {1}.",
+                        Helper.logFormat(LOG, Level.DEBUG, "Created submission for project {0}, user {1}.",
                                 new Object[]{projectId, userId});
 
                         // associate the submission with the submitter resource
                         resource.addSubmission(submission.getId());
 
-                        Helper.logFormat(LOG, Level.INFO, "Added submission {0} to resource.",
+                        Helper.logFormat(LOG, Level.DEBUG, "Added submission {0} to resource.",
                                 new Object[]{submission.getId()});
 
                         // Persist the resource using ResourceManager#updateResource
                         managersProvider.getResourceManager().updateResource(resource, operator);
 
-                        Helper.logFormat(LOG, Level.INFO, "Updated resource using the operator {0}.",
+                        Helper.logFormat(LOG, Level.DEBUG, "Updated resource using the operator {0}.",
                                 new Object[]{operator});
 
                         // If the project DOESN'T allow multiple submissions hence its property "Allow
@@ -326,7 +326,7 @@ public class DefaultUploadServices implements UploadServices {
 
                         if (!allow) {
                             deletePreviousSubmissions(userId, resource);
-                            Helper.logFormat(LOG, Level.INFO,
+                            Helper.logFormat(LOG, Level.DEBUG,
                                     "Marked previous submissions for deletion for the user {0}.",
                                     new Object[]{userId});
                         }
@@ -431,7 +431,7 @@ public class DefaultUploadServices implements UploadServices {
                         // persist the upload
                         uploadManager.createUpload(upload, operator);
 
-                        Helper.logFormat(LOG, Level.INFO,
+                        Helper.logFormat(LOG, Level.DEBUG,
                                 "Created final fix Upload for project {0}, user {1} with file name {2}.",
                                 new Object[]{projectId, userId, filename});
 
@@ -451,7 +451,7 @@ public class DefaultUploadServices implements UploadServices {
                             uploadManager.updateUpload(oldUpload, operator);
                         }
 
-                        Helper.logFormat(LOG, Level.INFO,
+                        Helper.logFormat(LOG, Level.DEBUG,
                                 "Marked previous final fixes for deletion for the user {0}.",
                                 new Object[]{userId});
 
@@ -537,7 +537,7 @@ public class DefaultUploadServices implements UploadServices {
                         String operator = String.valueOf(userId);
                         // persist the upload
                         managersProvider.getUploadManager().createUpload(upload, operator);
-                        Helper.logFormat(LOG, Level.INFO,
+                        Helper.logFormat(LOG, Level.DEBUG,
                                 "Created test cases Upload for project {0}, user {1} with file name {2}.",
                                 new Object[]{projectId, userId, filename});
 
@@ -561,7 +561,7 @@ public class DefaultUploadServices implements UploadServices {
                         }
 
                         Helper
-                                .logFormat(LOG, Level.INFO,
+                                .logFormat(LOG, Level.DEBUG,
                                         "Marked previous test cases for deletion for the user {0}.",
                                         new Object[]{userId});
 
@@ -641,7 +641,7 @@ public class DefaultUploadServices implements UploadServices {
                 if (phase.getPhaseType() != null
                         && ("Specification Submission".equals(phase.getPhaseType().getName()))) {
 
-                    Helper.logFormat(LOG, Level.INFO, "Current status for the phase {0} is {1} of the project.",
+                    Helper.logFormat(LOG, Level.DEBUG, "Current status for the phase {0} is {1} of the project.",
                             new Object[]{phase.getPhaseType().getName(), phase.getPhaseStatus().getName()});
 
                     // check if specification submission phase is open
@@ -649,7 +649,7 @@ public class DefaultUploadServices implements UploadServices {
                         // create a new Submission
                         Submission submission = new Submission();
 
-                        Helper.logFormat(LOG, Level.INFO,
+                        Helper.logFormat(LOG, Level.DEBUG,
                                 "Current status for the phase {0} is {1} of the project.", new Object[]{
                                         phase.getPhaseType().getName(), phase.getPhaseStatus().getName()});
 
@@ -661,7 +661,7 @@ public class DefaultUploadServices implements UploadServices {
                         submission.setSubmissionType(getSubmissionTypeByName("Specification Submission"));
 
                         Upload upload = createUpload(projectId, resource.getId(), filename, "Submission");
-                        Helper.logFormat(LOG, Level.INFO,
+                        Helper.logFormat(LOG, Level.DEBUG,
                                 "Upload created for the  projectId {0}, userId {1} with filename {2}.",
                                 new Object[]{projectId, userId, filename});
 
@@ -669,7 +669,7 @@ public class DefaultUploadServices implements UploadServices {
                         // persist the upload
                         managersProvider.getUploadManager().createUpload(upload, operator);
 
-                        Helper.logFormat(LOG, Level.INFO,
+                        Helper.logFormat(LOG, Level.DEBUG,
                                 "Created specification Upload for project {0}, user {1} with file name {2}.",
                                 new Object[]{projectId, userId, filename});
 
@@ -680,19 +680,19 @@ public class DefaultUploadServices implements UploadServices {
                         // operator
                         managersProvider.getUploadManager().createSubmission(submission, operator);
 
-                        Helper.logFormat(LOG, Level.INFO, "Created specification for project {0}, user {1}.",
+                        Helper.logFormat(LOG, Level.DEBUG, "Created specification for project {0}, user {1}.",
                                 new Object[]{projectId, userId});
 
                         // associate the submission with the submitter resource
                         resource.addSubmission(submission.getId());
 
-                        Helper.logFormat(LOG, Level.INFO, "Added specification {0} to resource.",
+                        Helper.logFormat(LOG, Level.DEBUG, "Added specification {0} to resource.",
                                 new Object[]{submission.getId()});
 
                         // persist the resource using ResourceManager#updateResource
                         managersProvider.getResourceManager().updateResource(resource, operator);
 
-                        Helper.logFormat(LOG, Level.INFO, "Updated resource using the operator {0}.",
+                        Helper.logFormat(LOG, Level.DEBUG, "Updated resource using the operator {0}.",
                                 new Object[]{operator});
 
                         return submission.getId();
@@ -768,7 +768,7 @@ public class DefaultUploadServices implements UploadServices {
                 if (status.getId() == submissionStatusId) {
                     submission.setSubmissionStatus(status);
                     managersProvider.getUploadManager().updateSubmission(submission, operator);
-                    Helper.logFormat(LOG, Level.INFO, "Updated submission {0} using operator {1}.", new Object[]{
+                    Helper.logFormat(LOG, Level.DEBUG, "Updated submission {0} using operator {1}.", new Object[]{
                             submission.getId(), operator});
                     return;
                 }
@@ -1114,14 +1114,14 @@ public class DefaultUploadServices implements UploadServices {
         }
         try {
             Project project = managersProvider.getProjectManager().getProject(projectId);
-            LOG.log(Level.INFO, "Project successfully retrieved for the project id : " + projectId);
+            LOG.log(Level.DEBUG, "Project successfully retrieved for the project id : " + projectId);
             // Obtain the instance of the Resource Manager
             ResourceManager resourceManager = managersProvider.getResourceManager();
             UserRetrieval userRetrieval = new DBUserRetrieval(DB_CONNECTION_NAMESPACE);
 
             // Get info about user with the specified userId
             ExternalUser user = userRetrieval.retrieveUser(userId);
-            LOG.log(Level.INFO, "User information successfully retrieved for the user id : " + userId);
+            LOG.log(Level.DEBUG, "User information successfully retrieved for the user id : " + userId);
             // If there is no user with such handle, indicate an error
             if (user == null) {
                 Helper.logFormat(LOG, Level.ERROR, "Failed to get the user details for the userId {0}",
@@ -1168,7 +1168,7 @@ public class DefaultUploadServices implements UploadServices {
 
             // Save the resource in the persistence level
             resourceManager.updateResource(resource, Long.toString(userId));
-            LOG.log(Level.INFO, "Resource successfully persisted into" + " to the DB with the id : "
+            LOG.log(Level.DEBUG, "Resource successfully persisted into" + " to the DB with the id : "
                     + resource.getId());
             newSubmitters.add(new Long(user.getId()));
 
@@ -1228,7 +1228,7 @@ public class DefaultUploadServices implements UploadServices {
             // design/development/assembly project need project_result
             return;
         }
-        LOG.log(Level.INFO, "Populating the project result table.");
+        LOG.log(Level.DEBUG, "Populating the project result table.");
         try {
             DBConnectionFactory dbconn;
             dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
@@ -1308,7 +1308,7 @@ public class DefaultUploadServices implements UploadServices {
                 // add component_inquiry
                 // only design, development and assembly contests needs a component_inquiry entry
                 if (!existCI && componentId > 0) {
-                    LOG.log(Level.INFO, "adding component_inquiry for projectId: " + projectId + " userId: "
+                    LOG.log(Level.DEBUG, "adding component_inquiry for projectId: " + projectId + " userId: "
                             + userId);
                     componentInquiryStmt.setLong(1, componentInquiryId++);
                     componentInquiryStmt.setLong(2, componentId);
@@ -1362,7 +1362,7 @@ public class DefaultUploadServices implements UploadServices {
      * @since 1.0
      */
     private long getNextComponentInquiryId(Connection conn, int count) throws UploadServicesException {
-        LOG.log(Level.INFO, "Getting the next component inquiry id.");
+        LOG.log(Level.DEBUG, "Getting the next component inquiry id.");
         String tableName = getPropertyValue("component_inquiry.tablename", "sequence_object");
         String nameField = getPropertyValue("component_inquiry.name", "name");
         String currentValueField = getPropertyValue("component_inquiry.current_value", "current_value");

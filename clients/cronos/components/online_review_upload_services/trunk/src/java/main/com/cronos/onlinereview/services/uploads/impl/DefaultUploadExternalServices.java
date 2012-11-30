@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2012 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.services.uploads.impl;
 
@@ -14,7 +14,7 @@ import com.topcoder.util.generator.guid.UUID;
 import com.topcoder.util.generator.guid.UUIDType;
 import com.topcoder.util.generator.guid.UUIDUtility;
 import com.topcoder.util.log.Level;
-import com.topcoder.util.log.LogFactory;
+import com.topcoder.util.log.LogManager;
 
 import javax.activation.DataHandler;
 import java.io.Closeable;
@@ -63,7 +63,7 @@ import java.text.MessageFormat;
  * </p>
  *
  * @author fabrizyo, saarixx, cyberjag, TCSDEVELOPER
- * @version 1.1
+ * @version 1.1.2
  * @since 1.0
  */
 public class DefaultUploadExternalServices implements UploadExternalServices {
@@ -90,7 +90,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
      * </p>
      */
     private static final com.topcoder.util.log.Log LOG =
-            LogFactory.getLog(DefaultUploadExternalServices.class.getName());
+            LogManager.getLog(DefaultUploadExternalServices.class.getName());
 
     /**
      * <p>
@@ -157,7 +157,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
             services = new DefaultUploadServices();
         }
         this.uploadServices = services;
-        LOG.log(Level.INFO, "UploadServices created using ObjectFactory");
+        LOG.log(Level.DEBUG, "UploadServices created using ObjectFactory");
         this.filenamePattern = Helper.readProperty(namespace, "filenamePattern", DEFAULT_FILENAME_PATTERN, LOG,
                 false);
         this.fileStorageLocation = Helper.readProperty(namespace, "fileStorageLocation", null, LOG, true);
@@ -222,7 +222,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
 
         File newFile = createNewFile(filename, submission);
         String filenameGenerated = newFile.getName();
-        Helper.logFormat(LOG, Level.INFO, "Submission file created {0}", new Object[]{newFile.getAbsolutePath()});
+        Helper.logFormat(LOG, Level.DEBUG, "Submission file created {0}", new Object[]{newFile.getAbsolutePath()});
         try {
             // delegate to the similar method in uploadServices without DataHandler passing only
             // filenameGenerated
@@ -270,7 +270,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
 
         File newFile = createNewFile(filename, finalFix);
         String filenameGenerated = newFile.getName();
-        Helper.logFormat(LOG, Level.INFO, "Final fix file created {0}", new Object[]{filenameGenerated});
+        Helper.logFormat(LOG, Level.DEBUG, "Final fix file created {0}", new Object[]{filenameGenerated});
         try {
             // delegate to the similar method in uploadServices without DataHandler passing only
             // filenameGenerated
@@ -318,7 +318,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
 
         File newFile = createNewFile(filename, testCases);
         String filenameGenerated = newFile.getName();
-        Helper.logFormat(LOG, Level.INFO, "Test case file created {0}", new Object[]{filenameGenerated});
+        Helper.logFormat(LOG, Level.DEBUG, "Test case file created {0}", new Object[]{filenameGenerated});
         try {
             // delegate to the similar method in uploadServices without DataHandler passing only
             // filenameGenerated
@@ -369,7 +369,7 @@ public class DefaultUploadExternalServices implements UploadExternalServices {
         // generate unique tmp file and write the content of the specification into it
         File newFile = createNewFile(filename, specification);
         String filenameGenerated = newFile.getName();
-        Helper.logFormat(LOG, Level.INFO, "Specification file created {0}", new Object[]{newFile.getAbsolutePath()});
+        Helper.logFormat(LOG, Level.DEBUG, "Specification file created {0}", new Object[]{newFile.getAbsolutePath()});
         try {
             // delegates to the similar method in uploadServices without DataHandler passing only
             // generated filename
