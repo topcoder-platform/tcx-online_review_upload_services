@@ -1158,6 +1158,7 @@ public class DefaultUploadServices implements UploadServices {
             // Set resource properties
             resource.setProject(new Long(project.getId()));
             resource.setResourceRole(submitterRole);
+            resource.setUserId(userId);
             resource.setProperty("Handle", user.getHandle());
             resource.setProperty("Payment", null);
             resource.setProperty("Payment Status", "No");
