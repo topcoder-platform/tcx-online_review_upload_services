@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2012 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.services.uploads.impl;
 
@@ -106,7 +106,7 @@ import java.util.Set;
  * </p>
  *
  * @author fabrizyo, saarixx, cyberjag, lmmortal
- * @version 1.1.2
+ * @version 1.1.3
  */
 public class DefaultUploadServices implements UploadServices {
 
@@ -877,10 +877,10 @@ public class DefaultUploadServices implements UploadServices {
         Filter submitterRoleIdFilter = new OrFilter(Arrays.asList(filters));
 
         // create the filter for searching resources
-        AndFilter filter = new AndFilter(Arrays.asList(new Filter[]{submitterRoleIdFilter,
+        AndFilter filter = new AndFilter(Arrays.asList(new Filter[]{
+                submitterRoleIdFilter,
                 ResourceFilterBuilder.createProjectIdFilter(projectId),
-                ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID"),
-                ResourceFilterBuilder.createExtensionPropertyValueFilter(String.valueOf(userId))}));
+                ResourceFilterBuilder.createUserIdFilter(userId)}));
 
         Resource[] resources;
         try {
